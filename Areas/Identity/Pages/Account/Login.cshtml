@@ -5,12 +5,20 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
+<div class="container">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col">
+            <div class="row">
+                <div class="col border-right">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Login"><h2 class="text-center" style="color:#1cd5db">Login</h2></a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register"><h2 style="color:darkgrey" class="text-center">Register</h2></a>
+                </div>
+            </div>
+
             <form id="account" method="post">
-                <h4>Use a local account to log in.</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
@@ -32,51 +40,70 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Log in</button>
-                </div>
-                <div class="form-group">
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
+                    <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;" type="submit">Login</button>
                 </div>
             </form>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h4>Use another service to log in.</h4>
             <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+            <div class="form-group">
+                @{
+                    if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                    {
                         <div>
                             <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
+                                There are no external authentication services configured at the moment.
                             </p>
                         </div>
-                    </form>
+                    }
+                    else
+                    {
+                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+
+                            <div class="socials text-center">
+                                <div class="row">
+                                    <div class="col" style="padding-right:35px;"></div>
+                                    <div class="col-6">
+                                        <ul>
+                                            <p class="text-center" style="padding-right:20px;">Or using other methods </p>
+                                            @foreach (var provider in Model.ExternalLogins)
+                                            {
+                                                switch (provider.Name)
+                                                {
+                                                    case "GitHub":
+                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-github"></i></button></li>
+                                                        break;
+                                                    case "Google":
+                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-google"></i></button></li>
+                                                        break;
+                                                    case "Twitter":
+                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-twitter"></i></button></li>
+                                                        break;
+                                                    case "Facebook":
+                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-facebook"></i></button></li>
+                                                        break;
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </div>
+                        </form>
+                    }
                 }
-            }
-        </section>
+            </div>
+            <div class="form-group">
+                <p>
+                    <a style="text-decoration: initial;" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                </p>
+                <p>
+                    <a style="text-decoration: initial;" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                </p>
+                <p>
+                    <a style="text-decoration: initial;" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                </p>
+            </div>
+        </div>
+        <div class="col-3"></div>
     </div>
 </div>
 

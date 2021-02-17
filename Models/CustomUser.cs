@@ -23,7 +23,6 @@ namespace BugTracker.Models
         [NotMapped]
         public string FullName { get { return $"{FirstName} {LastName}"; } }
 
-        public string Role { get; set; }
 
         public virtual ICollection<Project> Projects { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
