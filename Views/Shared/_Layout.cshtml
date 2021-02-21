@@ -11,10 +11,14 @@
     <title>@ViewData["Title"] - BugTracker</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="icon" href="~/img/favicon.png"  />
+    <link rel="icon" href="~/img/favicon.png" />
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
-
+    <!-- Bootstrap4 Duallistbox -->
+    <link rel="stylesheet" href="~/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <!-- Custom styles for this template-->
     <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
     <!-- Ionicons -->
@@ -41,39 +45,39 @@
     <div style="background-image: url('@ViewData["background"]');width:100%;height:auto; background-repeat: no-repeat;background-attachment: fixed;background-size: cover;">
         @*<header>
 
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BugTracker</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Projects" asp-action="Index">Project</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Projects" asp-action="ManagerUserProject"> Manage User Project</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Ticket</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ManageRole">Manage Role</a>
-                            </li>
-                        </ul>
-                        <partial name="_LoginPartial" />
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                    <div class="container">
+                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BugTracker</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Projects" asp-action="Index">Project</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Projects" asp-action="ManagerUserProject"> Manage User Project</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Ticket</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ManageRole">Manage Role</a>
+                                </li>
+                            </ul>
+                            <partial name="_LoginPartial" />
+                        </div>
                     </div>
-                </div>
-            </nav>
-        </header>*@
+                </nav>
+            </header>*@
         <!-- Sidebar -->
 
         @if (SignInManager.IsSignedIn(User))
@@ -86,14 +90,14 @@
                             <a style="color:black;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><span class="iconify" data-icon="ant-design:home-filled" data-inline="true"></span> Home</a>
                         </li>
                         @*<li class="nav-item d-none d-sm-inline-block">
-                            <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">Project</a>
-                        </li>
-                        <li class="nav-item d-none d-sm-inline-block">
-                            <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="ManagerUserProject"> Manage User Project</a>
-                        </li>
-                        <li class="nav-item d-none d-sm-inline-block">
-                            <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="Index">Ticket</a>
-                        </li>*@
+                                <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">Project</a>
+                            </li>
+                            <li class="nav-item d-none d-sm-inline-block">
+                                <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="ManagerUserProject"> Manage User Project</a>
+                            </li>
+                            <li class="nav-item d-none d-sm-inline-block">
+                                <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="Index">Ticket</a>
+                            </li>*@
                         <li class="nav-item d-none d-sm-inline-block">
                             <a class="nav-link" style="color:black;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" href="https://github.com/arthastheking113" target="_blank"><span class="iconify" data-icon="akar-icons:github-fill" data-inline="true"></span> Github</a>
                         </li>
@@ -221,9 +225,8 @@
             <!-- Main Sidebar Container -->
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
                 <!-- Brand Logo -->
-                <a href="index3.html" class="brand-link">
-                    <img src="~/img/favicon.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                         style="opacity: .8">
+                <a asp-controller="Home" asp-action="Index" class="brand-link">
+                    <img src="~/img/favicon.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3">
                     <span class="brand-text font-weight-light">Bug Tracker 2.0</span>
                 </a>
 
@@ -260,7 +263,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
+                            with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -337,7 +340,7 @@
         </footer>
 
     </div>
-    
+
     <script src="~/plugins/jquery/jquery.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
     <script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
@@ -365,10 +368,14 @@
     <script src="~/plugins/summernote/summernote-bs4.min.js"></script>
     <!-- overlayScrollbars -->
     <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
     <!-- AdminLTE App -->
     <script src="~/js/adminlte.js"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="~/js/pages/dashboard.js"></script>
+    <!-- Bootstrap4 Duallistbox -->
+    <script src="~/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="~/js/demo.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

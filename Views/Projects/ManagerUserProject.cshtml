@@ -3,10 +3,12 @@
     ViewData["Title"] = "ManagerUserProject";
 }
 
-<br /><br /><br />
-<div class="container">
+<br />
+<br />
+<br />
+<div class="container-fluid" style="padding-left:10%;padding-right:10%;">
     <div class="shadow-lg p-3 mb-5 bg-white rounded">
-        <h1>ManagerUserProject</h1>
+        <h1>Manager User Project</h1>
         <hr />
         <form asp-controller="Projects" asp-action="ManagerUserProject" method="post">
 
@@ -21,7 +23,11 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <select class="form-control" name="ProjectId" asp-items="@ViewBag.ProjectId"></select>
+                            <div class="form-group">
+                                <select class="form-control  select2bs4" style="width: 100%;" name="ProjectId" asp-items="@ViewBag.ProjectId"></select>
+                                @*<select class="form-control select2bs4" style="width: 100%;"></select>*@
+                            </div>
+                           
 
                         </div>
 
@@ -36,8 +42,9 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <select class="form-control" name="ProjectManagerId" asp-items="@ViewBag.ProjectManagerId"></select>
-
+                            <div class="form-group">
+                                <select class="form-control select2bs4" style="width: 100%;" name="ProjectManagerId" asp-items="@ViewBag.ProjectManagerId"></select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -53,8 +60,23 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <select class="form-control" size="15" multiple="multiple" name="DevelopersId" asp-items="@ViewBag.DevelopersId"></select>
-
+                            @*<select class="form-control" size="15" multiple="multiple" name="DevelopersId" asp-items="@ViewBag.DevelopersId"></select>*@
+                            <div class="card card-default">
+                                <div class="card-body" style="padding:0;">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                           
+                                                <select class="duallistbox" size="15" multiple="multiple" name="DevelopersId" asp-items="@ViewBag.DevelopersId"></select>
+                                            </div>
+                                            <!-- /.form-group -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
                         </div>
 
                     </div>
@@ -68,8 +90,23 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <select class="form-control" size="15" multiple="multiple" name="SubmittersId" asp-items="@ViewBag.SubmittersId"></select>
-
+                            @*<select class="form-control" size="15" multiple="multiple" name="SubmittersId" asp-items="@ViewBag.SubmittersId"></select>*@
+                            <div class="card card-default">
+                                <div class="card-body" style="padding:0;">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                               
+                                                <select class="duallistbox" size="15" multiple="multiple" name="SubmittersId" asp-items="@ViewBag.SubmittersId"></select>
+                                            </div>
+                                            <!-- /.form-group -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
                         </div>
 
                     </div>
@@ -83,5 +120,9 @@
             </div>
         </form>
     </div>
-    
+</div>
+
+<div class="form-group">
+
+    <select class="form-control select2bs4" style="width: 100%;"></select>
 </div>

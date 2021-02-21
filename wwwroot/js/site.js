@@ -15,5 +15,23 @@ function display_ct() {
     document.getElementById('ct').innerHTML = x.toLocaleTimeString("en-us", options);
     display_c();
 }
+
+$(function () {
+
+    //Initialize Select2 Elements
+    $('.select2').select2()
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+        theme: 'bootstrap4'
+    })
+
+
+    //Bootstrap Duallistbox
+    $('.duallistbox').bootstrapDualListbox()
+
+  
+})
+
+
 // Write your JavaScript code.
 $('expandbutton').trigger('mouseenter') 
