@@ -2,60 +2,83 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
+    ViewData["background"] = "/img/4kpic4.jpg";
 }
 
-<br />
-<br />
-<br />
-<div class="container" style="background-color:white">
+
+<div class="container">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
     <div class="row">
         <div class="col-3"></div>
-        <div class="col">
 
-            <div class="row">
-                <div class="col border-right">
-                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Login"><h2 style="color:darkgrey" class="text-center">Login</h2></a>
+        <div class="col">
+            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+                <div class="row">
+                    <div class="col border-right">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login"><h2 style="color:darkgrey" class="text-center">Login</h2></a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register"><h2 class="text-center" style="color:#1cd5db">Register</h2></a>
+                    </div>
                 </div>
-                <div class="col">
-                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register"><h2 class="text-center" style="color:#1cd5db">Register</h2></a>
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <hr />
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.FirstName"></label>
+                        <input asp-for="Input.FirstName" class="form-control" />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.LastName"></label>
+                        <input asp-for="Input.LastName" class="form-control" />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.CompanyId" class="control-label"></label>
+                        <select asp-for="Input.CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Email"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.Password"></label>
+                        <input asp-for="Input.Password" class="form-control" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.ConfirmPassword"></label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 130%;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;border:0;" type="submit">Register</button>
+                </form>
+
+                <div class="row pt-2 ">
+                    <div class="col text-center">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Or Login as a Demo User?</a>
+                    </div>
                 </div>
             </div>
-            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                <hr />
-                <div asp-validation-summary="All" class="text-danger"></div>
-
-                <div class="form-group">
-                    <label asp-for="Input.FirstName"></label>
-                    <input asp-for="Input.FirstName" class="form-control" />
-                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.LastName"></label>
-                    <input asp-for="Input.LastName" class="form-control" />
-                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.Email"></label>
-                    <input asp-for="Input.Email" class="form-control" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Input.Password"></label>
-                    <input asp-for="Input.Password" class="form-control" />
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.ConfirmPassword"></label>
-                    <input asp-for="Input.ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                </div>
-
-                <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 130%;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;border:0;" type="submit">Register</button>
-            </form>
         </div>
+
         <div class="col-3"></div>
     </div>
+    <br />
+    <br /> <br />
+    <br /> <br />
+    <br />
+
 </div>
 
 @section Scripts {

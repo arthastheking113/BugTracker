@@ -20,10 +20,15 @@ namespace BugTracker.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+        [Display(Name = "Change Avatar")]
+        public Byte[] ImageData { get; set; }
+        public string ContentType { get; set; }
+
         [NotMapped]
         public string FullName { get { return $"{FirstName} {LastName}"; } }
 
-
+        public int? CompanyId { get; set; }
+        public virtual Company Company { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

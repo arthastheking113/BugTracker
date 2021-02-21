@@ -1,6 +1,7 @@
 using BugTracker.Data;
 using BugTracker.Models;
 using BugTracker.Service;
+using BugTracker.Services;
 using BugTracker.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +44,8 @@ namespace BugTracker
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddTransient<IImageService, BasicImageService>();
+            services.AddScoped<ICustomRoleService, CustomRoleService>();
+            services.AddScoped<ICustomProjectService, CustomProjectService>();
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailSender, EmailService>();

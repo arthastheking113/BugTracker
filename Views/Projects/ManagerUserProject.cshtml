@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewData["Title"] = "ManagerUserProject";
+}
+
+<br /><br /><br />
+<div class="container">
+    <div class="shadow-lg p-3 mb-5 bg-white rounded">
+        <h1>ManagerUserProject</h1>
+        <hr />
+        <form asp-controller="Projects" asp-action="ManagerUserProject" method="post">
+
+
+            <div class="row">
+                <div class="col p-3">
+                    <div class="row">
+                        <div class="col">
+                            Project
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <select class="form-control" name="ProjectId" asp-items="@ViewBag.ProjectId"></select>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col  p-3">
+                    <div class="row">
+                        <div class="col">
+                            Project Manager
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <select class="form-control" name="ProjectManagerId" asp-items="@ViewBag.ProjectManagerId"></select>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col p-3">
+                    <div class="row">
+                        <div class="col">
+                            Developers
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <select class="form-control" size="15" multiple="multiple" name="DevelopersId" asp-items="@ViewBag.DevelopersId"></select>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col p-3">
+                    <div class="row">
+                        <div class="col">
+                            Submitters
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <select class="form-control" size="15" multiple="multiple" name="SubmittersId" asp-items="@ViewBag.SubmittersId"></select>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <input type="submit" class="btn btn-secondary" value="         Save         " />
+                    <a asp-controller="Projects" asp-action="ManagerUserProject" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+</div>

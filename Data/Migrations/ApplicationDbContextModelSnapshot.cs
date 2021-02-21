@@ -132,6 +132,9 @@ namespace BugTracker.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -143,6 +146,9 @@ namespace BugTracker.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -305,9 +311,6 @@ namespace BugTracker.Data.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CustomUserId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -317,16 +320,9 @@ namespace BugTracker.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("CustomUserId");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("Project");
                 });
@@ -445,6 +441,21 @@ namespace BugTracker.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TicketType");
+                });
+
+            modelBuilder.Entity("CustomUserProject", b =>
+                {
+                    b.Property<string>("CustomUsersId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CustomUsersId", "ProjectsId");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("CustomUserProject");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -613,9 +624,11 @@ namespace BugTracker.Data.Migrations
 
             modelBuilder.Entity("BugTracker.Models.CustomUser", b =>
                 {
-                    b.HasOne("BugTracker.Models.Company", null)
+                    b.HasOne("BugTracker.Models.Company", "Company")
                         .WithMany("CustomUsers")
                         .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Invite", b =>
@@ -672,21 +685,7 @@ namespace BugTracker.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BugTracker.Models.CustomUser", "CustomUser")
-                        .WithMany("Projects")
-                        .HasForeignKey("CustomUserId");
-
-                    b.HasOne("BugTracker.Models.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Company");
-
-                    b.Navigation("CustomUser");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Ticket", b =>
@@ -745,6 +744,21 @@ namespace BugTracker.Data.Migrations
                     b.Navigation("CustomUser");
 
                     b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("CustomUserProject", b =>
+                {
+                    b.HasOne("BugTracker.Models.CustomUser", null)
+                        .WithMany()
+                        .HasForeignKey("CustomUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BugTracker.Models.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -808,8 +822,6 @@ namespace BugTracker.Data.Migrations
             modelBuilder.Entity("BugTracker.Models.CustomUser", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Projects");
 
                     b.Navigation("Tickets");
                 });

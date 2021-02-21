@@ -7,22 +7,65 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICustomProjectService _projectService;
+        private readonly ICustomRoleService _roleService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService)
         {
             _context = context;
+            _projectService = projectService;
+            _roleService = roleService;
         }
+
+        public async Task<IActionResult> ManagerUserProject()
+        {
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["ProjectManagerId"] = new SelectList(await _roleService.UsersInRoleAsync(Roles.ProjectManager.ToString()), "Id", "FullName");
+            ViewData["DevelopersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Developer.ToString()), "Id", "FullName");
+            ViewData["SubmittersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Submitter.ToString()), "Id", "FullName");
+
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManagerUserProject(string ProjectManagerId, int ProjectId, List<string> DevelopersId, List<string> SubmittersId)
+        {
+            var currentlyOnProject = await _projectService.UserOnProjectAsync(ProjectId);
+            foreach (var user in currentlyOnProject)
+            {
+                await _projectService.RemoveUserFromProjectAsync(user.Id, ProjectId);
+            }
+            await _projectService.AddUserToProjectAsync(ProjectManagerId, ProjectId);
+            foreach (var user in DevelopersId)
+            {
+                await _projectService.AddUserToProjectAsync(user, ProjectId);
+            }
+            foreach (var user in SubmittersId)
+            {
+                await _projectService.AddUserToProjectAsync(user, ProjectId);
+            }
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["ProjectManagerId"] = new SelectList(await _roleService.UsersInRoleAsync(Roles.ProjectManager.ToString()), "Id", "FullName");
+            ViewData["DevelopersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Developer.ToString()), "Id", "FullName");
+            ViewData["SubmittersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Submitter.ToString()), "Id", "FullName");
+            return View();
+        }
+
+
 
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Project.Include(p => p.Company).Include(p => p.CustomUser).Include(p => p.Status);
+            var applicationDbContext = _context.Project.Include(p => p.Company);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -36,8 +79,6 @@ namespace BugTracker.Controllers
 
             var project = await _context.Project
                 .Include(p => p.Company)
-                .Include(p => p.CustomUser)
-                .Include(p => p.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (project == null)
             {
@@ -51,8 +92,6 @@ namespace BugTracker.Controllers
         public IActionResult Create()
         {
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id");
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id");
             return View();
         }
 
@@ -61,7 +100,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CustomUserId,StatusId,CompanyId,ImageData,ContentType")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -70,8 +109,6 @@ namespace BugTracker.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", project.CustomUserId);
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", project.StatusId);
             return View(project);
         }
 
@@ -89,8 +126,6 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", project.CustomUserId);
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", project.StatusId);
             return View(project);
         }
 
@@ -99,7 +134,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,CustomUserId,StatusId,CompanyId,ImageData,ContentType")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project)
         {
             if (id != project.Id)
             {
@@ -127,8 +162,6 @@ namespace BugTracker.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", project.CustomUserId);
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", project.StatusId);
             return View(project);
         }
 
@@ -142,8 +175,6 @@ namespace BugTracker.Controllers
 
             var project = await _context.Project
                 .Include(p => p.Company)
-                .Include(p => p.CustomUser)
-                .Include(p => p.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (project == null)
             {
