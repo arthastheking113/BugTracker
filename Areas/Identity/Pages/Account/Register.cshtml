@@ -17,7 +17,7 @@
         <div class="col-3"></div>
 
         <div class="col">
-            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="shadow-lg p-3 mb-5 bg-dark rounded">
                 <div class="row">
                     <div class="col border-right">
                         <a class="nav-link" asp-area="Identity" asp-page="/Account/Login"><h2 style="color:darkgrey" class="text-center">Login</h2></a>
@@ -55,7 +55,7 @@
                         <input asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group pb-4">
                         <label asp-for="Input.ConfirmPassword"></label>
                         <input asp-for="Input.ConfirmPassword" class="form-control" />
                         <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
@@ -66,7 +66,7 @@
 
                 <div class="row pt-2 ">
                     <div class="col text-center">
-                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Or Login as a Demo User?</a>
+                        <a class="nav-link text-white "  asp-area="Identity" asp-page="/Account/Login">Or Login as a Demo User?</a>
                     </div>
                 </div>
             </div>

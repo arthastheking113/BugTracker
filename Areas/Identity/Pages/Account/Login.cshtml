@@ -18,7 +18,7 @@
         <div class="col-3"></div>
 
         <div class="col">
-            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
                 <div class="row">
                     <div class="col border-right">
                         <a class="nav-link" asp-area="Identity" asp-page="/Account/Login"><h2 class="text-center" style="color:#1cd5db">Login</h2></a>
@@ -104,13 +104,13 @@
                 </div>
                 <div class="form-group">
                     <p>
-                        <a style="text-decoration: initial;" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                        <a class="text-white" style="text-decoration: initial;" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
                     </p>
                     <p>
-                        <a style="text-decoration: initial;" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                        <a class="text-white" style="text-decoration: initial;" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
                     </p>
                     <p>
-                        <a style="text-decoration: initial;" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                        <a class="text-white" style="text-decoration: initial;" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
                     </p>
                 </div>
             </div>
@@ -119,14 +119,93 @@
         <div class="col-3"></div>
     </div>
 
-    <br />
-    <br /> <br />
-    <br /> <br />
-    <br /> <br />
-    <br /> <br />
-    <br /> <br />
- 
+    
 </div>
+<div class="container-fluid" style="opacity: 0.7;">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                <div class="row">
+                    <div class="col text-center">
+                        <h4><span class="iconify" data-icon="wpf:administrator" data-inline="true"></span> Demo Admin</h4>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        Log in as an Admin with full of functions.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <a class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Admin</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                <div class="row">
+                    <div class="col  text-center">
+                        <h4><span class="iconify" data-icon="fa-solid:users-cog" data-inline="true"></span> Demo PM</h4>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        Log in as a Project Manager to manage your team.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <a class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo PM</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                <div class="row">
+                    <div class="col text-center">
+                        <h4><span class="iconify" data-icon="fa-solid:user-secret" data-inline="true"></span> Demo Developer</h4>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        Log in as a Developer to work as a normal employee.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <a class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Developer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                <div class="row">
+                    <div class="col text-center">
+                        <h4><span class="iconify" data-icon="fa-solid:user" data-inline="true"></span> Demo Submitter</h4>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        Log in as a Submitter to work with developer.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <a class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Submitter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <br /><br /><br /><br />
+</div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

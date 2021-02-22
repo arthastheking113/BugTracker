@@ -16,6 +16,18 @@ function display_ct() {
     display_c();
 }
 
+$('#contact').summernote({
+    height: 300,
+    placeholder: "Tell me, I'm listening...",
+    tabDisable: true,
+    dialogsInBody: true
+});
+$('#Content').summernote({
+    height: 120,
+    placeholder: "Tell me, I'm listening...",
+    tabDisable: true,
+    dialogsInBody: true
+});
 $(function () {
 
     //Initialize Select2 Elements

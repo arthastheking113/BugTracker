@@ -43,41 +43,6 @@
 <body class="sidebar-mini layout-fixed sidebar-collapse" onload=display_ct();>
 
     <div style="background-image: url('@ViewData["background"]');width:100%;height:auto; background-repeat: no-repeat;background-attachment: fixed;background-size: cover;">
-        @*<header>
-
-                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                    <div class="container">
-                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BugTracker</a>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                            <ul class="navbar-nav flex-grow-1">
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Projects" asp-action="Index">Project</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Projects" asp-action="ManagerUserProject"> Manage User Project</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Ticket</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ManageRole">Manage Role</a>
-                                </li>
-                            </ul>
-                            <partial name="_LoginPartial" />
-                        </div>
-                    </div>
-                </nav>
-            </header>*@
         <!-- Sidebar -->
 
         @if (SignInManager.IsSignedIn(User))
@@ -89,15 +54,6 @@
                         <li class="nav-item d-none d-sm-inline-block">
                             <a style="color:black;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><span class="iconify" data-icon="ant-design:home-filled" data-inline="true"></span> Home</a>
                         </li>
-                        @*<li class="nav-item d-none d-sm-inline-block">
-                                <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">Project</a>
-                            </li>
-                            <li class="nav-item d-none d-sm-inline-block">
-                                <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="ManagerUserProject"> Manage User Project</a>
-                            </li>
-                            <li class="nav-item d-none d-sm-inline-block">
-                                <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="Index">Ticket</a>
-                            </li>*@
                         <li class="nav-item d-none d-sm-inline-block">
                             <a class="nav-link" style="color:black;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" href="https://github.com/arthastheking113" target="_blank"><span class="iconify" data-icon="akar-icons:github-fill" data-inline="true"></span> Github</a>
                         </li>
@@ -325,7 +281,7 @@
         }
         else
         {
-            <main role="main">
+            <main role="main" >
                 @RenderBody()
             </main>
         }

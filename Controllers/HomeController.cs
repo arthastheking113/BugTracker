@@ -3,6 +3,7 @@ using BugTracker.Models;
 using BugTracker.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -19,12 +20,14 @@ namespace BugTracker.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ICustomRoleService _customRoleService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(ILogger<HomeController> logger, ICustomRoleService customRoleService, ApplicationDbContext dbContext)
+        public HomeController(ILogger<HomeController> logger, ICustomRoleService customRoleService, ApplicationDbContext dbContext, IEmailSender emailSender)
         {
             _logger = logger;
            _customRoleService = customRoleService;
             _dbContext = dbContext;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -33,6 +36,40 @@ namespace BugTracker.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Contact(string Name, string Email, string Subject, string Message)
+        {
+            string myEmail = "arthastheking113@gmail.com";
+
+            string subject = $"{Name} Just Send You A Message About {Subject}";
+
+            string body = $"Message From {Email}: {Message}";
+
+            string customberSubject = $"I Just Received A Message From Lan's Blog With Name {Name} About {Subject}";
+            string customberBody = $"I Received Message From {Email} About: {Subject}. I will contact back to you as soon as possible.";
+
+            await _emailSender.SendEmailAsync(myEmail, subject, body);
+
+            await _emailSender.SendEmailAsync(Email, customberSubject, customberBody);
+
+            ModelState.Clear();
+            return View("SendMessageSuccess");
+        }
+
+        public IActionResult SendMessageSuccess()
+        {
+            return View();
+        }
+
+        public IActionResult About()
         {
             return View();
         }
