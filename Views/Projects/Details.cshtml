@@ -1,60 +1,193 @@
 ﻿@model BugTracker.Models.Project
-
+@using BugTracker.Services
+@inject ICustomProjectService projectService
 @{
     ViewData["Title"] = "Details";
 }
-@using BugTracker.Services
-@inject ICustomProjectService projectService
-<h1>Details</h1>
 
-<div>
-    <h4>Project</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Company.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContentType)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<section class="content">
+    <div class="container-fluid">
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-1">
+                        <h3 class="card-title">Projects Detail</h3>
+                    </div>
+                    <div class="col">
+                        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+                        <a asp-action="Index">Back to List</a>
+                    </div>
+                </div>
 
-@foreach (var user in (await projectService.UserOnProjectAsync(Model.Id)).ToList())
-{
-    <h4>@user.FullName</h4>
-}
+
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+                        <div class="row">
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center text-muted">Estimated budget</span>
+                                        <span class="info-box-number text-center text-muted mb-0">2300</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center text-muted">Total amount spent</span>
+                                        <span class="info-box-number text-center text-muted mb-0">2000</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center text-muted">Estimated project duration</span>
+                                        <span class="info-box-number text-center text-muted mb-0">20 <span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <h4>Recent Activity</h4>
+                                <div class="post">
+                                    <div class="user-block">
+                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                        <span class="username">
+                                            <a href="#">Jonathan Burke Jr.</a>
+                                        </span>
+                                        <span class="description">Shared publicly - 7:45 PM today</span>
+                                    </div>
+                                    <!-- /.user-block -->
+                                    <p>
+                                        Lorem ipsum represents a long-held tradition for designers,
+                                        typographers and the like. Some people hate it and argue for
+                                        its demise, but others ignore.
+                                    </p>
+
+                                    <p>
+                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                                    </p>
+                                </div>
+
+                                <div class="post clearfix">
+                                    <div class="user-block">
+                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
+                                        <span class="username">
+                                            <a href="#">Sarah Ross</a>
+                                        </span>
+                                        <span class="description">Sent you a message - 3 days ago</span>
+                                    </div>
+                                    <!-- /.user-block -->
+                                    <p>
+                                        Lorem ipsum represents a long-held tradition for designers,
+                                        typographers and the like. Some people hate it and argue for
+                                        its demise, but others ignore.
+                                    </p>
+                                    <p>
+                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 2</a>
+                                    </p>
+                                </div>
+
+                                <div class="post">
+                                    <div class="user-block">
+                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                        <span class="username">
+                                            <a href="#">Jonathan Burke Jr.</a>
+                                        </span>
+                                        <span class="description">Shared publicly - 5 days ago</span>
+                                    </div>
+                                    <!-- /.user-block -->
+                                    <p>
+                                        Lorem ipsum represents a long-held tradition for designers,
+                                        typographers and the like. Some people hate it and argue for
+                                        its demise, but others ignore.
+                                    </p>
+
+                                    <p>
+                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v1</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+                        <h3 class="text-primary"><i class="fas fa-paint-brush"></i> @Html.DisplayFor(model => model.Name)</h3>
+                        <p class="text-muted">@Html.DisplayFor(model => model.Description)</p>
+                        <br>
+                        <div class="text-muted">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="text-sm">
+                                        Client Company
+                                        <b class="d-block">@Html.DisplayFor(model => model.Company.Name)</b>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="text-sm">
+                                        Project Leader
+                                        <b class="d-block">@((await projectService.ProjectManagerOnProjectAsync(Model.Id)).FullName)</b>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="text-sm">
+                                        Developer
+                                        @foreach (var developer in await projectService.DeveloperOnProjectAsync(Model.Id))
+                                        {
+                                            <b class="d-block">@(developer.FullName)</b>
+                                        }
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <p class="text-sm">
+                                        Submitter
+                                        @foreach (var submitter in await projectService.SubmitterOnProjectAsync(Model.Id))
+                                        {
+                                            <b class="d-block">@(submitter.FullName)</b>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <h5 class="mt-5 text-muted">Project files</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
+                            </li>
+                            <li>
+                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
+                            </li>
+                            <li>
+                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-flatbal.mln</a>
+                            </li>
+                            <li>
+                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
+                            </li>
+                            <li>
+                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
+                            </li>
+                        </ul>
+                        <div class="text-center mt-5 mb-3">
+                            <a href="#" class="btn btn-sm btn-primary">Add files</a>
+                            <a href="#" class="btn btn-sm btn-warning">Report contact</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</section>
+<!-- /.content -->
