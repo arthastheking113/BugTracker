@@ -137,9 +137,9 @@ namespace BugTracker.Controllers
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
 
-                    var userId = _userManager.GetUserId(User);
-                    Ticket newTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
-                    await _customHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
+                    //var userId = _userManager.GetUserId(User);
+                    //Ticket newTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
+                    //await _customHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
 
                 }
                 catch (DbUpdateConcurrencyException)
