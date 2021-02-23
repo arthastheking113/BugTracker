@@ -88,18 +88,18 @@ namespace BugTracker.Utilities
             {
                 IList<Company> defaltcompanies = new List<Company>()
                 {
-                    new Company() { Name = "Company1", Description = "This is default Company 1"},
-                    new Company() { Name = "Company2", Description = "This is default Company 1"},
-                    new Company() { Name = "Company3", Description = "This is default Company 1"}
+                    new Company() { Name = "Apple", Description = "This is default Company Apple"},
+                    new Company() { Name = "Tesla", Description = "This is default Company Tesla"},
+                    new Company() { Name = "Netflix", Description = "This is default Company Netflix"}
                 };
                 var dbCompanies = context.Company.Select(c => c.Name).ToList();
                 await context.Company.AddRangeAsync(defaltcompanies.Where(c => !dbCompanies.Contains(c.Name)));
                 context.SaveChanges();
 
                 //get company Id
-                company1Id = context.Company.FirstOrDefault(p => p.Name == "Company1").Id;
-                company2Id = context.Company.FirstOrDefault(p => p.Name == "Company2").Id;
-                company3Id = context.Company.FirstOrDefault(p => p.Name == "Company3").Id;
+                company1Id = context.Company.FirstOrDefault(p => p.Name == "Apple").Id;
+                company2Id = context.Company.FirstOrDefault(p => p.Name == "Tesla").Id;
+                company3Id = context.Company.FirstOrDefault(p => p.Name == "Netflix").Id;
             }
             catch (Exception ex)
             {

@@ -287,7 +287,9 @@
     }
   }
 }
-
+.info-box:hover {
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
 .tab-pane {
   // Box overlay for LOADING STATE effect on Tab Panels
   > .overlay-wrapper {

@@ -20,8 +20,12 @@ namespace BugTracker.Models
         public DateTimeOffset? Updated { get; set; }
 
         [Display(Name = "User")]
-        public string CustomUserId { get; set; }
-        public virtual CustomUser CustomUser { get; set; }
+        public string DeveloperId { get; set; }
+        public virtual CustomUser Developer { get; set; }
+
+        [Display(Name = "Ownner")]
+        public string OwnnerId { get; set; }
+        public virtual CustomUser Ownner { get; set; }
 
         [Display(Name = "Project")]
         public int ProjectId { get; set; }

@@ -104,6 +104,7 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                project.Created = DateTime.Now;
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

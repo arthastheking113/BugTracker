@@ -21,10 +21,10 @@ function display_ct() {
 
 
  $(function () {
-     oTable = $("#example1").DataTable({
+     oTable = $("#example1,#homeTable").DataTable({
       "responsive": true,
       "autoWidth": false,
-        "paging": false,
+        "paging": true,
         "searching": true,
     });
     $('#example2').DataTable({
@@ -36,9 +36,10 @@ function display_ct() {
       "autoWidth": false,
       "responsive": true,
     });
+
   
   });
-$('#myInputTextField').keyup(function () {
+$('#myInputTextField,#myInputHomeField').keyup(function () {
     oTable.search($(this).val()).draw();
 });
 
@@ -70,6 +71,7 @@ $(function () {
 
   
 })
+
 
 
 // Write your JavaScript code.

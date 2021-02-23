@@ -25,7 +25,10 @@
                 @Html.DisplayNameFor(model => model.Updated)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomUser)
+                @Html.DisplayNameFor(model => model.Developer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ownner)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Project)
@@ -52,25 +55,28 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
+                @item.Created.ToString("dddd, dd MMMM yyyy")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
+                @item.Updated.ToString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CustomUser.Id)
+                @Html.DisplayFor(modelItem => item.Developer.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Project.Id)
+                @Html.DisplayFor(modelItem => item.Ownner.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status.Id)
+                @Html.DisplayFor(modelItem => item.Project.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Priority.Id)
+                @Html.DisplayFor(modelItem => item.Status.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketType.Id)
+                @Html.DisplayFor(modelItem => item.Priority.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketType.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

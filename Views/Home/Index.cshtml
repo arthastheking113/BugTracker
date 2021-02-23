@@ -1,48 +1,340 @@
 ﻿@using BugTracker.Services
+@using BugTracker.Data
+@inject ApplicationDbContext ApplicationDbContext 
 @inject ICustomRoleService roleService
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
 @{
     ViewData["Title"] = "Home Page";
+    var currentTime = DateTime.Now;
     var role = await roleService.ListUserRoleAsync((await UserManager.GetUserAsync(User)));
+    var userId = (await UserManager.GetUserAsync(User)).Id;
+    var userTicket = ApplicationDbContext.Ticket.Where(t => t.OwnnerId == userId || t.DeveloperId == userId).ToList();
+    var projects = ApplicationDbContext.Project.ToList();
+    var ticketType = ApplicationDbContext.TicketType.ToList();
+    var ticketStatus = ApplicationDbContext.Status.ToList();
+    var ticketPriority = ApplicationDbContext.Priority.ToList();
+    var number_of_project = projects.Count;
+    var number_of_ticket = ApplicationDbContext.Ticket.ToList().Count;
+    var number_of_user = ApplicationDbContext.Users.ToList().Count;
+    var number_of_close_ticket = ApplicationDbContext.Ticket.Where(t => t.StatusId == 5).ToList().Count;
+    var persent_of_ticket_done = number_of_close_ticket * 100 / number_of_ticket ;
+    var number_of_urgent_ticket = ApplicationDbContext.Ticket.Where(t => t.PriorityId == 1).ToList().Count;
+    var number_of_high_ticket = ApplicationDbContext.Ticket.Where(t => t.PriorityId == 2).ToList().Count;
+    var number_of_medium_ticket = ApplicationDbContext.Ticket.Where(t => t.PriorityId == 3).ToList().Count;
+    var number_of_low_ticket = ApplicationDbContext.Ticket.Where(t => t.PriorityId == 4).ToList().Count;
+    var number_unassign_ticket = ApplicationDbContext.Ticket.Where(t => t.DeveloperId == null).ToList().Count;
+    var number_new_ticket = ApplicationDbContext.Ticket.Where(t => t.Created >= currentTime.AddDays(-7)).ToList().Count;
+    var number_resolve_ticket = ApplicationDbContext.Ticket.Where(t => t.StatusId == 5).Where(t => t.Updated >= currentTime.AddDays(-7)).ToList().Count;
 }
 <div class="container-fluid">
-    <h1>home page</h1>
+    <br />
+    <div class="row">
 
 
-    @*<div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-        <div class="modal-dialog" role="document" style="padding-top:16%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Notification</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row text-right">
-                        <div class="col text-center">
-                            <p>You are login as</p>
-                        </div>
+        @if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager"))
+        {
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-dark">
+                        <h5 class="card-title">Quick Management Action</h5>
                     </div>
-                    <div class="row">
-                        @foreach (var userrole in role)
-                        {
-                            <div class="col text-center">
-                                <p>@userrole</p>
-                            </div>
-                        }
+                    <div class="card-body">
+                        <a asp-controller="Tickets" asp-action="Create" class="btn btn-secondary"><i class="fas fa-plus-circle"></i> Create New Ticket</a>
+                        <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
+
+                        <a asp-controller="Home" asp-action="ManageRole" class="btn btn-secondary"><i class="fas fa-people-arrows"></i> Role's Management </a>
+
+
+
+                        <a asp-controller="Projects" asp-action="ManagerUserProject" class="btn btn-secondary"><i class="fas fa-user-edit"></i> Project User Management</a>
                     </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col text-center">
-                            <button type="button" class="btn btn-block btn-secondary" data-dismiss="modal">Okay</button>
-                        </div>
-                    </div> 
                 </div>
             </div>
-        </div>
-    </div>*@
-</div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-dark">
+                        <h5 class="card-title">Quick Inbox Action</h5>
+                    </div>
+                    <div class="card-body">
+                        <a asp-controller="Inboxes" asp-action="Create" class="btn btn-secondary"><i class="fas fa-plus-square"></i> Compose New Inbox</a>
+                        <a asp-controller="Inboxes" asp-action="Index" class="btn btn-secondary"><i class="far fa-comments"></i> View My Inbox</a>
 
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-dark">
+                        <h5 class="card-title">Quick Inbox Action</h5>
+                    </div>
+                    <div class="card-body">
+                        <a asp-controller="Inboxes" asp-action="Create" class="btn btn-secondary"><i class="fas fa-plus-square"></i> Compose New Inbox</a>
+                        <a asp-controller="Inboxes" asp-action="Index" class="btn btn-secondary"><i class="far fa-comments"></i> View My Inbox</a>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+ 
+    <div class="row">
+        <div class="col">
+            <!-- DONUT CHART -->
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h3 class="card-title">Works Overview</h3>
+                </div>
+                <br />
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col ml-2">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-percentage"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Works Process</span>
+                                    <span class="info-box-number">
+                                        @persent_of_ticket_done
+                                        <small>%</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col ml-2">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-exclamation"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Un-Assign Tickets</span>
+                                    <span class="info-box-number">
+                                        @number_unassign_ticket
+                                        <small>Tickets</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col ml-2">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-lime elevation-1"><i class="fas fa-file-alt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">New Tickets In Last 7 Days</span>
+                                    <span class="info-box-number">
+                                        @number_new_ticket
+                                        <small>Tickets</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col ml-2">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-cyan elevation-1"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tickets Resolved In Last 7 Days</span>
+                                    <span class="info-box-number">
+                                        @number_resolve_ticket
+                                        <small>Tickets</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+
+
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <div class="card-body">
+                            <div class="info-box mb-3 bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-tasks"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Projects</span>
+                                    <span class="info-box-number">@number_of_project</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                            <div class="info-box mb-3 bg-success">
+                                <span class="info-box-icon"><i class="fas fa-ticket-alt"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tickets</span>
+                                    <span class="info-box-number">@number_of_ticket</span>
+                                </div>
+
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                            <div class="info-box mb-3 bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-users"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">User</span>
+                                    <span class="info-box-number">@number_of_user</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+
+
+                            <!-- /.info-box -->
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card-body">
+                            <canvas id="TicketTypeChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            <p class="text-center">
+                                <strong>Tickets By Type</strong>
+                            </p>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <div class="col">
+                        <div class="card-body">
+                            <canvas id="TicketStatusChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            <p class="text-center">
+                                <strong>Tickets By Status</strong>
+                            </p>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <div class="col">
+                        <div class="card-body">
+                            <canvas id="TicketPriorityChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            <p class="text-center">
+                                <strong>Tickets By Priority</strong>
+                            </p>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- /.card -->
+        </div>
+       
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-dark">
+                    <h5 class="card-title">My Tickets</h5>
+                </div>
+                <div class="card-header">
+                    <h3 class="card-title">Manage All of my Tickets</h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" placeholder="Search Ticket" id="myInputHomeField">
+                            <div class="input-group-append">
+                                <div class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive mailbox-messages">
+                       
+                            <table class="table table-striped table-hover" id="homeTable">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Owner
+                                        </th>
+                                        <th>
+                                            Developer
+                                        </th>
+                                        <th>
+                                            Title
+                                        </th>
+                                        <th>
+                                            Created
+                                        </th>
+                                        <th>
+                                            Updated
+                                        </th>
+                                        <th>
+                                            Project
+                                        </th>
+                                        <th>
+                                            Type
+                                        </th>
+                                        <th>
+                                            Priority
+                                        </th>
+                                        <th>
+                                            Status
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ticket in userTicket)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName)
+                                            </td>
+                                            <td>
+                                                @if ((await UserManager.FindByIdAsync(ticket.DeveloperId)) != null)
+                                                {
+                                                    @((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName)
+                                                }
+                                            </td>
+                                            <td>
+                                               @(ticket.Description)
+                                            </td>
+                                            <td>
+                                                @ticket.Created.ToString("dddd, dd MMMM yyyy")
+                                            </td>
+                                            <td>
+                                                @(ticket.Updated)
+                                            </td>
+                                            <td>
+                                                @((projects.FirstOrDefault(p => p.Id == ticket.ProjectId)).Name)
+                                            </td>
+                                            <td>
+                                                @((ticketType.FirstOrDefault(p => p.Id == ticket.TicketTypeId)).Name)
+                                            </td>
+                                            <td>
+                                                @((ticketPriority.FirstOrDefault(p => p.Id == ticket.PriorityId)).Name)
+                                            </td>
+                                            <td>
+                                                @((ticketStatus.FirstOrDefault(p => p.Id == ticket.StatusId)).Name)
+                                            </td>
+                                            <td class="project-actions text-right">
+                                                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-folder"></i>View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+
+
+                                </tbody>
+                            </table>
+                        
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- ./card-body -->
+            </div>
+        </div>
+    </div>
+</div>

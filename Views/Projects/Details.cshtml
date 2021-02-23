@@ -1,8 +1,19 @@
 ﻿@model BugTracker.Models.Project
 @using BugTracker.Services
+@using BugTracker.Service
 @inject ICustomProjectService projectService
+@using Microsoft.AspNetCore.Identity
+@inject IImageService imageService
+@inject UserManager<CustomUser> UserManager
 @{
     ViewData["Title"] = "Details";
+}
+@{
+    var totalTicket = Model.Tickets.ToList().Count;
+    var unAssignTicket = Model.Tickets.Where(t => t.DeveloperId == null).ToList().Count;
+    var closeTicket = Model.Tickets.Where(t => t.StatusId == 4).ToList().Count;
+    var tickets = Model.Tickets.ToList();
+
 }
 
 <section class="content">
@@ -11,15 +22,22 @@
         <div class="card">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-1">
-                        <h3 class="card-title">Projects Detail</h3>
-                    </div>
                     <div class="col">
-                        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-                        <a asp-action="Index">Back to List</a>
+                        <h3 class="card-title">View Project Details</h3>
                     </div>
                 </div>
 
+            </div>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col">
+                        <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary"> <i class="fas fa-arrow-circle-left"></i> Back</a>
+
+                        <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
+                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get">Create New Ticket</a>
+                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get">View All Tickets</a>
+                    </div>
+                </div>
 
             </div>
             <div class="card-body">
@@ -27,87 +45,104 @@
                     <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
                         <div class="row" style="border-bottom:1px solid;">
                             <div class="col-12 col-sm-4">
-                                <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get">Create New Ticket</a>
-                                <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get">View All Tickets</a>
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-poll"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Total Tickets</span>
+                                        <span class="info-box-number">
+                                            @totalTicket
+                                            <small>Tickets</small>
+                                        </span>
+                                    </div>
+                                    <!-- /.info-box-content -->
+                                </div>
+                                <!-- /.info-box -->
                             </div>
                             <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-exclamation"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">Estimated project duration</span>
-                                        <span class="info-box-number text-center text-muted mb-0">20 <span>
+                                        <span class="info-box-text">Un-Assigned Tickets</span>
+                                        <span class="info-box-number">
+                                            @unAssignTicket
+                                            <small>Tickets</small>
+                                        </span>
                                     </div>
+                                    <!-- /.info-box-content -->
                                 </div>
+                                <!-- /.info-box -->
                             </div>
                             <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-cyan elevation-1"><i class="fas fa-check-circle"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">Estimated project duration</span>
-                                        <span class="info-box-number text-center text-muted mb-0">20 <span>
+                                        <span class="info-box-text">Closed Tickets</span>
+                                        <span class="info-box-number">
+                                            @closeTicket
+                                            <small>Tickets</small>
+                                        </span>
                                     </div>
+                                    <!-- /.info-box-content -->
                                 </div>
+                                <!-- /.info-box -->
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
                                 <h4>Recent Activity</h4>
-                                <div class="post">
-                                    <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                                        <span class="username">
-                                            <a href="#">Jonathan Burke Jr.</a>
-                                        </span>
-                                        <span class="description">Shared publicly - 7:45 PM today</span>
-                                    </div>
-                                    <!-- /.user-block -->
-                                    <p>
-                                        Lorem ipsum represents a long-held tradition for designers,
-                                        typographers and the like. Some people hate it and argue for
-                                        its demise, but others ignore.
-                                    </p>
+                                @foreach (var ticket in tickets)
+                                {
+                                    if (ticket.DeveloperId != null)
+                                    {
+                                        byte[] imageData = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ImageData;
+                                        string imageType = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ContentType;
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
+                                                <span class="username">
+                                                    <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - Deverloper</a>
+                                                </span>
+                                                <span class="description">Shared publicly - @ticket.Created</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                @ticket.Description
+                                            </p>
 
-                                    <p>
-                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                                    </p>
-                                </div>
+                                            @*<p>
+                                                <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                                            </p>*@
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        byte[] imageData = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ImageData;
+                                        string imageType = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ContentType;
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
+                                                <span class="username">
+                                                    <a>@((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName) - Project Manager</a>
+                                                </span>
+                                                <span class="description">Shared publicly - @ticket.Created</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                @ticket.Description
+                                            </p>
 
-                                <div class="post clearfix">
-                                    <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
-                                        <span class="username">
-                                            <a href="#">Sarah Ross</a>
-                                        </span>
-                                        <span class="description">Sent you a message - 3 days ago</span>
-                                    </div>
-                                    <!-- /.user-block -->
-                                    <p>
-                                        Lorem ipsum represents a long-held tradition for designers,
-                                        typographers and the like. Some people hate it and argue for
-                                        its demise, but others ignore.
-                                    </p>
-                                    <p>
-                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 2</a>
-                                    </p>
-                                </div>
+                                            @*<p>
+                                                <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                                            </p>*@
+                                        </div>
+                                    }
 
-                                <div class="post">
-                                    <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                                        <span class="username">
-                                            <a href="#">Jonathan Burke Jr.</a>
-                                        </span>
-                                        <span class="description">Shared publicly - 5 days ago</span>
-                                    </div>
-                                    <!-- /.user-block -->
-                                    <p>
-                                        Lorem ipsum represents a long-held tradition for designers,
-                                        typographers and the like. Some people hate it and argue for
-                                        its demise, but others ignore.
-                                    </p>
 
-                                    <p>
-                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v1</a>
-                                    </p>
-                                </div>
+
+                                }
+
+
+
                             </div>
                         </div>
                     </div>

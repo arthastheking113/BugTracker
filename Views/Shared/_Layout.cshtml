@@ -222,7 +222,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-    with font-awesome or any other icon font library -->
+                            with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -304,7 +304,7 @@
 
 
 
-
+<br /><br /><br />
         <footer class="footer text-muted text-center" style="border:none;">
             <div class="container">
                 &copy; 2021 - BugTracker - Made by <a href="https://duylanle-portfolio.netlify.app/" target="_blank">Duy Lan Le</a>
@@ -353,8 +353,126 @@
     <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- ChartJS -->
+    <script src="~/plugins/chart.js/Chart.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="~/js/demo.js"></script>
+    @if (SignInManager.IsSignedIn(User))
+    {
+
+        var userProjects = ApplicationDbContext.Project.ToList();
+        var userTickets = ApplicationDbContext.Ticket.ToList();
+        var ticketTypes = ApplicationDbContext.TicketType.ToList();
+        var TicketType_Maintenance = userTickets.Where(p => p.TicketTypeId == 1);
+        var TicketType_NewDevelopment = userTickets.Where(p => p.TicketTypeId == 2);
+        var TicketType_RunTime = userTickets.Where(p => p.TicketTypeId == 3);
+        var TicketType_UI = userTickets.Where(p => p.TicketTypeId == 4);
+        var TicketStatus_Testing = userTickets.Where(p => p.StatusId == 1);
+        var TicketStatus_Development = userTickets.Where(p => p.StatusId == 2);
+        var TicketStatus_Open = userTickets.Where(p => p.StatusId == 3);
+        var TicketStatus_New = userTickets.Where(p => p.StatusId == 4);
+        var TicketStatus_Close = userTickets.Where(p => p.StatusId == 5);
+        var TicketPriority_Urgent = userTickets.Where(p => p.PriorityId == 1);
+        var TicketPriority_High = userTickets.Where(p => p.PriorityId == 2);
+        var TicketPriority_Medium = userTickets.Where(p => p.PriorityId == 3);
+        var TicketPriority_Low = userTickets.Where(p => p.PriorityId == 4);
+
+<script>
+            //-------------
+            //- DONUT CHART - Type
+            //-------------
+            var TicketType = $('#TicketTypeChart').get(0).getContext('2d')
+                                  var TypeData = {
+                labels: [
+                    'Maintenance',
+                    'UI',
+                    'Run Time',
+                    'New Development',
+                ],
+                datasets: [
+                    {
+                    data: [@TicketType_Maintenance.Count() , @TicketType_UI.Count(), @TicketType_RunTime.Count(), @TicketType_NewDevelopment.Count()],
+                        backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef'],
+                    }
+                ]
+            }
+                var donutOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var TicketTypeChart = new Chart(TicketType, {
+                type: 'doughnut',
+                data: TypeData,
+                options: donutOptions
+            })
+            //--------------------------/////// End Type
+            //-------------
+            //- DONUT CHART - Status
+            //-------------
+            var TicketStatus = $('#TicketStatusChart').get(0).getContext('2d')
+            var StatusData = {
+                labels: [
+                    'Testing',
+                    'Development',
+                    'Open',
+                    'New',
+                    'Close',
+
+                ],
+                datasets: [
+                    {
+                        data: [@TicketStatus_Testing.Count(), @TicketStatus_Development.Count(), @TicketStatus_Open.Count(), @TicketStatus_New.Count(), @TicketStatus_Close.Count()],
+                        backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#d2d6de'],
+                    }
+                ]
+            }
+            var donutOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var TicketStatusChart = new Chart(TicketStatus, {
+                type: 'doughnut',
+                data: StatusData,
+                options: donutOptions
+            })
+            //--------------------------/////// End Type
+            //--------------------------///////
+            //- DONUT CHART - Priority
+                    //-------------
+                    var TicketStatus = $('#TicketPriorityChart').get(0).getContext('2d')
+                    var StatusData = {
+                        labels: [
+                            'Urgent',
+                            'High',
+                            'Medium',
+                            'Low',
+                        ],
+                        datasets: [
+                            {
+    data: [@TicketPriority_Urgent.Count(), @TicketPriority_High.Count(), @TicketPriority_Medium.Count(), @TicketPriority_Low.Count()],
+                                backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#d2d6de'],
+                            }
+                        ]
+                    }
+                    var donutOptions = {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                    }
+                    //Create pie or douhnut chart
+                    // You can switch between pie and douhnut using the method below.
+                    var TicketStatusChart = new Chart(TicketStatus, {
+                        type: 'doughnut',
+                        data: StatusData,
+                        options: donutOptions
+                    })
+                    //--------------------------/////// End Type
+                    //--------------------------///////
+</script>
+      }
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

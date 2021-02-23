@@ -44,11 +44,19 @@ namespace BugTracker
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddTransient<IImageService, BasicImageService>();
+
+
+            services.AddTransient<IEmailSender, EmailService>();
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+
+
             services.AddScoped<ICustomRoleService, CustomRoleService>();
             services.AddScoped<ICustomProjectService, CustomProjectService>();
 
-            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
-            services.AddScoped<IEmailSender, EmailService>();
+
+            services.AddScoped<ICustomHistoryService, CustomHistoryService>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
