@@ -92,6 +92,48 @@ namespace BugTracker.Controllers
             return View(inbox);
         }
 
+        public async Task<IActionResult> ReplyAsync(string senderId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
+            var unread = (await applicationDbContext.Where(i => i.IsSeen == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
+            var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
+            ViewData["senderIds"] = senderId;
+            ViewData["send"] = send;
+            ViewData["unread"] = unread;
+            ViewData["delete"] = delete;
+            ViewData["ReceiverId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["SenderId"] = new SelectList(_context.Users, "Id", "FullName");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reply([Bind("Id,Message,Created,Subject,IsSeen,SenderId,ReceiverId")] Inbox inbox)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = _userManager.GetUserId(User);
+                inbox.SenderId = userId;
+                inbox.Created = DateTime.Now;
+                _context.Add(inbox);
+                await _context.SaveChangesAsync();
+                var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
+                var unread = (await applicationDbContext.Where(i => i.IsSeen == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+                var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
+                var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
+                ViewData["send"] = send;
+                ViewData["unread"] = unread;
+                ViewData["delete"] = delete;
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["ReceiverId"] = new SelectList(_context.Users, "Id", "FullName", inbox.ReceiverId);
+            ViewData["SenderId"] = new SelectList(_context.Users, "Id", "FullName", inbox.SenderId);
+            return View(inbox);
+        }
+
+
         public async Task<IActionResult> temporaryDelete(int? id)
         {
             if (id == null)
