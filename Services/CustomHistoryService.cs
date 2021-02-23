@@ -89,20 +89,23 @@ namespace BugTracker.Services
                 };
                 await _context.TicketHistory.AddAsync(history);
             }
-
-            if (oldTicket.DeveloperId != newTicket.DeveloperId)
+            if (oldTicket.DeveloperId != null && newTicket.DeveloperId != null)
             {
-                TicketHistory history = new TicketHistory
+                if (oldTicket.DeveloperId != newTicket.DeveloperId)
                 {
-                    TicketId = newTicket.Id,
-                    Property = "CustomUser",
-                    OldValue = oldTicket.Developer.FullName,
-                    NewValue = oldTicket.Developer.FullName,
-                    Created = DateTime.Now,
-                    CustomUserId = userId
-                };
-                await _context.TicketHistory.AddAsync(history);
+                    TicketHistory history = new TicketHistory
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "CustomUser",
+                        OldValue = oldTicket.Developer.FullName,
+                        NewValue = oldTicket.Developer.FullName,
+                        Created = DateTime.Now,
+                        CustomUserId = userId
+                    };
+                    await _context.TicketHistory.AddAsync(history);
+                }
             }
+           
 
             Notification notification = new Notification
             {
