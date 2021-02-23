@@ -14,8 +14,6 @@ namespace BugTracker.Models
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
 
-     
-
 
         public int CompanyId { get; set; }
         public virtual Company Company { get; set; }

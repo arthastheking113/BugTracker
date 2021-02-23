@@ -1,0 +1,129 @@
+﻿@model IEnumerable<BugTracker.Models.Inbox>
+@using BugTracker.Services
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<CustomUser> userManager
+@{
+    ViewData["Title"] = "Inbox";
+}
+
+<section class="content">
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="Create" class="btn btn-primary btn-block mb-3">Compose</a>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Folders</h3>
+
+
+                </div>
+                <div class="card-body p-0">
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item active">
+                            <a asp-action="Index" class="nav-link">
+                                <i class="fas fa-inbox"></i> Inbox
+                                <span class="badge bg-primary float-right">@ViewBag.unread</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Send" class="nav-link">
+                                <i class="far fa-envelope"></i> Sent
+                                <span class="badge bg-info float-right">@ViewBag.send</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Deleted" class="nav-link">
+                                <i class="far fa-trash-alt"></i> Trash
+                                <span class="badge bg-danger float-right">@ViewBag.delete</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9 ">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Inbox</h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" placeholder="Search Mail" id="myInputTextField">
+                            <div class="input-group-append">
+                                <div class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive mailbox-messages">
+
+                        <table id="example1" class="table table-bordered table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th>
+                                        From
+                                    </th>
+                                    <th>
+                                        To
+                                    </th>
+                                    <th>
+                                        Subject
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                <tr onclick="document.location = 'inboxes/Details/@item.Id';">
+
+                                    <td class="mailbox-name">@((await userManager.FindByIdAsync(item.SenderId)).FullName)</td>
+                                    <td class="mailbox-name">@((await userManager.FindByIdAsync(item.ReceiverId)).FullName)</td>
+                                    <td class="mailbox-subject">
+                                        @if (!item.IsSeen)
+                                        {
+                                            <p><b>@Html.DisplayFor(modelItem => item.Subject)</b></p>
+                                        }
+                                        else
+                                        {
+                                            <p>@Html.DisplayFor(modelItem => item.Subject)</p>
+                                        }
+
+                                    </td>
+                                    <td class="mailbox-date">@Html.DisplayFor(modelItem => item.Created)</td>
+                                    <td> <a asp-action="Delete" asp-route-id="@item.Id">Delete</a></td>
+                                </tr>
+
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.mail-box-messages -->
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->

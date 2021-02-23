@@ -1,7 +1,48 @@
-﻿@{
+﻿@using BugTracker.Services
+@inject ICustomRoleService roleService
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
+@{
     ViewData["Title"] = "Home Page";
+    var role = await roleService.ListUserRoleAsync((await UserManager.GetUserAsync(User)));
 }
 <div class="container-fluid">
     <h1>home page</h1>
+
+
+    @*<div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document" style="padding-top:16%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Notification</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-right">
+                        <div class="col text-center">
+                            <p>You are login as</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @foreach (var userrole in role)
+                        {
+                            <div class="col text-center">
+                                <p>@userrole</p>
+                            </div>
+                        }
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col text-center">
+                            <button type="button" class="btn btn-block btn-secondary" data-dismiss="modal">Okay</button>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>*@
 </div>
-   
+

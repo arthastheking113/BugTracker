@@ -1,0 +1,104 @@
+﻿@model BugTracker.Models.Inbox
+
+
+@using BugTracker.Services
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<CustomUser> userManager
+@{
+    ViewData["Title"] = "Inbox";
+}
+
+<section class="content">
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="Create" class="btn btn-primary btn-block mb-3">Compose</a>
+            <a asp-action="Index" class="btn btn-primary btn-block mb-3">Back</a>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Folders</h3>
+
+
+                </div>
+                <div class="card-body p-0">
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item active">
+                            <a asp-action="Index" class="nav-link">
+                                <i class="fas fa-inbox"></i> Inbox
+                                <span class="badge bg-primary float-right">@ViewBag.unread</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Send" class="nav-link">
+                                <i class="far fa-envelope"></i> Sent
+                                <span class="badge bg-info float-right">@ViewBag.send</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Deleted" class="nav-link">
+                                <i class="far fa-trash-alt"></i> Trash
+                                <span class="badge bg-danger float-right">@ViewBag.delete</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Read Mail</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    <div class="mailbox-read-info">
+                        <h5>Subject: @Html.DisplayFor(model => model.Subject)</h5>
+                        <h6>
+                            From:  @Html.DisplayFor(model => model.Sender.FullName) - Email: @Html.DisplayFor(model => model.Sender.Email)
+                            <span class="mailbox-read-time float-right">Sent on: @Html.DisplayFor(model => model.Created)</span>
+                        </h6>
+                    </div>
+              
+                    <!-- /.mailbox-controls -->
+                    <div class="mailbox-read-message">
+                        @Html.Raw(Model.Message)
+                        <br /><br />
+                    </div>
+                    <!-- /.mailbox-read-message -->
+                </div>
+                <!-- /.card-body -->
+               
+                <!-- /.card-footer -->
+                <div class="card-footer">
+                  
+                        <div class="row">
+                         
+                                <form asp-controller="Inboxes" asp-action="reply" method="get">
+                                    <input type="hidden" name="senderId" value="@Model.SenderId" />
+                                    <button type="submit" class="btn btn-default mr-2"><i class="fas fa-reply"></i> Reply</button>
+                                </form>
+                          
+                          
+                                <form asp-controller="Inboxes" asp-action="temporaryDelete" method="post">
+                                    <input type="hidden" name="Id" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-default"><i class="far fa-trash-alt"></i> Delete</button>
+                                </form>
+                           
+                        </div>            
+                 
+                </div>
+                <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->

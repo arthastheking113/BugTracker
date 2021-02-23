@@ -15,7 +15,35 @@ function display_ct() {
     display_c();
 }
 
-$('#contact').summernote({
+//$(window).on('load', function () {
+//    $('#exampleModal').modal('show');
+//});
+
+
+ $(function () {
+     oTable = $("#example1").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+        "paging": false,
+        "searching": true,
+    });
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  
+  });
+$('#myInputTextField').keyup(function () {
+    oTable.search($(this).val()).draw();
+});
+
+
+$('#contact,#Message').summernote({
     height: 300,
     placeholder: "Tell me, I'm listening...",
     tabDisable: true,

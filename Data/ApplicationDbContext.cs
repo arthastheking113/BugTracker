@@ -24,6 +24,7 @@ namespace BugTracker.Data
         public DbSet<TicketHistory> TicketHistory { get; set; }
         public DbSet<TicketType> TicketType { get; set; }
         public DbSet<Company> Company { get; set; }
+        public DbSet<BugTracker.Models.Inbox> Inbox { get; set; }
 
     }
 }

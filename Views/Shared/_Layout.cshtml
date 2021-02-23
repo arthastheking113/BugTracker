@@ -1,4 +1,6 @@
 ﻿@using BugTracker.Service
+@using BugTracker.Data
+@inject ApplicationDbContext ApplicationDbContext 
 @inject IImageService imageService
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<CustomUser> SignInManager
@@ -84,61 +86,62 @@
                     <!-- Right navbar links -->
                     <ul class="navbar-nav mr-auto">
                         <!-- Messages Dropdown Menu -->
+                        @{
+                            var userId = UserManager.GetUserId(User);
+                            var message = ApplicationDbContext.Inbox.Where(i => i.ReceiverId == userId).Where(i => i.IsSeen == false).ToList();
+                            var currentTime = DateTime.Now;
+                        }
                         <li class="nav-item dropdown">
                             <a class="nav-link" data-toggle="dropdown" href="#">
                                 <i class="far fa-comments"></i>
-                                <span class="badge badge-danger navbar-badge">3</span>
+                                <span class="badge badge-danger navbar-badge">@message.Count</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                <a href="#" class="dropdown-item">
-                                    <!-- Message Start -->
-                                    <div class="media">
-                                        <img src="~/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-                                        <div class="media-body">
-                                            <h3 class="dropdown-item-title">
-                                                Brad Diesel
-                                                <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                                            </h3>
-                                            <p class="text-sm">Call me whenever you can...</p>
-                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+
+                                @foreach (var mes in message)
+                                {
+                                    var timeSpan = currentTime.Subtract(mes.Created);
+                                    var eslapseSecond = timeSpan.Seconds;
+                                    var eslapseMinute = timeSpan.Minutes;
+                                    var eslapseHours = timeSpan.Hours;
+                                    var eslapseDate = timeSpan.Days;
+                                    string commentdate;
+                                    if (eslapseDate >= 1)
+                                    {
+                                        commentdate = eslapseDate.ToString() + " Days Ago";
+
+                                    }
+                                    else if (eslapseHours >= 1)
+                                    {
+                                        commentdate = eslapseHours.ToString() + " Hours Ago";
+                                    }
+                                    else if (eslapseMinute >= 1)
+                                    {
+                                        commentdate = eslapseMinute.ToString() + " Minutes Ago";
+                                    }
+                                    else
+                                    {
+                                        commentdate = eslapseSecond.ToString() + " Seconds Ago";
+                                    }
+                                    <a asp-controller="Inboxes" asp-action="Details" asp-route-id="@mes.Id" class="dropdown-item">
+                                        <!-- Message Start -->
+                                        <div class="media">
+                                            <img src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync((mes.SenderId))).ImageData,(await UserManager.FindByIdAsync((mes.SenderId))).ContentType)" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                                            <div class="media-body">
+                                                <h3 class="dropdown-item-title">
+                                                    @((await UserManager.FindByIdAsync((mes.SenderId))).FullName)
+                                                </h3>
+                                                <p class="text-sm">@mes.Subject</p>
+                                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>@commentdate</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <!-- Message End -->
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">
-                                    <!-- Message Start -->
-                                    <div class="media">
-                                        <img src="~/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-                                        <div class="media-body">
-                                            <h3 class="dropdown-item-title">
-                                                John Pierce
-                                                <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                                            </h3>
-                                            <p class="text-sm">I got your message bro</p>
-                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                        </div>
-                                    </div>
-                                    <!-- Message End -->
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">
-                                    <!-- Message Start -->
-                                    <div class="media">
-                                        <img src="~/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-                                        <div class="media-body">
-                                            <h3 class="dropdown-item-title">
-                                                Nora Silvester
-                                                <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                                            </h3>
-                                            <p class="text-sm">The subject goes here</p>
-                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                        </div>
-                                    </div>
-                                    <!-- Message End -->
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                                        <!-- Message End -->
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                }
+
+
+                                <a asp-controller="Inboxes" asp-action="Index" class="dropdown-item dropdown-footer">See All Messages</a>
                             </div>
                         </li>
                         <!-- Notifications Dropdown Menu -->
@@ -228,11 +231,18 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a asp-controller="Companies" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-building"></i>
+                                    <p>
+                                        Company
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a asp-controller="Projects" asp-action="Index" class="nav-link">
                                     <i class="nav-icon fas fa-tasks"></i>
                                     <p>
                                         Project
-
                                     </p>
                                 </a>
                             </li>
@@ -281,7 +291,7 @@
         }
         else
         {
-            <main role="main" >
+            <main role="main">
                 @RenderBody()
             </main>
         }
@@ -332,6 +342,11 @@
     <script src="~/js/pages/dashboard.js"></script>
     <!-- Bootstrap4 Duallistbox -->
     <script src="~/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+    <!-- DataTables -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="~/js/demo.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
