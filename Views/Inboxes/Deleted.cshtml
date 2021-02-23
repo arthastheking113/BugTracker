@@ -94,7 +94,7 @@
                                 @foreach (var item in Model)
                                 {
 
-                                <tr onclick="document.location = 'inboxes/Details/@item.Id';">
+                                <tr onclick="document.location = 'Details/@item.Id';">
 
                                     <td class="mailbox-name">@((await userManager.FindByIdAsync(item.SenderId)).FullName)</td>
                                     <td class="mailbox-name">@((await userManager.FindByIdAsync(item.ReceiverId)).FullName)</td>
