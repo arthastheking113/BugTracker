@@ -1,5 +1,4 @@
-﻿
-function display_c() {
+﻿function display_c() {
     var refresh = 1000; // Refresh rate in milli seconds
     mytime = setTimeout('display_ct()', refresh)
 }
@@ -10,10 +9,23 @@ function display_ct() {
         hour: "2-digit", minute: "2-digit",
         second: "2-digit", weekday: "long", year: "numeric", month: "short",
         day: "numeric"
-    };  
-    document.getElementById('ct').innerHTML = x.toLocaleTimeString("en-us", options);
+    };
+    document.getElementById('ct').innerText = x.toLocaleTimeString("en-us", options);
     display_c();
 }
+
+//document.getElementById("aboutButton").addEventListener("click", function () {
+//    $('#aboutModal').modal("show");
+//});
+
+
+//function about() {
+//    Swal.fire(
+//        'The Internet?',
+//        'That thing is still around?',
+//        'question'
+//    )
+//}
 
 //$(window).on('load', function () {
 //    $('#exampleModal').modal('show');

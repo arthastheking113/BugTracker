@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BugTracker</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+
     <link rel="icon" href="~/img/favicon.png" />
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- Tempusdominus Bbootstrap 4 -->
+    @*Tempusdominus Bbootstrap 4*@
     <link rel="stylesheet" href="~/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <!-- iCheck -->
     <link rel="stylesheet" href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
@@ -40,11 +40,12 @@
     <!-- summernote -->
     <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.css">
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body class="sidebar-mini layout-fixed sidebar-collapse" onload=display_ct();>
+<body class="sidebar-mini layout-fixed sidebar-collapse" onload=display_ct();  style="background-image: url('@ViewData["background"]');width:100%;height:auto; background-repeat: no-repeat;background-attachment: fixed;background-size: cover;">
 
-    <div style="background-image: url('@ViewData["background"]');width:100%;height:auto; background-repeat: no-repeat;background-attachment: fixed;background-size: cover;">
+    <div >
         <!-- Sidebar -->
 
         @if (SignInManager.IsSignedIn(User))
@@ -222,7 +223,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                            with font-awesome or any other icon font library -->
+                        with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -297,19 +298,186 @@
         }
         else
         {
-            <main role="main">
-                @RenderBody()
-            </main>
+            <div>
+                <main role="main">
+                    @RenderBody()
+                    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModal" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">About</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            An issue tracking system (also ITS, trouble ticket system, support ticket, request management or incident ticket system) is a computer software package that manages and maintains lists of issues.
+
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            Issue tracking systems are generally used in collaborative settings—especially in large or distributed collaborations—but can also be employed by individuals as part of a time management or personal productivity regime.
+
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            These systems often encompass resource allocation, time accounting, priority management, and oversight workflow in addition to implementing a centralized issue registry.
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+
+                    <div class="modal fade" id="howtouse" tabindex="-1" aria-labelledby="howtouse" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="howtouse">How to use?</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            In order to test the Bug Tracker, you can simply click on Login as either Admin, Project Manager, Developer, or Submitter. To test all of the Bug Tracker functions, I recommend you to login as Demo Admin.
+
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            Different role has different permission to do their work in the system. For example, Admin has every permission on the system, Project Manager have almost every permissions but can't modify the role of Admin. Developer and Submitter only can update ticket and submit file to the system.
+
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            You can register your own account in the register section, if you do that, your role at after register will be developer.
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="whatcanbugtrackerdoes" tabindex="-1" aria-labelledby="whatcanbugtrackerdoes" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="whatcanbugtrackerdoes">About My Bug Tracker</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            My Bug Tracker has every funtions of a complete production which is ready to sell to customer.
+
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            My Bug Tracker has Authorization, Authendication, Securities, Create, Adjust Project and Ticket, Assign role to user, Assign ticket to user, Change Ticket's Priority, Status, or Type, Comment on Ticket, Attach file to Ticket and Project, Notification Alert through Email, Message system, and Overview the work of company.
+
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col">
+                                            This is my biggest project and I put a lot of works on this project. After finished this Bug Tracker, I used it to track other project, and I'm still working on those projects right now. You can see it when you log in with Demo Admin or Demo Project Manager
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="contactme" tabindex="-1" aria-labelledby="contactme" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="contactme">How to Contact me?</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="https://www.linkedin.com/in/duy-lan-le-445262163/"  target="_blank" class="btn btn-primary btn-block text-white">
+                                                <i class="fab fa-linkedin"></i> Linked
+                                            </a>
+                                        </div>
+
+
+                                        <div class="col">
+                                            <a href="https://duylanle-portfolio.netlify.app/" target="_blank" class="btn btn-info btn-block text-white">
+                                                <i class="fas fa-folder-open"></i> Portfolio
+                                            </a>
+                                        </div>
+
+
+                                        @*<div class="col">
+                                            <a class="btn btn-secondary btn-block">
+                                                How to use?
+                                            </a>
+                                        </div>*@
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col text-center">
+
+                                            Email: arthastheking113@gmail.com
+                                        </div>
+                                        <div class="col text-center">
+                                            Phone: 402-304-0329
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+
         }
 
+       
 
 
-<br /><br /><br />
-        <footer class="footer text-muted text-center" style="border:none;">
-            <div class="container">
-                &copy; 2021 - BugTracker - Made by <a href="https://duylanle-portfolio.netlify.app/" target="_blank">Duy Lan Le</a>
-            </div>
-        </footer>
+
+
+            <footer class="footer text-muted text-center" style="border:none;">
+                <div class="container">
+                    &copy; 2021 - BugTracker - Made by <a href="https://duylanle-portfolio.netlify.app/" target="_blank">Duy Lan Le</a>
+                </div>
+            </footer>
 
     </div>
 

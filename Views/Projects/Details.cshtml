@@ -11,7 +11,7 @@
 @{
     var totalTicket = Model.Tickets.ToList().Count;
     var unAssignTicket = Model.Tickets.Where(t => t.DeveloperId == null).ToList().Count;
-    var closeTicket = Model.Tickets.Where(t => t.StatusId == 4).ToList().Count;
+    var closeTicket = Model.Tickets.Where(t => t.StatusId == 5).ToList().Count;
     var tickets = Model.Tickets.ToList();
 
 }
@@ -110,39 +110,58 @@
                                             </p>
 
                                             @*<p>
-                                                <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                                            </p>*@
+                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                    </p>*@
                                         </div>
                                     }
                                     else
                                     {
-                                        byte[] imageData = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ImageData;
-                                        string imageType = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ContentType;
-                                        <div class="post">
-                                            <div class="user-block">
-                                                <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
-                                                <span class="username">
-                                                    <a>@((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName) - Project Manager</a>
-                                                </span>
-                                                <span class="description">Shared publicly - @ticket.Created</span>
+                                        if (ticket.OwnnerId == null)
+                                        {
+                                            byte[] imageData = null;
+                                            string imageType = null;
+                                            string userName = "Database doesn't have userId";
+                                            <div class="post">
+                                                <div class="user-block">
+                                                    <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
+                                                    <span class="username">
+                                                        <a>@(userName) - Project Manager</a>
+                                                    </span>
+                                                    <span class="description">Shared publicly - @ticket.Created</span>
+                                                </div>
+                                                <!-- /.user-block -->
+                                                <p>
+                                                    @ticket.Description
+                                                </p>
+
+                                                @*<p>
+                            <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                        </p>*@
                                             </div>
-                                            <!-- /.user-block -->
-                                            <p>
-                                                @ticket.Description
-                                            </p>
-
-                                            @*<p>
-                                                <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                                            </p>*@
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            byte[] imageData = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ImageData;
+                                            string imageType = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ContentType;
+                                            <div class="post">
+                                                <div class="user-block">
+                                                    <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
+                                                    <span class="username">
+                                                        <a>@((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName) - Project Manager</a>
+                                                    </span>
+                                                    <span class="description">Shared publicly - @ticket.Created</span>
+                                                </div>
+                                                <!-- /.user-block -->
+                                                <p>
+                                                    @ticket.Description
+                                                </p>
+                                                @*<p>
+                            <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                        </p>*@
+                                            </div>
+                                        }
                                     }
-
-
-
                                 }
-
-
-
                             </div>
                         </div>
                     </div>
