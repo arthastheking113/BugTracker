@@ -23,6 +23,11 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            @if (Model.ImageData != null && Model.ContentType != null)
+            {
+                <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.ImageData)" class="form-control" />
+                <input type="hidden" name="contentType" value="@Model.ContentType" class="form-control" />
+            }
             <div class="form-group">
                 <label asp-for="Created" class="control-label"></label>
                 <input asp-for="Created" class="form-control" />

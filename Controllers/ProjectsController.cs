@@ -9,6 +9,8 @@ using BugTracker.Data;
 using BugTracker.Models;
 using BugTracker.Services;
 using BugTracker.Data.Enums;
+using Microsoft.AspNetCore.Http;
+using BugTracker.Service;
 
 namespace BugTracker.Controllers
 {
@@ -17,12 +19,14 @@ namespace BugTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ICustomProjectService _projectService;
         private readonly ICustomRoleService _roleService;
+        private readonly IImageService _imageService;
 
-        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService)
+        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService, IImageService imageService)
         {
             _context = context;
             _projectService = projectService;
             _roleService = roleService;
+            _imageService = imageService;
         }
 
         public async Task<IActionResult> ManagerUserProject()
@@ -91,7 +95,7 @@ namespace BugTracker.Controllers
         // GET: Projects/Create
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id");
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             return View();
         }
 
@@ -100,16 +104,18 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image)
         {
             if (ModelState.IsValid)
             {
+                project.ImageData = await _imageService.EncodeFileAsync(image);
+                project.ContentType = _imageService.RecordContentType(image);
                 project.Created = DateTime.Now;
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
             return View(project);
         }
 
@@ -126,7 +132,7 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
             return View(project);
         }
 
@@ -135,7 +141,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image, Byte[]? imageData, string contentType)
         {
             if (id != project.Id)
             {
@@ -146,6 +152,26 @@ namespace BugTracker.Controllers
             {
                 try
                 {
+                    if (image != null)
+                    {
+                        project.ImageData = await _imageService.EncodeFileAsync(image);
+                        project.ContentType = _imageService.RecordContentType(image);
+                    }
+                    else
+                    {
+                        if (imageData != null && contentType != null)
+                        {
+                            project.ImageData = imageData;
+                            project.ContentType = contentType;
+                        }
+                        else
+                        {
+                            project.ImageData = null;
+                            project.ContentType = null;
+                        }
+
+                    }
+
                     _context.Update(project);
                     await _context.SaveChangesAsync();
                 }
@@ -162,7 +188,7 @@ namespace BugTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
             return View(project);
         }
 
