@@ -4,20 +4,12 @@
     ViewData["Title"] = "Create";
 }
 
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Project Add</h1>
-            </div>
-        </div>
-    </div><!-- /.container-fluid -->
-</section>
 
+<br /><br /><br />
 <!-- Main content -->
 <section class="content">
     <div class="row">
+        <div class="col-2"></div>
         <div class="col">
             <form asp-controller="Projects" asp-action="Create" method="post">
                 <div class="card card-primary">
@@ -26,16 +18,18 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <label class="control-label">Project Name</label>
-                            <input name="Name" class="form-control" />
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Description</label>
-                            <textarea name="Description" class="form-control" rows="4"></textarea>
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Company</label>
-                            <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                            <label asp-for="CompanyId" class="control-label"></label>
+                            <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Upload Image</label>
@@ -51,45 +45,11 @@
                 <!-- /.card -->
             </form>
         </div>
+        <div class="col-2"></div>
     </div>
    
 </section>
 <!-- /.content -->
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CompanyId" class="control-label"></label>
-                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Upload Image</label>
-                <input type="file" name="image" />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

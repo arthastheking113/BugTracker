@@ -9,12 +9,12 @@ namespace BugTracker.Models
     public class Project
     {
         public int Id { get; set; }
-        [Display(Name = "Project Name")]
+        [Display(Name = "Name")]
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
 
-
+        [Display(Name = "Company")]
         public int CompanyId { get; set; }
         public virtual Company Company { get; set; }
 

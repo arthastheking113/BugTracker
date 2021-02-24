@@ -33,7 +33,7 @@ function display_ct() {
 
 
  $(function () {
-     oTable = $("#example1,#homeTable").DataTable({
+     oTable = $("#example1,#homeTable,#notificationTable,#viewTicket,#viewProject,#viewCompany").DataTable({
       "responsive": true,
       "autoWidth": false,
         "paging": true,
@@ -51,7 +51,7 @@ function display_ct() {
 
   
   });
-$('#myInputTextField,#myInputHomeField').keyup(function () {
+$('#myInputTextField,#myInputHomeField,#inputNotification,#searchTicket,#searchProject,#searchCompany').keyup(function () {
     oTable.search($(this).val()).draw();
 });
 

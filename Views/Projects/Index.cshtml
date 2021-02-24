@@ -5,7 +5,6 @@
 }
 <!-- Main content -->
 <section class="content">
-    <br />
     <div class="card">
         <div class="card-header bg-dark">
             Project
@@ -50,14 +49,20 @@
                 <!-- Default box -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                <h3 class="card-title">All Project</h3>
+                        <h3 class="card-title">All Projects</h3>
+                        <div class="card-tools">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" placeholder="Search Projects" id="searchProject">
+                                <div class="input-group-append">
+                                    <div class="btn btn-primary">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body p-0">
-                        <table class="table table-striped projects table-hover">
+                    <div class="card-body">
+                        <table class="table table-striped projects table-hover" id="viewProject">
                             <thead>
                                 <tr>
                                     <th>
@@ -86,7 +91,7 @@
                                             @Html.DisplayFor(modelItem => item.Description)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.Created)
+                                            @item.Created.ToString("dddd, dd MMMM yyyy")
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Company.Name)

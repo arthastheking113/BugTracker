@@ -105,20 +105,47 @@ namespace BugTracker.Services
                     await _context.TicketHistory.AddAsync(history);
                 }
             }
-           
+            var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
 
-            Notification notification = new Notification
+            if (newTicket.StatusId == currentStatus) 
             {
-                TicketId = newTicket.Id,
-                Description = "You have a new ticket.",
-                Created = DateTimeOffset.Now,
-                SenderId = userId,
-                RecipientId = newTicket.DeveloperId
-            };
+                Notification notification = new Notification
+                {
+                    Name = $"Your Ticket: {newTicket.Name} is Done",
+                    TicketId = newTicket.Id,
+                    Description = $"Yay!!! Your Ticket {newTicket.Name} on project {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name} is Approved",
+                    Created = DateTime.Now,
+                    SenderId = userId,
+                    RecipientId = newTicket.DeveloperId
+                };
+                await _context.Notification.AddAsync(notification);
+                await _context.SaveChangesAsync();
 
+                string devEmail = newTicket.Developer.Email;
+                string subject = "Your Ticket is Approved";
+                string message = $"Your Ticket on project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name} has been Aaproved!!!";
+
+                await _emailSender.SendEmailAsync(devEmail, subject, message);
+
+                await _context.SaveChangesAsync();
+            }
+     
             //send email
-            if (newTicket.IsAssigned == true)
+            if (newTicket.IsAssigned == true && newTicket.StatusId != currentStatus)
             {
+                Notification notification = new Notification
+                {
+                    Name = $"New Ticket Assign on project {newTicket.Name}",
+                    TicketId = newTicket.Id,
+                    Description = $"You have a new ticket about {newTicket.Description} on project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name}",
+                    Created = DateTime.Now,
+                    SenderId = userId,
+                    RecipientId = newTicket.DeveloperId
+                };
+                await _context.Notification.AddAsync(notification);
+                await _context.SaveChangesAsync();
+
+
                 string devEmail = newTicket.Developer.Email;
                 string subject = "New Ticket Assignment";
                 string message = $"You have a new ticket for project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name}";

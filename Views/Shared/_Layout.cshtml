@@ -95,7 +95,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link" data-toggle="dropdown" href="#">
                                 <i class="far fa-comments"></i>
-                                <span class="badge badge-danger navbar-badge">@message.Count</span>
+                                @if (message.Count != 0)
+                                {
+                                    <span class="badge badge-danger navbar-badge">@message.Count</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger navbar-badge"></span>
+                                }
+
                             </a>
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 
@@ -127,7 +135,7 @@
                                     <a asp-controller="Inboxes" asp-action="Details" asp-route-id="@mes.Id" class="dropdown-item">
                                         <!-- Message Start -->
                                         <div class="media">
-                                            <img src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync((mes.SenderId))).ImageData,(await UserManager.FindByIdAsync((mes.SenderId))).ContentType)" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                                            <img src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync((mes.SenderId))).ImageData, (await UserManager.FindByIdAsync((mes.SenderId))).ContentType)" alt="User Avatar" class="img-size-50 mr-3 img-circle">
                                             <div class="media-body">
                                                 <h3 class="dropdown-item-title">
                                                     @((await UserManager.FindByIdAsync((mes.SenderId))).FullName)
@@ -145,31 +153,69 @@
                                 <a asp-controller="Inboxes" asp-action="Index" class="dropdown-item dropdown-footer">See All Messages</a>
                             </div>
                         </li>
+                        @{ 
+
+                            var notification = ApplicationDbContext.Notification.Where(s => s.IsViewed == false).Where(n => n.RecipientId == userId).ToList();
+                            var number_of_notification = notification.Count;
+                           
+
+                            //-------last notification time section---------------
+
+
+                        }
+
                         <!-- Notifications Dropdown Menu -->
                         <li class="nav-item dropdown">
                             <a class="nav-link" data-toggle="dropdown" href="#">
                                 <i class="far fa-bell"></i>
-                                <span class="badge badge-warning navbar-badge">15</span>
+                                @if (number_of_notification != 0)
+                                {
+                                    <span class="badge badge-warning navbar-badge">@number_of_notification</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-warning navbar-badge"></span>
+                                }
+
                             </a>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                <span class="dropdown-item dropdown-header">15 Notifications</span>
+                            <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                                <span class="dropdown-item dropdown-header">@number_of_notification Notifications</span>
                                 <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-envelope mr-2"></i> 4 new messages
-                                    <span class="float-right text-muted text-sm">3 mins</span>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-users mr-2"></i> 8 friend requests
-                                    <span class="float-right text-muted text-sm">12 hours</span>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-file mr-2"></i> 3 new reports
-                                    <span class="float-right text-muted text-sm">2 days</span>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                                @foreach (var item in notification)
+                                {
+
+                                    var timeSpan2 = currentTime.Subtract(item.Created);
+                                    var eslapseSecond2 = timeSpan2.Seconds;
+                                    var eslapseMinute2 = timeSpan2.Minutes;
+                                    var eslapseHours2 = timeSpan2.Hours;
+                                    var eslapseDate2 = timeSpan2.Days;
+                                    string commentdate2;
+                                    if (eslapseDate2 >= 1)
+                                    {
+                                        commentdate2 = eslapseDate2.ToString() + " Days Ago";
+
+                                    }
+                                    else if (eslapseHours2 >= 1)
+                                    {
+                                        commentdate2 = eslapseHours2.ToString() + " Hours Ago";
+                                    }
+                                    else if (eslapseMinute2 >= 1)
+                                    {
+                                        commentdate2 = eslapseMinute2.ToString() + " Minutes Ago";
+                                    }
+                                    else
+                                    {
+                                        commentdate2 = eslapseSecond2.ToString() + " Seconds Ago";
+                                    }
+                                    <a asp-controller="Notifications" asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">
+                                        <i class="fas fa-file mr-2"></i> @item.Name
+                                    <span class="float-right text-muted text-sm">@commentdate2</span>
+                                    </a>
+                                    <br />
+                                    <div class="dropdown-divider"></div>
+                                }
+
+                                <a asp-controller="Notifications" asp-action="Index" class="dropdown-item dropdown-footer">See All Notifications</a>
                             </div>
                         </li>
 
@@ -519,31 +565,84 @@
     <script src="~/js/demo.js"></script>
     @if (SignInManager.IsSignedIn(User))
     {
+        var Status = ApplicationDbContext.Status;
+        var TestingStatus = Status.FirstOrDefault(t => t.Name == "Testing").Id; // new 
+        var DevelopmentStatus = Status.FirstOrDefault(t => t.Name == "Development").Id; // new 
+        var OpenStatus = Status.FirstOrDefault(t => t.Name == "Open").Id; // new 
+        var NewStatus = Status.FirstOrDefault(t => t.Name == "New").Id; // new 
+        var CloseStatus = Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
+
+        var Priority = ApplicationDbContext.Priority;
+        var Priority_Urgent = Priority.FirstOrDefault(t => t.Name == "Urgent").Id; // new 
+        var Priority_High = Priority.FirstOrDefault(t => t.Name == "High").Id; // new 
+        var Priority_Medium = Priority.FirstOrDefault(t => t.Name == "Medium").Id; // new 
+        var Priority_Low = Priority.FirstOrDefault(t => t.Name == "Low").Id; // new 
+
+        var Type = ApplicationDbContext.TicketType;
+        var Type_UI = Type.FirstOrDefault(t => t.Name == "UI").Id;
+        var Type_RunTime = Type.FirstOrDefault(t => t.Name == "Run Time").Id;
+        var Type_NewDevelopment = Type.FirstOrDefault(t => t.Name == "New Development").Id;
+        var Type_Maintenance = Type.FirstOrDefault(t => t.Name == "Maintenance").Id;
 
         var userProjects = ApplicationDbContext.Project.ToList();
         var userTickets = ApplicationDbContext.Ticket.ToList();
         var ticketTypes = ApplicationDbContext.TicketType.ToList();
-        var TicketType_Maintenance = userTickets.Where(p => p.TicketTypeId == 1);
-        var TicketType_NewDevelopment = userTickets.Where(p => p.TicketTypeId == 2);
-        var TicketType_RunTime = userTickets.Where(p => p.TicketTypeId == 3);
-        var TicketType_UI = userTickets.Where(p => p.TicketTypeId == 4);
-        var TicketStatus_Testing = userTickets.Where(p => p.StatusId == 1);
-        var TicketStatus_Development = userTickets.Where(p => p.StatusId == 2);
-        var TicketStatus_Open = userTickets.Where(p => p.StatusId == 3);
-        var TicketStatus_New = userTickets.Where(p => p.StatusId == 4);
-        var TicketStatus_Close = userTickets.Where(p => p.StatusId == 5);
-        var TicketPriority_Urgent = userTickets.Where(p => p.PriorityId == 1);
-        var TicketPriority_High = userTickets.Where(p => p.PriorityId == 2);
-        var TicketPriority_Medium = userTickets.Where(p => p.PriorityId == 3);
-        var TicketPriority_Low = userTickets.Where(p => p.PriorityId == 4);
+        var TicketType_Maintenance = userTickets.Where(p => p.TicketTypeId == Type_Maintenance);
+        var TicketType_NewDevelopment = userTickets.Where(p => p.TicketTypeId == Type_NewDevelopment);
+        var TicketType_RunTime = userTickets.Where(p => p.TicketTypeId == Type_RunTime);
+        var TicketType_UI = userTickets.Where(p => p.TicketTypeId == Type_UI);
+        var TicketStatus_Testing = userTickets.Where(p => p.StatusId == TestingStatus);
+        var TicketStatus_Development = userTickets.Where(p => p.StatusId == DevelopmentStatus);
+        var TicketStatus_Open = userTickets.Where(p => p.StatusId == OpenStatus);
+        var TicketStatus_New = userTickets.Where(p => p.StatusId == NewStatus);
+        var TicketStatus_Close = userTickets.Where(p => p.StatusId == CloseStatus);
+        var TicketPriority_Urgent = userTickets.Where(p => p.PriorityId == Priority_Urgent);
+        var TicketPriority_High = userTickets.Where(p => p.PriorityId == Priority_High);
+        var TicketPriority_Medium = userTickets.Where(p => p.PriorityId == Priority_Medium);
+        var TicketPriority_Low = userTickets.Where(p => p.PriorityId == Priority_Low);
 
 <script>
             //-------------
             //- DONUT CHART - Type
             //-------------
+      @*var TicketType = $('#TicketTypeChart').get(0).getContext('2d')
+                                  var TypeData = {
+                                      labels: [
+
+                   @foreach (var type in ticketTypes)
+                   {
+                       $"{type.Name},"
+                   }
+                ],
+                datasets: [
+                    {
+                        data: [
+                        @foreach (var type in ticketTypes)
+                        {
+                            $"{userTickets.Where(t => t.TicketTypeId == type.Id).Count()},"
+                        }
+                        ],
+                        backgroundColor: [
+                            @foreach (var type in ticketTypes)
+                            {
+                                Color background = new Color(
+                                Random.Range(0f, 1f),
+                                Random.Range(0f, 1f),
+                                Random.Range(0f, 1f)
+                                );
+                                $"{background},"
+                            }
+                        ],
+                    }
+                ]
+            }*@
+
+
+
             var TicketType = $('#TicketTypeChart').get(0).getContext('2d')
                                   var TypeData = {
-                labels: [
+                                      labels: [
+
                     'Maintenance',
                     'UI',
                     'Run Time',

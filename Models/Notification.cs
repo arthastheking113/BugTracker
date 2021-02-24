@@ -11,7 +11,7 @@ namespace BugTracker.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsViewed { get; set; }
-        public DateTimeOffset Created { get; set; }
+        public DateTime Created { get; set; }
 
         public string SenderId { get; set; }
         public virtual CustomUser Sender { get; set; }

@@ -11,6 +11,7 @@ using BugTracker.Services;
 using BugTracker.Data.Enums;
 using Microsoft.AspNetCore.Http;
 using BugTracker.Service;
+using System.Drawing;
 
 namespace BugTracker.Controllers
 {
@@ -152,6 +153,8 @@ namespace BugTracker.Controllers
             {
                 try
                 {
+
+
                     if (image != null)
                     {
                         project.ImageData = await _imageService.EncodeFileAsync(image);

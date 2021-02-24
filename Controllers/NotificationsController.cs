@@ -7,22 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
     public class NotificationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public NotificationsController(ApplicationDbContext context)
+        public NotificationsController(ApplicationDbContext context, UserManager<CustomUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Notification.Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
+            var userId = _userManager.GetUserId(User);
+            var applicationDbContext = _context.Notification.Where(r => r.RecipientId == userId).Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -43,6 +47,9 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
+            notification.IsViewed = true;
+            await _context.SaveChangesAsync();
+
 
             return View(notification);
         }

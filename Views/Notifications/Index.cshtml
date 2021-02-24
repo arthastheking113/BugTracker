@@ -3,69 +3,112 @@
 @{
     ViewData["Title"] = "Index";
 }
+<br /><br /><br />
+<div class="row">
+    <div class="col-1"></div>
+    <div class="shadow p-3 mb-5 bg-white rounded">
 
-<h1>Index</h1>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Notifications</h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" placeholder="Search Mail" id="inputNotification">
+                            <div class="input-group-append">
+                                <div class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover" id="notificationTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Sender)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Recipient)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Ticket.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Ticket.Description)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    @if (item.IsViewed == false)
+                                    {
+                                        <td>
+                                            <b>@Html.DisplayFor(modelItem => item.Name)</b>
+                                        </td>
+                                        <td>
+                                            <b>@Html.DisplayFor(modelItem => item.Description)</b>
+                                        </td>
+                                        <td>
+                                            <b>@Html.DisplayFor(modelItem => item.Sender.FullName)</b>
+                                        </td>
+                                        <td>
+                                            <b>@Html.DisplayFor(modelItem => item.Recipient.FullName)</b>
+                                        </td>
+                                        <td>
+                                            <b> @Html.DisplayFor(modelItem => item.Ticket.Name)</b>
+                                        </td>
+                                        <td>
+                                            <b> @Html.DisplayFor(modelItem => item.Ticket.Description)</b>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Sender.FullName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Recipient.FullName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Ticket.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Ticket.Description)
+                                        </td>
+                                    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsViewed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Recipient)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsViewed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sender.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Recipient.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ticket.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                                    <td class="project-actions text-right">
+                                        <a class="btn btn-primary btn-sm mb-1" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-folder"></i> View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-1"></div>
+</div>

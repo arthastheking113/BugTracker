@@ -34,8 +34,9 @@
                         <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary"> <i class="fas fa-arrow-circle-left"></i> Back</a>
 
                         <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
-                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get">Create New Ticket</a>
-                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get">View All Tickets</a>
+                        <a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>
+                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get"><i class="fas fa-plus-square"></i> Create New Ticket</a>
+                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets</a>
                     </div>
                 </div>
 

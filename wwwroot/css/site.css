@@ -79,6 +79,19 @@ body {
     display: none;
 }
 
+#viewTicket_filter {
+    display: none;
+}
+#viewProject_filter {
+    display: none;
+}
+#viewCompany_filter {
+    display: none;
+}
+#notificationTable_filter {
+    display: none;
+}
+
 .info-box {
     transition: 0.4s;
 }

@@ -9,6 +9,7 @@ using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTracker.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BugTracker.Controllers
 {
@@ -17,12 +18,14 @@ namespace BugTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
         private readonly ICustomHistoryService _customHistoryService;
+        private readonly IEmailSender _emailSender;
 
-        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService)
+        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
             _customHistoryService = customHistoryService;
+            _emailSender = emailSender;
         }
 
         // GET: Tickets
@@ -83,6 +86,35 @@ namespace BugTracker.Controllers
                 ticket.Updated = ticket.Created;
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
+
+                var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
+
+                if (ticket.IsAssigned == true && ticket.StatusId != currentStatus)
+                {
+                    Notification notification = new Notification
+                    {
+                        Name = "New Ticket Assign",
+                        TicketId = ticket.Id,
+                        Description = "You have a new ticket.",
+                        Created = DateTime.Now,
+                        SenderId = ticket.OwnnerId,
+                        RecipientId = ticket.DeveloperId
+                    };
+                    await _context.Notification.AddAsync(notification);
+                    await _context.SaveChangesAsync();
+
+
+                    string devEmail = (await _userManager.FindByIdAsync(ticket.DeveloperId)).Email;
+                    string subject = "New Ticket Assignment";
+                    string message = $"You have been Assigned a new ticket {ticket.Name} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}";
+
+                    await _emailSender.SendEmailAsync(devEmail, subject, message);
+
+                    await _context.SaveChangesAsync();
+                }
+
+
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);

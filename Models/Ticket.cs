@@ -9,21 +9,21 @@ namespace BugTracker.Models
     public class Ticket
     {
         public int Id { get; set; }
-        [Display(Name = "Ticket Name")]
+        [Display(Name = "Name")]
         public string Name { get; set; }
         public string Description { get; set; }
 
-        [Display(Name = "Created Date")]
+        [Display(Name = "Created")]
         public DateTimeOffset Created { get; set; }
 
 
-        [Display(Name = "Is Assigned?")]
+        [Display(Name = "Assigned?")]
         public bool IsAssigned { get; set; }
 
-        [Display(Name = "Updated Date")]
+        [Display(Name = "Updated")]
         public DateTimeOffset? Updated { get; set; }
 
-        [Display(Name = "User")]
+        [Display(Name = "Developer")]
         public string DeveloperId { get; set; }
         public virtual CustomUser Developer { get; set; }
 
@@ -43,7 +43,7 @@ namespace BugTracker.Models
         public int PriorityId { get; set; }
         public virtual Priority Priority { get; set; }
 
-        [Display(Name = "Priority")]
+        [Display(Name = "Type")]
         public int TicketTypeId { get; set; }
         public virtual TicketType TicketType { get; set; }
 
