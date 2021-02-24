@@ -10,7 +10,7 @@
 }
 @{
     var totalTicket = Model.Tickets.ToList().Count;
-    var unAssignTicket = Model.Tickets.Where(t => t.DeveloperId == null).ToList().Count;
+    var unAssignTicket = Model.Tickets.Where(t => t.IsAssigned == false).ToList().Count;
     var closeTicket = Model.Tickets.Where(t => t.StatusId == 5).ToList().Count;
     var tickets = Model.Tickets.ToList();
 

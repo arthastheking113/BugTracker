@@ -117,13 +117,17 @@ namespace BugTracker.Services
             };
 
             //send email
-            string devEmail = newTicket.Developer.Email;
-            string subject = "New Ticket Assignment";
-            string message = $"You have a new ticket for project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name}";
+            if (newTicket.IsAssigned == true)
+            {
+                string devEmail = newTicket.Developer.Email;
+                string subject = "New Ticket Assignment";
+                string message = $"You have a new ticket for project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name}";
 
-            await _emailSender.SendEmailAsync(devEmail, subject, message);
+                await _emailSender.SendEmailAsync(devEmail, subject, message);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+   
         }
     }
 }

@@ -16,6 +16,10 @@ namespace BugTracker.Models
         [Display(Name = "Created Date")]
         public DateTimeOffset Created { get; set; }
 
+
+        [Display(Name = "Is Assigned?")]
+        public bool IsAssigned { get; set; }
+
         [Display(Name = "Updated Date")]
         public DateTimeOffset? Updated { get; set; }
 
