@@ -1,5 +1,8 @@
 ﻿@using BugTracker.Service
 @using BugTracker.Data
+@using BugTracker.Services
+@using BugTracker.Data.Enums 
+@inject ICustomRoleService RoleService  
 @inject ApplicationDbContext ApplicationDbContext 
 @inject IImageService imageService
 @using Microsoft.AspNetCore.Identity
@@ -269,7 +272,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -283,49 +286,124 @@
                                     <p>Inbox</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a asp-controller="Companies" asp-action="Index" class="nav-link">
-                                    <i class="nav-icon fas fa-building"></i>
-                                    <p>
-                                        Company
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-controller="Projects" asp-action="Index" class="nav-link">
-                                    <i class="nav-icon fas fa-tasks"></i>
-                                    <p>
-                                        Project
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-controller="Tickets" asp-action="Index" class="nav-link">
-                                    <i class="nav-icon fas fa-ticket-alt"></i>
-                                    <p>
-                                        Ticket
+                            @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="Companies" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-building"></i>
+                                        <p>
+                                            Company
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Projects" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-tasks"></i>
+                                        <p>
+                                            Project
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Tickets" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-ticket-alt"></i>
+                                        <p>
+                                            Ticket
 
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-controller="Home" asp-action="ManageRole" class="nav-link">
-                                    <i class="nav-icon fas fa-people-arrows"></i>
-                                    <p>
-                                        Role's Management
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Home" asp-action="ManageRole" class="nav-link">
+                                        <i class="nav-icon fas fa-people-arrows"></i>
+                                        <p>
+                                            Role's Management
 
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-controller="Projects" asp-action="ManagerUserProject" class="nav-link">
-                                    <i class="nav-icon fas fa-user-edit"></i>
-                                    <p>
-                                        Project User Management
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Projects" asp-action="ManagerUserProject" class="nav-link">
+                                        <i class="nav-icon fas fa-user-edit"></i>
+                                        <p>
+                                            Project User Management
 
-                                    </p>
-                                </a>
-                            </li>
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon fas fa-toolbox"></i>
+                                        <p>
+                                            Admin Tool
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a asp-controller="TicketTypes" asp-action="Index" class="nav-link">
+                                                <i class="fas fa-filter"></i>
+                                                <p>Ticket Type</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Priorities" asp-action="Index" class="nav-link">
+                                                <i class="fas fa-sort-alpha-down"></i>
+                                                <p>Ticket Priority</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Status" asp-action="Index" class="nav-link">
+                                                <i class="fas fa-battery-three-quarters"></i>
+                                                <p>Ticket Status</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="Projects" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-tasks"></i>
+                                        <p>
+                                            Project
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Tickets" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-ticket-alt"></i>
+                                        <p>
+                                            Ticket
+
+                                        </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a asp-controller="Projects" asp-action="ManagerUserProject" class="nav-link">
+                                        <i class="nav-icon fas fa-user-edit"></i>
+                                        <p>
+                                            Project User Management
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="Tickets" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-ticket-alt"></i>
+                                        <p>
+                                            Ticket
+
+                                        </p>
+                                    </a>
+                                </li>
+
+                            }
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->
@@ -565,125 +643,21 @@
     <script src="~/js/demo.js"></script>
     @if (SignInManager.IsSignedIn(User))
     {
-        var Status = ApplicationDbContext.Status;
-        var TestingStatus = Status.FirstOrDefault(t => t.Name == "Testing").Id; // new 
-        var DevelopmentStatus = Status.FirstOrDefault(t => t.Name == "Development").Id; // new 
-        var OpenStatus = Status.FirstOrDefault(t => t.Name == "Open").Id; // new 
-        var NewStatus = Status.FirstOrDefault(t => t.Name == "New").Id; // new 
-        var CloseStatus = Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
-
-        var Priority = ApplicationDbContext.Priority;
-        var Priority_Urgent = Priority.FirstOrDefault(t => t.Name == "Urgent").Id; // new 
-        var Priority_High = Priority.FirstOrDefault(t => t.Name == "High").Id; // new 
-        var Priority_Medium = Priority.FirstOrDefault(t => t.Name == "Medium").Id; // new 
-        var Priority_Low = Priority.FirstOrDefault(t => t.Name == "Low").Id; // new 
-
-        var Type = ApplicationDbContext.TicketType;
-        var Type_UI = Type.FirstOrDefault(t => t.Name == "UI").Id;
-        var Type_RunTime = Type.FirstOrDefault(t => t.Name == "Run Time").Id;
-        var Type_NewDevelopment = Type.FirstOrDefault(t => t.Name == "New Development").Id;
-        var Type_Maintenance = Type.FirstOrDefault(t => t.Name == "Maintenance").Id;
-
-        var userProjects = ApplicationDbContext.Project.ToList();
-        var userTickets = ApplicationDbContext.Ticket.ToList();
-        var ticketTypes = ApplicationDbContext.TicketType.ToList();
-        var TicketType_Maintenance = userTickets.Where(p => p.TicketTypeId == Type_Maintenance);
-        var TicketType_NewDevelopment = userTickets.Where(p => p.TicketTypeId == Type_NewDevelopment);
-        var TicketType_RunTime = userTickets.Where(p => p.TicketTypeId == Type_RunTime);
-        var TicketType_UI = userTickets.Where(p => p.TicketTypeId == Type_UI);
-        var TicketStatus_Testing = userTickets.Where(p => p.StatusId == TestingStatus);
-        var TicketStatus_Development = userTickets.Where(p => p.StatusId == DevelopmentStatus);
-        var TicketStatus_Open = userTickets.Where(p => p.StatusId == OpenStatus);
-        var TicketStatus_New = userTickets.Where(p => p.StatusId == NewStatus);
-        var TicketStatus_Close = userTickets.Where(p => p.StatusId == CloseStatus);
-        var TicketPriority_Urgent = userTickets.Where(p => p.PriorityId == Priority_Urgent);
-        var TicketPriority_High = userTickets.Where(p => p.PriorityId == Priority_High);
-        var TicketPriority_Medium = userTickets.Where(p => p.PriorityId == Priority_Medium);
-        var TicketPriority_Low = userTickets.Where(p => p.PriorityId == Priority_Low);
-
 <script>
-            //-------------
-            //- DONUT CHART - Type
-            //-------------
-      @*var TicketType = $('#TicketTypeChart').get(0).getContext('2d')
-                                  var TypeData = {
-                                      labels: [
-
-                   @foreach (var type in ticketTypes)
-                   {
-                       $"{type.Name},"
-                   }
-                ],
+      // Charts is the Controller name, TypeChart is the action
+        var Url1 = '@Url.Action("TypeChart", "Charts")'; // represent the endpoint 
+        var Url2 = '@Url.Action("PriorityChart", "Charts")'; // represent the endpoint
+        var Url3 = '@Url.Action("StatusChart", "Charts")'; // represent the endpoint
+        //Step 2 - start the structure for our AJAX call
+        $.post(Url1).then(function (response) {
+            // Get context with jQuery - using jQuery's .get() method.
+            var typeChartCanvas = $('#TicketTypeChart').get(0).getContext('2d')
+            var donutData = {
+                labels: response.labels,
                 datasets: [
                     {
-                        data: [
-                        @foreach (var type in ticketTypes)
-                        {
-                            $"{userTickets.Where(t => t.TicketTypeId == type.Id).Count()},"
-                        }
-                        ],
-                        backgroundColor: [
-                            @foreach (var type in ticketTypes)
-                            {
-                                Color background = new Color(
-                                Random.Range(0f, 1f),
-                                Random.Range(0f, 1f),
-                                Random.Range(0f, 1f)
-                                );
-                                $"{background},"
-                            }
-                        ],
-                    }
-                ]
-            }*@
-
-
-
-            var TicketType = $('#TicketTypeChart').get(0).getContext('2d')
-                                  var TypeData = {
-                                      labels: [
-
-                    'Maintenance',
-                    'UI',
-                    'Run Time',
-                    'New Development',
-                ],
-                datasets: [
-                    {
-                    data: [@TicketType_Maintenance.Count() , @TicketType_UI.Count(), @TicketType_RunTime.Count(), @TicketType_NewDevelopment.Count()],
-                        backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef'],
-                    }
-                ]
-            }
-                var donutOptions = {
-                maintainAspectRatio: false,
-                responsive: true,
-            }
-            //Create pie or douhnut chart
-            // You can switch between pie and douhnut using the method below.
-            var TicketTypeChart = new Chart(TicketType, {
-                type: 'doughnut',
-                data: TypeData,
-                options: donutOptions
-            })
-            //--------------------------/////// End Type
-            //-------------
-            //- DONUT CHART - Status
-            //-------------
-            var TicketStatus = $('#TicketStatusChart').get(0).getContext('2d')
-            var StatusData = {
-                labels: [
-                    'Testing',
-                    'Development',
-                    'Open',
-                    'New',
-                    'Close',
-
-                ],
-                datasets: [
-                    {
-                        data: [@TicketStatus_Testing.Count(), @TicketStatus_Development.Count(), @TicketStatus_Open.Count(), @TicketStatus_New.Count(), @TicketStatus_Close.Count()],
-                        backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#d2d6de'],
+                        data: response.data,
+                        backgroundColor: response.backgroundColor,
                     }
                 ]
             }
@@ -693,43 +667,61 @@
             }
             //Create pie or douhnut chart
             // You can switch between pie and douhnut using the method below.
-            var TicketStatusChart = new Chart(TicketStatus, {
+            var donutChart = new Chart(typeChartCanvas, {
                 type: 'doughnut',
-                data: StatusData,
+                data: donutData,
                 options: donutOptions
             })
-            //--------------------------/////// End Type
-            //--------------------------///////
-            //- DONUT CHART - Priority
-                    //-------------
-                    var TicketStatus = $('#TicketPriorityChart').get(0).getContext('2d')
-                    var StatusData = {
-                        labels: [
-                            'Urgent',
-                            'High',
-                            'Medium',
-                            'Low',
-                        ],
-                        datasets: [
-                            {
-    data: [@TicketPriority_Urgent.Count(), @TicketPriority_High.Count(), @TicketPriority_Medium.Count(), @TicketPriority_Low.Count()],
-                                backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#d2d6de'],
-                            }
-                        ]
+        });
+        $.post(Url2).then(function (response) {
+            // Get context with jQuery - using jQuery's .get() method.
+            var priorityChartCanvas = $('#TicketPriorityChart').get(0).getContext('2d')
+            var donutData = {
+                labels: response.labels,
+                datasets: [
+                    {
+                        data: response.data,
+                        backgroundColor: response.backgroundColor,
                     }
-                    var donutOptions = {
-                        maintainAspectRatio: false,
-                        responsive: true,
+                ]
+            }
+            var donutOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var donutChart = new Chart(priorityChartCanvas, {
+                type: 'doughnut',
+                data: donutData,
+                options: donutOptions
+            })
+        });
+        $.post(Url3).then(function (response) {
+            // Get context with jQuery - using jQuery's .get() method.
+            var statusChartCanvas = $('#TicketStatusChart').get(0).getContext('2d')
+            var donutData = {
+                labels: response.labels,
+                datasets: [
+                    {
+                        data: response.data,
+                        backgroundColor: response.backgroundColor,
                     }
-                    //Create pie or douhnut chart
-                    // You can switch between pie and douhnut using the method below.
-                    var TicketStatusChart = new Chart(TicketStatus, {
-                        type: 'doughnut',
-                        data: StatusData,
-                        options: donutOptions
-                    })
-                    //--------------------------/////// End Type
-                    //--------------------------///////
+                ]
+            }
+            var donutOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var donutChart = new Chart(statusChartCanvas, {
+                type: 'doughnut',
+                data: donutData,
+                options: donutOptions
+            })
+        });
+    
 </script>
       }
     <script src="~/js/site.js" asp-append-version="true"></script>
