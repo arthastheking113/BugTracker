@@ -10,6 +10,7 @@ using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTracker.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
@@ -31,8 +32,19 @@ namespace BugTracker.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
-            return View(await applicationDbContext.ToListAsync());
+            if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString())|| await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+            {
+                var applicationDbContext = _context.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+                return View(await applicationDbContext.ToListAsync());
+            }
+            else
+            {
+                var userId = _userManager.GetUserId(User);
+                var applicationDbContext = _context.Ticket.Where(u => u.DeveloperId == userId).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+                return View(await applicationDbContext.ToListAsync());
+            }
+
+         
         }
 
         // GET: Tickets/Details/5
@@ -50,6 +62,9 @@ namespace BugTracker.Controllers
                 .Include(t => t.Project)
                 .Include(t => t.Status)
                 .Include(t => t.TicketType)
+                .Include(t => t.Attachments)
+                .Include(t => t.Comments)
+                .Include(t => t.TicketHistories).ThenInclude(t => t.CustomUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ticket == null)
             {

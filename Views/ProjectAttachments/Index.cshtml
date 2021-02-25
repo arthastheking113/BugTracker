@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BugTracker.Models.Comment>
+﻿@model IEnumerable<BugTracker.Models.ProjectAttachment>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,19 +13,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Created)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Updated)
+                @Html.DisplayNameFor(model => model.FileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileData)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CustomUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket)
             </th>
             <th></th>
         </tr>
@@ -34,19 +37,22 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Content)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Created)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
+                @Html.DisplayFor(modelItem => item.FileName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CustomUser.FullName)
+                @Html.DisplayFor(modelItem => item.FileData)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ticket.Name)
+                @Html.DisplayFor(modelItem => item.Project.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomUser.Id)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

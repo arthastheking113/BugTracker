@@ -1,4 +1,4 @@
-﻿@model BugTracker.Models.Attachment
+﻿@model BugTracker.Models.ProjectAttachment
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Attachment</h4>
+    <h4>ProjectAttachment</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -35,16 +35,16 @@
             @Html.DisplayFor(model => model.FileData)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ticket)
+            @Html.DisplayNameFor(model => model.Project)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ticket.Id)
+            @Html.DisplayFor(model => model.Project.Id)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomUserId)
+            @Html.DisplayNameFor(model => model.CustomUser)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomUserId)
+            @Html.DisplayFor(model => model.CustomUser.Id)
         </dd>
     </dl>
 </div>

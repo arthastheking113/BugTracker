@@ -3,21 +3,62 @@ using System;
 using BugTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210225014917_AfterDeleteDataBase11")]
+    partial class AfterDeleteDataBase11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+            modelBuilder.Entity("BugTracker.Models.Attachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("FileData")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomUserId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("Attachment");
+                });
 
             modelBuilder.Entity("BugTracker.Models.Comment", b =>
                 {
@@ -399,40 +440,6 @@ namespace BugTracker.Data.Migrations
                     b.ToTable("Ticket");
                 });
 
-            modelBuilder.Entity("BugTracker.Models.TicketAttachment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CustomUserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<byte[]>("FileData")
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("TicketId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomUserId");
-
-                    b.HasIndex("TicketId");
-
-                    b.ToTable("Attachment");
-                });
-
             modelBuilder.Entity("BugTracker.Models.TicketHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -630,6 +637,31 @@ namespace BugTracker.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("BugTracker.Models.Attachment", b =>
+                {
+                    b.HasOne("BugTracker.Models.CustomUser", "CustomUser")
+                        .WithMany()
+                        .HasForeignKey("CustomUserId");
+
+                    b.HasOne("BugTracker.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BugTracker.Models.Ticket", "Ticket")
+                        .WithMany("Attachments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomUser");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Ticket");
+                });
+
             modelBuilder.Entity("BugTracker.Models.Comment", b =>
                 {
                     b.HasOne("BugTracker.Models.CustomUser", "CustomUser")
@@ -773,23 +805,6 @@ namespace BugTracker.Data.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("TicketType");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.TicketAttachment", b =>
-                {
-                    b.HasOne("BugTracker.Models.CustomUser", "CustomUser")
-                        .WithMany()
-                        .HasForeignKey("CustomUserId");
-
-                    b.HasOne("BugTracker.Models.Ticket", "Ticket")
-                        .WithMany("Attachments")
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CustomUser");
-
-                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketHistory", b =>

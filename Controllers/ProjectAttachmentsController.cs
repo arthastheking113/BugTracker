@@ -10,23 +10,23 @@ using BugTracker.Models;
 
 namespace BugTracker.Controllers
 {
-    public class CommentsController : Controller
+    public class ProjectAttachmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CommentsController(ApplicationDbContext context)
+        public ProjectAttachmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Comments
+        // GET: ProjectAttachments
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Comment.Include(c => c.CustomUser).Include(c => c.Ticket);
+            var applicationDbContext = _context.ProjectAttachment.Include(p => p.CustomUser).Include(p => p.Project);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Comments/Details/5
+        // GET: ProjectAttachments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,54 +34,45 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comment
-                .Include(c => c.CustomUser)
-                .Include(c => c.Ticket)
+            var projectAttachment = await _context.ProjectAttachment
+                .Include(p => p.CustomUser)
+                .Include(p => p.Project)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (comment == null)
+            if (projectAttachment == null)
             {
                 return NotFound();
             }
 
-            return View(comment);
+            return View(projectAttachment);
         }
 
-        // GET: Comments/Create
+        // GET: ProjectAttachments/Create
         public IActionResult Create()
         {
             ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id");
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id");
             return View();
         }
 
-        // POST: Comments/Create
+        // POST: ProjectAttachments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Content,Created,Updated,IsModerated,Moderated,ModeratedReason,ModeratedContent,CustomUserId,TicketId")] Comment comment)
+        public async Task<IActionResult> Create([Bind("Id,Description,Created,FileName,FileData,ProjectId,CustomUserId")] ProjectAttachment projectAttachment)
         {
             if (ModelState.IsValid)
             {
-                comment.Created = DateTime.Now;
-                comment.Updated = comment.Created;
-                var id = comment.TicketId;
-                _context.Add(comment);
+                _context.Add(projectAttachment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Tickets", new { id });
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                var id = comment.TicketId;
-                ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", comment.CustomUserId);
-                ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", comment.TicketId);
-                return RedirectToAction("Details", "Tickets", new { id });
-            }
-            
-       
+            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
+            return View(projectAttachment);
         }
 
-        // GET: Comments/Edit/5
+        // GET: ProjectAttachments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -89,24 +80,24 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comment.FindAsync(id);
-            if (comment == null)
+            var projectAttachment = await _context.ProjectAttachment.FindAsync(id);
+            if (projectAttachment == null)
             {
                 return NotFound();
             }
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", comment.CustomUserId);
-            ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", comment.TicketId);
-            return View(comment);
+            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
+            return View(projectAttachment);
         }
 
-        // POST: Comments/Edit/5
+        // POST: ProjectAttachments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Content,Created,Updated,IsModerated,Moderated,ModeratedReason,ModeratedContent,CustomUserId,TicketId")] Comment comment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Created,FileName,FileData,ProjectId,CustomUserId")] ProjectAttachment projectAttachment)
         {
-            if (id != comment.Id)
+            if (id != projectAttachment.Id)
             {
                 return NotFound();
             }
@@ -115,12 +106,12 @@ namespace BugTracker.Controllers
             {
                 try
                 {
-                    _context.Update(comment);
+                    _context.Update(projectAttachment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentExists(comment.Id))
+                    if (!ProjectAttachmentExists(projectAttachment.Id))
                     {
                         return NotFound();
                     }
@@ -131,12 +122,12 @@ namespace BugTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", comment.CustomUserId);
-            ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", comment.TicketId);
-            return View(comment);
+            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
+            return View(projectAttachment);
         }
 
-        // GET: Comments/Delete/5
+        // GET: ProjectAttachments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,32 +135,32 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comment
-                .Include(c => c.CustomUser)
-                .Include(c => c.Ticket)
+            var projectAttachment = await _context.ProjectAttachment
+                .Include(p => p.CustomUser)
+                .Include(p => p.Project)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (comment == null)
+            if (projectAttachment == null)
             {
                 return NotFound();
             }
 
-            return View(comment);
+            return View(projectAttachment);
         }
 
-        // POST: Comments/Delete/5
+        // POST: ProjectAttachments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var comment = await _context.Comment.FindAsync(id);
-            _context.Comment.Remove(comment);
+            var projectAttachment = await _context.ProjectAttachment.FindAsync(id);
+            _context.ProjectAttachment.Remove(projectAttachment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CommentExists(int id)
+        private bool ProjectAttachmentExists(int id)
         {
-            return _context.Comment.Any(e => e.Id == id);
+            return _context.ProjectAttachment.Any(e => e.Id == id);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace BugTracker.Data
         }
         public DbSet<Project> Project { get; set; }
         public DbSet<Ticket> Ticket { get; set; }
-        public DbSet<Attachment> Attachment { get; set; }
+        public DbSet<TicketAttachment> Attachment { get; set; }
         public DbSet<Comment> Comment { get; set; }
         public DbSet<Invite> Invite { get; set; }
         public DbSet<Priority> Priority { get; set; }
@@ -25,6 +25,7 @@ namespace BugTracker.Data
         public DbSet<TicketType> TicketType { get; set; }
         public DbSet<Company> Company { get; set; }
         public DbSet<BugTracker.Models.Inbox> Inbox { get; set; }
+        public DbSet<BugTracker.Models.ProjectAttachment> ProjectAttachment { get; set; }
 
     }
 }

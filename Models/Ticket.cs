@@ -48,7 +48,7 @@ namespace BugTracker.Models
         public virtual TicketType TicketType { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
-        public virtual ICollection<Attachment> Attachments { get; set; } = new HashSet<Attachment>();
+        public virtual ICollection<TicketAttachment> Attachments { get; set; } = new HashSet<TicketAttachment>();
         public virtual ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
         public virtual ICollection<TicketHistory> TicketHistories { get; set; } = new HashSet<TicketHistory>();
     }

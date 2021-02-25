@@ -1,5 +1,6 @@
-﻿@model IEnumerable<BugTracker.Models.Attachment>
-
+﻿@model IEnumerable<BugTracker.Models.TicketAttachment>
+@using BugTracker.Services
+@inject ICustomFileService CustomFileService 
 @{
     ViewData["Title"] = "Index";
 }
@@ -12,23 +13,19 @@
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Created)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileData)
-            </th>
+         
             <th>
                 @Html.DisplayNameFor(model => model.Ticket)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomUserId)
+                @Html.DisplayNameFor(model => model.CustomUser)
             </th>
             <th></th>
         </tr>
@@ -37,22 +34,20 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                <img class="img-fluid" src="@(CustomFileService.ConvertByteArrayToFile(item.FileData,item.FileName)) " />
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Created)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileData)
-            </td>
+           
             <td>
                 @Html.DisplayFor(modelItem => item.Ticket.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CustomUserId)
+                @Html.DisplayFor(modelItem => item.CustomUser.Id)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

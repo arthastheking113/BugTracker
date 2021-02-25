@@ -1,17 +1,21 @@
 ﻿@model BugTracker.Models.Ticket
+@using Microsoft.AspNetCore.Identity
+@using BugTracker.Data
+@inject ApplicationDbContext ApplicationDbContext
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
+@using BugTracker.Services
+@inject ICustomFileService CustomFileService 
 
 @{
     ViewData["Title"] = "Details";
 }
 
-
-<br />
-<br />
 <div class="row">
-    <div class="col-3"></div>
-    <div class="col">
+
+    <div class="col-5">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-dark">
                 Ticket Details
             </div>
 
@@ -85,13 +89,138 @@
                     </div>
                 </div>
             </div>
-           
+
         </div>
+        <div class="card">
+            <div class="card-header bg-dark">
+               <h3 class="card-title"> Attach File</h3>
+            </div>
+            <div class="card-body">
+                <div class="row ">
+                    <div class="col">
+                        <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label> Description </label>
+                                    <textarea asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" rows="4"></textarea><br />
+                                </div>
+                                <div class="col">
+                                    <label>Upload File </label><br />
+                                    <input asp-for="@Model.Attachments.FirstOrDefault().FormFile"  type="file" />
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <button type="submit" class="btn btn-outline-secondary md-btn-flat">Submit</button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col">
+                        <div class="row clearfix">
+                            @foreach (var item in Model.Attachments)
+                            {
+                                <div class="col-sm-2">
+                                    <div class="card">
+                                        <div class="file">
+                                            <a href="javascript:void(0);">
+                                                <div class="hover">
+                                                    <button type="button" class="btn btn-icon btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="icon">
+                                                    <img src="@CustomFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                                </div>
+                                                <div class="file-name">
+                                                    <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                                    <small>Size: @CustomFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>  
+        </div>
+     
+
+       
+       
+
     </div>
 
+    <div class="col">
+        <div class="card">
+            <div class="card-header bg-dark">
+                Comment
+            </div>
+            <div class="card-body">
+                <form asp-controller="Comments" asp-action="Create" method="post">
+                    <input type="hidden" name="TicketId" value="@Model.Id" />
+                    <input type="hidden" name="CustomUserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
+                    <div class="form-group">
+                        <textarea name="Content" class="form-control" rows="4"></textarea>
+                    </div>
 
-    <div class="col-3"></div>
+                    <input type="submit" value="Comment" class="btn btn-secondary" />
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            @{
+                var comments = ApplicationDbContext.Comment.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Updated).ToList();
+            }
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        @foreach (var comment in comments)
+                        {
+
+                            <div class="row">
+                                <div class="col">
+                                    @((await UserManager.FindByIdAsync(comment.CustomUserId)).FullName)
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col">
+                                    @comment.Content
+                                </div>
+                                <div class="col text-right">
+                                    @comment.Updated
+                                </div>
+                            </div>
+                            <hr />
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+    
+
+
 </div>
-
-
+<br />
+<br />
 

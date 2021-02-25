@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.Models
 {
-    public class Attachment
+    public class TicketAttachment
     {
         public int Id { get; set; }
 
@@ -26,11 +26,10 @@ namespace BugTracker.Models
         public byte[] FileData { get; set; }
 
 
-
         public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }
 
-        public int CustomUserId { get; set; }
+        public string CustomUserId { get; set; }
         public virtual CustomUser CustomUser { get; set; }
     }
 }

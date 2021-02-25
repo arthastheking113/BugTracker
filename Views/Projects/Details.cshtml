@@ -1,10 +1,14 @@
 ﻿@model BugTracker.Models.Project
 @using BugTracker.Services
 @using BugTracker.Service
+@using BugTracker.Data
+@inject ApplicationDbContext ApplicationDbContext  
 @inject ICustomProjectService projectService
+@inject ICustomRoleService roleService
 @using Microsoft.AspNetCore.Identity
 @inject IImageService imageService
 @inject UserManager<CustomUser> UserManager
+@inject ICustomFileService CustomFileService
 @{
     ViewData["Title"] = "Details";
 }
@@ -12,233 +16,255 @@
     var totalTicket = Model.Tickets.ToList().Count;
     var unAssignTicket = Model.Tickets.Where(t => t.IsAssigned == false).ToList().Count;
     var closeTicket = Model.Tickets.Where(t => t.StatusId == 5).ToList().Count;
-    var tickets = Model.Tickets.ToList();
+    var tickets = Model.Tickets.OrderByDescending(c => c.Updated).ToList();
 
 }
 
 <section class="content">
-    <div class="container-fluid">
-        <!-- Default box -->
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title">View Project Details</h3>
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header bg-dark">
+            <div class="row">
+                <div class="col">
+                    <h3 class="card-title">View Project Details</h3>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary"> <i class="fas fa-arrow-circle-left"></i> Back</a>
+
+                    <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
+                    <a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>
+                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get"><i class="fas fa-plus-square"></i> Create New Ticket</a>
+                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+                    <div class="row" style="border-bottom:1px solid;">
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-poll"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Tickets</span>
+                                    <span class="info-box-number">
+                                        @totalTicket
+                                        <small>Tickets</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-exclamation"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Un-Assigned Tickets</span>
+                                    <span class="info-box-number">
+                                        @unAssignTicket
+                                        <small>Tickets</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-cyan elevation-1"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Closed Tickets</span>
+                                    <span class="info-box-number">
+                                        @closeTicket
+                                        <small>Tickets</small>
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h4 class="mt-2">Recent Activity</h4>
+                            <hr />
+                            @if (tickets.Count >= 5)
+                            {
+                                var count = 1;
+                                foreach (var ticket in tickets)
+                                {
+                                    if (count == 6)
+                                    {
+                                        break;
+                                    }
+
+                                    byte[] imageData = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ImageData;
+                                    string imageType = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ContentType;
+                                    <div class="post">
+                                        <div class="user-block">
+                                            <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
+                                            <span class="username">
+                                                <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First())</a>
+                                            </span>
+                                            <span class="description">Shared publicly - @ticket.Created</span>
+                                        </div>
+                                        <!-- /.user-block -->
+                                        <p>
+                                            @ticket.Description
+                                        </p>
+                                        <div class="row">     
+                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-comment-dots"></i> @ticket.Comments.Count Comments </a>
+                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>                          
+                                        </div>
+                                       
+                                    </div>
+
+                                    count++;
+                                }
+                            }
+                            else
+                            {
+                                foreach (var ticket in tickets)
+                                {
+                                    byte[] imageData = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ImageData;
+                                    string imageType = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ContentType;
+                                    <div class="post">
+                                        <div class="user-block">
+                                            <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
+                                            <span class="username">
+                                                <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First())</a>
+                                            </span>
+                                            <span class="description">Shared publicly - @ticket.Created</span>
+                                        </div>
+                                        <!-- /.user-block -->
+                                        <p>
+                                            @ticket.Description
+                                        </p>
+
+                                        <div class="row">     
+                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-comment-dots"></i> @ticket.Comments.Count Comments </a>
+                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>                          
+                                        </div>
+
+                                    </div>
+
+
+                                }
+                            }
+
+                        </div>
                     </div>
                 </div>
-
-            </div>
-            <div class="card-header">
-                <div class="row">
-                    <div class="col">
-                        <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary"> <i class="fas fa-arrow-circle-left"></i> Back</a>
-
-                        <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
-                        <a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>
-                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get"><i class="fas fa-plus-square"></i> Create New Ticket</a>
-                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets</a>
-                    </div>
-                </div>
-
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
-                        <div class="row" style="border-bottom:1px solid;">
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-poll"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Total Tickets</span>
-                                        <span class="info-box-number">
-                                            @totalTicket
-                                            <small>Tickets</small>
-                                        </span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                                <!-- /.info-box -->
-                            </div>
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-exclamation"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Un-Assigned Tickets</span>
-                                        <span class="info-box-number">
-                                            @unAssignTicket
-                                            <small>Tickets</small>
-                                        </span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                                <!-- /.info-box -->
-                            </div>
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-cyan elevation-1"><i class="fas fa-check-circle"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Closed Tickets</span>
-                                        <span class="info-box-number">
-                                            @closeTicket
-                                            <small>Tickets</small>
-                                        </span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                                <!-- /.info-box -->
+                <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+                    <h3 class="text-primary"><i class="fas fa-paint-brush"></i> @Html.DisplayFor(model => model.Name)</h3>
+                    <p class="text-muted">@Html.DisplayFor(model => model.Description)</p>
+                    <br>
+                    <div class="text-muted">
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-sm">
+                                    Client Company
+                                    <b class="d-block">@Html.DisplayFor(model => model.Company.Name)</b>
+                                </p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-12">
-                                <h4>Recent Activity</h4>
-                                @foreach (var ticket in tickets)
-                                {
-                                    if (ticket.DeveloperId != null)
+                            <div class="col">
+                                <p class="text-sm">
+                                    Project Leader
+                                    <b class="d-block">@((await projectService.ProjectManagerOnProjectAsync(Model.Id)).FullName)</b>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-sm">
+                                    Developer
+                                    @foreach (var developer in await projectService.DeveloperOnProjectAsync(Model.Id))
                                     {
-                                        byte[] imageData = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ImageData;
-                                        string imageType = (await UserManager.FindByIdAsync(ticket.DeveloperId)).ContentType;
-                                        <div class="post">
-                                            <div class="user-block">
-                                                <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
-                                                <span class="username">
-                                                    <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - Deverloper</a>
-                                                </span>
-                                                <span class="description">Shared publicly - @ticket.Created</span>
-                                            </div>
-                                            <!-- /.user-block -->
-                                            <p>
-                                                @ticket.Description
-                                            </p>
+                                        <b class="d-block">@(developer.FullName)</b>
+                                    }
+                                </p>
+                            </div>
+                            <div class="col">
+                                <p class="text-sm">
+                                    Submitter
+                                    @foreach (var submitter in await projectService.SubmitterOnProjectAsync(Model.Id))
+                                    {
+                                        <b class="d-block">@(submitter.FullName)</b>
+                                    }
+                                </p>
+                            </div>
+                        </div>
 
-                                            @*<p>
-                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                    </p>*@
+
+                    </div>
+
+                    <h5 class="mt-5 text-muted">Project files</h5>
+             
+                    <div class="row">
+                        <form asp-action="Create" asp-controller="Attachments" enctype="multipart/form-data" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                            <div class="media-body ml-3">
+                                <label>
+                                    Description
+                                    <input name="Description" type="text" class="form-control" />
+                                </label>
+                                <label class="btn btn-outline-secondary btn-sm"> Upload File
+                                    <input name="file" type="file" />
+                                </label>
+                               
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                           @*<div class="row clearfix">
+                        @{ 
+                            var ticketAttachment = ApplicationDbContext.Ticket.Where(t => t.ProjectId == Model.Id).Where(t => t.Attachments.Count > 0).ToList();
+                        }
+                        @foreach (var item in ticketAttachment)
+                        {
+                        <div class="col-sm-2">
+                            <div class="card">
+                                <div class="file">
+                                    <a href="javascript:void(0);">
+                                        <div class="hover">
+                                            <button type="button" class="btn btn-icon btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
                                         </div>
-                                    }
-                                    else
-                                    {
-                                        if (ticket.OwnnerId == null)
-                                        {
-                                            byte[] imageData = null;
-                                            string imageType = null;
-                                            string userName = "Database doesn't have userId";
-                                            <div class="post">
-                                                <div class="user-block">
-                                                    <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
-                                                    <span class="username">
-                                                        <a>@(userName) - Project Manager</a>
-                                                    </span>
-                                                    <span class="description">Shared publicly - @ticket.Created</span>
-                                                </div>
-                                                <!-- /.user-block -->
-                                                <p>
-                                                    @ticket.Description
-                                                </p>
-
-                                                @*<p>
-                            <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                        </p>*@
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            byte[] imageData = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ImageData;
-                                            string imageType = (await UserManager.FindByIdAsync(ticket.OwnnerId)).ContentType;
-                                            <div class="post">
-                                                <div class="user-block">
-                                                    <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
-                                                    <span class="username">
-                                                        <a>@((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName) - Project Manager</a>
-                                                    </span>
-                                                    <span class="description">Shared publicly - @ticket.Created</span>
-                                                </div>
-                                                <!-- /.user-block -->
-                                                <p>
-                                                    @ticket.Description
-                                                </p>
-                                                @*<p>
-                            <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                        </p>*@
-                                            </div>
-                                        }
-                                    }
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-                        <h3 class="text-primary"><i class="fas fa-paint-brush"></i> @Html.DisplayFor(model => model.Name)</h3>
-                        <p class="text-muted">@Html.DisplayFor(model => model.Description)</p>
-                        <br>
-                        <div class="text-muted">
-                            <div class="row">
-                                <div class="col">
-                                    <p class="text-sm">
-                                        Client Company
-                                        <b class="d-block">@Html.DisplayFor(model => model.Company.Name)</b>
-                                    </p>
+                                        <div class="icon">
+                                            <img src="@CustomFileService.GetFileIcon(item.Attachments.Where(t => t.TicketId == Model.Tickets.))" style="height:60px;width:60px" />
+                                        </div>
+                                        <div class="file-name">
+                                            <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                            <small>Size: @CustomFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col">
-                                    <p class="text-sm">
-                                        Project Leader
-                                        <b class="d-block">@((await projectService.ProjectManagerOnProjectAsync(Model.Id)).FullName)</b>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <p class="text-sm">
-                                        Developer
-                                        @foreach (var developer in await projectService.DeveloperOnProjectAsync(Model.Id))
-                                        {
-                                            <b class="d-block">@(developer.FullName)</b>
-                                        }
-                                    </p>
-                                </div>
-                                <div class="col">
-                                    <p class="text-sm">
-                                        Submitter
-                                        @foreach (var submitter in await projectService.SubmitterOnProjectAsync(Model.Id))
-                                        {
-                                            <b class="d-block">@(submitter.FullName)</b>
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                        <h5 class="mt-5 text-muted">Project files</h5>
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-flatbal.mln</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
-                            </li>
-                        </ul>
-                        <div class="text-center mt-5 mb-3">
-                            <a href="#" class="btn btn-sm btn-primary">Add files</a>
-                            <a href="#" class="btn btn-sm btn-warning">Report contact</a>
-                        </div>
-                    </div>
+                        </div>            }
+                    </div>*@
                 </div>
             </div>
-            <!-- /.card-body -->
         </div>
-        <!-- /.card -->
+        <!-- /.card-body -->
     </div>
+    <!-- /.card -->
+
 </section>
 <!-- /.content -->
