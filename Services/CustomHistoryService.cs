@@ -135,9 +135,9 @@ namespace BugTracker.Services
             {
                 Notification notification = new Notification
                 {
-                    Name = $"New Ticket Assign on project {newTicket.Name}",
+                    Name = $"New Ticket Assign.",
                     TicketId = newTicket.Id,
-                    Description = $"You have a new ticket about {newTicket.Description} on project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name}",
+                    Description = $"You have a new ticket {newTicket.Name} about {newTicket.Description} on project: {_context.Project.FirstOrDefault(p => p.Id == newTicket.ProjectId).Name}",
                     Created = DateTime.Now,
                     SenderId = userId,
                     RecipientId = newTicket.DeveloperId

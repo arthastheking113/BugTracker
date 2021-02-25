@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BugTracker.Controllers
 {
@@ -15,11 +16,13 @@ namespace BugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public InboxesController(ApplicationDbContext context, UserManager<CustomUser> userManager)
+        public InboxesController(ApplicationDbContext context, UserManager<CustomUser> userManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         // GET: Inboxes
@@ -92,6 +95,35 @@ namespace BugTracker.Controllers
             return View(inbox);
         }
 
+
+        public async Task<IActionResult> ReaderDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var inbox = await _context.Inbox
+                .Include(i => i.Receiver)
+                .Include(i => i.Sender)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (inbox == null)
+            {
+                return NotFound();
+            }
+            var userId = _userManager.GetUserId(User);
+            var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
+            var unread = (await applicationDbContext.Where(i => i.IsSeen == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
+            var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
+            ViewData["send"] = send;
+            ViewData["unread"] = unread;
+            ViewData["delete"] = delete;
+            await _context.SaveChangesAsync();
+            return View(inbox);
+        }
+
+
         public async Task<IActionResult> ReplyAsync(string senderId)
         {
             var userId = _userManager.GetUserId(User);
@@ -119,6 +151,19 @@ namespace BugTracker.Controllers
                 inbox.Created = DateTime.Now;
                 _context.Add(inbox);
                 await _context.SaveChangesAsync();
+
+                var messageSubject = inbox.Subject;
+                var messageContent = inbox.Message;
+                var receiver = inbox.ReceiverId;
+                string devEmail = (await _userManager.FindByIdAsync(receiver)).Email;
+                string subject = $"New Reply Message From {(await _userManager.FindByIdAsync(userId)).FullName}";
+                string message = $"You have a new Reply Message from {(await _userManager.FindByIdAsync(userId)).FullName} about {messageSubject}, message : {messageContent}";
+
+                await _emailSender.SendEmailAsync(devEmail, subject, message);
+
+                await _context.SaveChangesAsync();
+
+
                 var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
                 var unread = (await applicationDbContext.Where(i => i.IsSeen == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
                 var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
@@ -203,6 +248,17 @@ namespace BugTracker.Controllers
                 inbox.Created = DateTime.Now;
                 _context.Add(inbox);
                 await _context.SaveChangesAsync();
+                var messageSubject = inbox.Subject;
+                var messageContent = inbox.Message;
+                var receiver = inbox.ReceiverId;
+                string devEmail = (await _userManager.FindByIdAsync(receiver)).Email;
+                string subject = $"New Message From {(await _userManager.FindByIdAsync(userId)).FullName}";
+                string message = $"You have a new Message from {(await _userManager.FindByIdAsync(userId)).FullName} about {messageSubject}, message : {messageContent}";
+
+                await _emailSender.SendEmailAsync(devEmail, subject, message);
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ReceiverId"] = new SelectList(_context.Users, "Id", "FullName", inbox.ReceiverId);

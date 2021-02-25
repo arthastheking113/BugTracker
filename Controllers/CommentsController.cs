@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BugTracker.Controllers
 {
     public class CommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public CommentsController(ApplicationDbContext context)
+        public CommentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, IEmailSender emailSender)
         {
             _context = context;
+            _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         // GET: Comments
@@ -68,6 +74,31 @@ namespace BugTracker.Controllers
                 var id = comment.TicketId;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
+
+                var messageContent = comment.Content;
+
+                Notification notification = new Notification
+                {
+                    Name = "New Comment on your ticket",
+                    TicketId = comment.TicketId,
+                    Description = $"You have a new comment from {(await _userManager.FindByIdAsync(comment.CustomUserId)).FullName} on your ticket {(_context.Ticket.FirstOrDefault(t => t.Id == comment.TicketId)).Name}, comment : {messageContent}",
+                    Created = DateTime.Now,
+                    SenderId = comment.CustomUserId,
+                    RecipientId = (_context.Ticket.FirstOrDefault(t => t.Id == comment.TicketId)).DeveloperId
+                };
+                await _context.Notification.AddAsync(notification);
+                await _context.SaveChangesAsync();
+
+               
+                var receiver = (_context.Ticket.FirstOrDefault(t => t.Id == comment.TicketId)).DeveloperId;
+                string devEmail = (await _userManager.FindByIdAsync(receiver)).Email;
+                string subject = $"New Comment From {(await _userManager.FindByIdAsync(comment.CustomUserId)).FullName} on your Ticket.";
+                string message = $"You have a new Comment from {(await _userManager.FindByIdAsync(comment.CustomUserId)).FullName} on Ticket {(_context.Ticket.FirstOrDefault(t => t.Id == comment.TicketId)).Name}, comment : {messageContent}";
+
+                await _emailSender.SendEmailAsync(devEmail, subject, message);
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Details", "Tickets", new { id });
             }
             else

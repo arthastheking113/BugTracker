@@ -9,85 +9,95 @@
 @inject UserManager<CustomUser> userManager
 
 <section class="content">
-    <br />
-    <br />
     <div class="row">
-        <div class="col-md-3">
-            <a asp-action="Index" class="btn btn-primary btn-block mb-3">Back to Inbox</a>
+        <div class="col">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Folders</h3>
+                <div class="card-header bg-dark">
+                    <h3 class="card-title">Inbox</h3>
                 </div>
-                <div class="card-body p-0">
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item active">
-                            <a asp-action="Index" class="nav-link">
-                                <i class="fas fa-inbox"></i> Inbox
-                                <span class="badge bg-primary float-right">@ViewBag.unread</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-action="Send" class="nav-link">
-                                <i class="far fa-envelope"></i> Sent
-                                <span class="badge bg-info float-right">@ViewBag.send</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-action="Deleted" class="nav-link">
-                                <i class="far fa-trash-alt"></i> Trash
-                                <span class="badge bg-danger float-right">@ViewBag.delete</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a asp-action="Index" class="btn btn-primary btn-block mb-3">Back to Inbox</a>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Folders</h3>
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="nav nav-pills flex-column">
+                                        <li class="nav-item active">
+                                            <a asp-action="Index" class="nav-link">
+                                                <i class="fas fa-inbox"></i> Inbox
+                                                <span class="badge bg-primary float-right">@ViewBag.unread</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="Send" class="nav-link">
+                                                <i class="far fa-envelope"></i> Sent
+                                                <span class="badge bg-info float-right">@ViewBag.send</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="Deleted" class="nav-link">
+                                                <i class="far fa-trash-alt"></i> Trash
+                                                <span class="badge bg-danger float-right">@ViewBag.delete</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
 
 
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9 ">
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">Compose New Message</h3>
-                </div>
-                <!-- /.card-header -->
-                <form asp-action="Create">
-                    <div class="card-body">
-
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <div class="form-group">
-                            <label asp-for="ReceiverId" class="control-label"></label>
-                            <select asp-for="ReceiverId" class="form-control" asp-items="ViewBag.ReceiverId"></select>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="Subject" class="control-label"></label>
-                            <input asp-for="Subject" class="form-control" />
-                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        <!-- /.col -->
+                        <div class="col-md-9 ">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Compose New Message</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <form asp-action="Create">
+                                    <div class="card-body">
+
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                        <div class="form-group">
+                                            <label asp-for="ReceiverId" class="control-label"></label>
+                                            <select asp-for="ReceiverId" class="form-control" asp-items="ViewBag.ReceiverId"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Subject" class="control-label"></label>
+                                            <input asp-for="Subject" class="form-control" />
+                                            <span asp-validation-for="Subject" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Message" class="control-label"></label>
+                                            <textarea asp-for="Message" class="form-control"></textarea>
+                                            <span asp-validation-for="Message" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                    <div class="card-footer">
+                                        <div class="float-left">
+                                            <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
+                                            <a asp-action="Index" class="btn btn-default"><i class="fas fa-times"></i> Cancel</a>
+                                        </div>
+
+                                    </div>
+                                    <!-- /.card-footer -->
+                                </form>
+                            </div>
+                            <!-- /.card -->
                         </div>
-                        <div class="form-group">
-                            <label asp-for="Message" class="control-label"></label>
-                            <textarea asp-for="Message" class="form-control"></textarea>
-                            <span asp-validation-for="Message" class="text-danger"></span>
-                        </div>
+                        <!-- /.col -->
                     </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer">
-                        <div class="float-left">
-                            <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
-                            <a asp-action="Index" class="btn btn-default"><i class="fas fa-times"></i> Cancel</a>
-                        </div>
-                      
-                    </div>
-                    <!-- /.card-footer -->
-                </form>
+                    <!-- /.row -->
+                </div>
             </div>
-            <!-- /.card -->
         </div>
-        <!-- /.col -->
     </div>
-    <!-- /.row -->
+    
 </section>
 <!-- /.content -->
