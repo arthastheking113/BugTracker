@@ -94,8 +94,15 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <h4 class="mt-2">Recent Activity</h4>
-                            <hr />
+                            <div class="row mb-0">
+                                <div class="col text-left">
+                                    <h4 class="mt-2">Recent Activity</h4>
+                                </div>
+                                <div class="col text-right mr-2">
+                                    <h4 class="mt-2"><a asp-controller="Tickets" asp-action="ProjectIndex" asp-route-id="@Model.Id" class="btn btn-secondary" >View All Ticket</a></h4>
+                                </div>
+                            </div>
+                            <hr class="mt-0"/>
                             @if (tickets.Count >= 5)
                             {
                                 var count = 1;
@@ -120,11 +127,11 @@
                                         <p>
                                             @ticket.Description
                                         </p>
-                                        <div class="row">     
+                                        <div class="row">
                                             <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-comment-dots"></i> @ticket.Comments.Count Comments </a>
-                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>                          
+                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>
                                         </div>
-                                       
+
                                     </div>
 
                                     count++;
@@ -149,9 +156,9 @@
                                             @ticket.Description
                                         </p>
 
-                                        <div class="row">     
+                                        <div class="row">
                                             <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-comment-dots"></i> @ticket.Comments.Count Comments </a>
-                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>                          
+                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>
                                         </div>
 
                                     </div>
@@ -211,44 +218,44 @@
                     <h5 class="mt-5 text-muted">Project files</h5>
              
                     <div class="row">
-                        <form asp-action="Create" asp-controller="Attachments" enctype="multipart/form-data" method="post">
+                        <form asp-action="Create" asp-controller="ProjectAttachments" enctype="multipart/form-data" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                            <input type="hidden" asp-for="@Model.Id" name="ProjectId">
                             <div class="media-body ml-3">
                                 <label>
                                     Description
-                                    <input name="Description" type="text" class="form-control" />
+                                    <input name="Description" type="text" class="form-control"  />
                                 </label>
-                                <label class="btn btn-outline-secondary btn-sm"> Upload File
-                                    <input name="file" type="file" />
-                                </label>
-                               
+                                <label class="btn btn-outline-secondary btn-sm">
+                                    Upload File
+                                    <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
+                                </label>   
                             </div>
                             <div class="row">
                                 <div class="col text-center">
                                     <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-
                                 </div>
                             </div>
                         </form>
                     </div>
-                           @*<div class="row clearfix">
+                           <div class="row clearfix">
                         @{ 
-                            var ticketAttachment = ApplicationDbContext.Ticket.Where(t => t.ProjectId == Model.Id).Where(t => t.Attachments.Count > 0).ToList();
+                            var ticketAttachment = ApplicationDbContext.ProjectAttachment.Where(t => t.ProjectId == Model.Id).ToList();
                         }
                         @foreach (var item in ticketAttachment)
                         {
                         <div class="col-sm-2">
                             <div class="card">
                                 <div class="file">
-                                    <a href="javascript:void(0);">
+                                    <a asp-controller="ProjectAttachments" asp-action="Details" asp-route-id="@item.Id">
                                         <div class="hover">
-                                            <button type="button" class="btn btn-icon btn-danger">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
+                                            <form asp-controller="ProjectAttachments" asp-action="Delete" asp-route-id="@item.Id" method="get" > 
+                                                <button type="submit"  class="btn btn-icon btn-danger"><i class="fa fa-trash"></i> </button>
+                                            </form>
+                                         
                                         </div>
                                         <div class="icon">
-                                            <img src="@CustomFileService.GetFileIcon(item.Attachments.Where(t => t.TicketId == Model.Tickets.))" style="height:60px;width:60px" />
+                                            <img src="@CustomFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
                                         </div>
                                         <div class="file-name">
                                             <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
@@ -258,7 +265,7 @@
                                 </div>
                             </div>
                         </div>            }
-                    </div>*@
+                    </div>
                 </div>
             </div>
         </div>

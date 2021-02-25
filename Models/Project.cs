@@ -24,7 +24,7 @@ namespace BugTracker.Models
 
         public virtual ICollection<CustomUser> CustomUsers { get; set; } = new HashSet<CustomUser>();
         public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
-
+        public virtual ICollection<ProjectAttachment> Attachments { get; set; } = new HashSet<ProjectAttachment>();
 
     }
 }

@@ -36,7 +36,7 @@
 
         @if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager"))
         {
-            <div class="col">
+            <div class="col-sm-7">
                 <div class="card">
                     <div class="card-header bg-dark">
                         <h5 class="card-title">Quick Management Action</h5>
@@ -46,9 +46,12 @@
                         <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary pb-2 mb-2"> <i class="fas fa-tasks"></i> Create New Projects</a>
                         <a asp-controller="Home" asp-action="ManageRole" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-people-arrows"></i> Role's Management </a>
                         <a asp-controller="Projects" asp-action="ManagerUserProject" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-user-edit"></i> Project User Management</a>
+                        <a asp-controller="Invites" asp-action="Create" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-location-arrow"></i> Create a Invite Ticket</a>
+                       
                     </div>
                 </div>
             </div>
+
             <div class="col">
                 <div class="card">
                     <div class="card-header bg-dark">
@@ -58,10 +61,11 @@
                         <a asp-controller="Inboxes" asp-action="Create" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-plus-square"></i> Compose New Inbox</a>
                         <a asp-controller="Inboxes" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="far fa-comments"></i> View My Inbox</a>
                         <a asp-controller="Notifications" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="far fa-bell"></i> View My Notifications</a>
-
+                       
                     </div>
                 </div>
             </div>
+
         }
         else
         {

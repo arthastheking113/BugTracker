@@ -97,30 +97,22 @@
             </div>
             <div class="card-body">
                 <div class="row ">
-                    <div class="col">
-                        <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label> Description </label>
-                                    <textarea asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" rows="4"></textarea><br />
-                                </div>
-                                <div class="col">
-                                    <label>Upload File </label><br />
-                                    <input asp-for="@Model.Attachments.FirstOrDefault().FormFile"  type="file" />
-
-                                </div>
+                    <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                        <div class="media-body ml-3 ">
+                            <label>Description<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" /></label>      
+                            <label class="btn btn-outline-secondary btn-sm">
+                                Upload File
+                                <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
+                            </label>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <button type="submit" class="btn btn-outline-secondary md-btn-flat">Submit</button>
                             </div>
-                            <div class="row">
-                                <div class="col text-center">
-                                    <button type="submit" class="btn btn-outline-secondary md-btn-flat">Submit</button>
-                                </div>
-
-                            </div>
-                        </form>
-                    </div>
-                   
+                        </div>
+                    </form>      
                 </div>
             </div>
             <div class="card-body">
@@ -133,11 +125,14 @@
                                 <div class="col-sm-2">
                                     <div class="card">
                                         <div class="file">
-                                            <a href="javascript:void(0);">
+                                            <a asp-controller="TicketAttachments" asp-action="Details" asp-route-id="@item.Id" >
                                                 <div class="hover">
-                                                    <button type="button" class="btn btn-icon btn-danger">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
+                                                    <form asp-controller="TicketAttachments" asp-action="Details" asp-route-id="@item.Id">
+                                                        <button type="submit" class="btn btn-icon btn-danger">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                   
                                                 </div>
                                                 <div class="icon">
                                                     <img src="@CustomFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />

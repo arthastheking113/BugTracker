@@ -1,54 +1,69 @@
 ﻿@model BugTracker.Models.ProjectAttachment
-
+@using BugTracker.Services
+@inject ICustomFileService CustomFileService
+@using BugTracker.Data.Enums
+@inject ICustomRoleService RoleService
+@using BugTracker.Data
+@inject ApplicationDbContext ApplicationDbContext
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header bg-dark">
+                <h3>Image Details</h3>
+            </div>
+            <div class="card-body">
 
-<div>
-    <h4>ProjectAttachment</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FileName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FileData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Project)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Project.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomUser.Id)
-        </dd>
-    </dl>
+                <div class="row">
+
+                    <div class="col-6">
+                        <img style="width:80%;" src="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName)) " />
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Description)
+                            </div>
+                            <div class="col-sm-10">
+                                @Html.DisplayFor(model => model.Description)
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Created)
+                            </div>
+                            <div class="col-sm-10">
+                                @Model.Created.ToString("dddd, dd MMMM yyyy")
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Project)
+                            </div>
+                            <div class="col-sm-10">
+                                @Html.DisplayFor(model => model.Project.Id)
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.CustomUser)
+                            </div>
+                            <div class="col-sm-10">
+                                @Html.DisplayFor(model => model.CustomUser.FullName)
+                            </div>
+                        </div>
+                        @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString()) || await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                            <a asp-action="Index">Back to List</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+
+
+

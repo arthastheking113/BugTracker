@@ -84,6 +84,7 @@ namespace BugTracker.Controllers
 
             var project = await _context.Project
                 .Include(p => p.Company)
+                .Include(p => p.Attachments)
                 .Include(p => p.Tickets)
                 .Include(p => p.CustomUsers)
                 .FirstOrDefaultAsync(m => m.Id == id);

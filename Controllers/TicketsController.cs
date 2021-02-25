@@ -47,6 +47,15 @@ namespace BugTracker.Controllers
          
         }
 
+        public async Task<IActionResult> ProjectIndex(int? id)
+        {
+          
+            var applicationDbContext = _context.Ticket.Where(u => u.ProjectId == id).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+
+
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {

@@ -74,9 +74,10 @@ namespace BugTracker.Controllers
                 ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
                 ticketAttachment.Created = DateTimeOffset.Now;
                 ticketAttachment.CustomUserId = _userManager.GetUserId(User);
+                var id = ticketAttachment.TicketId;
                 _context.Add(ticketAttachment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","Tickets", new { id });
             }
             ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
             ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);

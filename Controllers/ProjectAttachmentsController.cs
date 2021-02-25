@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using System.IO;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
     public class ProjectAttachmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public ProjectAttachmentsController(ApplicationDbContext context)
+        public ProjectAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: ProjectAttachments
@@ -59,13 +63,21 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Created,FileName,FileData,ProjectId,CustomUserId")] ProjectAttachment projectAttachment)
+        public async Task<IActionResult> Create([Bind("Id,FormFile,Image,Description,Created,FileName,FileData,ProjectId,CustomUserId")] ProjectAttachment projectAttachment)
         {
             if (ModelState.IsValid)
             {
+                MemoryStream ms = new MemoryStream();
+                await projectAttachment.FormFile.CopyToAsync(ms);
+
+                projectAttachment.FileData = ms.ToArray();
+                projectAttachment.FileName = projectAttachment.FormFile.FileName;
+                projectAttachment.Created = DateTimeOffset.Now;
+                projectAttachment.CustomUserId = _userManager.GetUserId(User);
+                var id = projectAttachment.ProjectId;
                 _context.Add(projectAttachment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","Projects",new { id });
             }
             ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
