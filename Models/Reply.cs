@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace BugTracker.Models
 {
-    public class Inbox
+    public class Reply
     {
         public int Id { get; set; }
         public string Message { get; set; }
         public DateTime Created { get; set; }
         public string Subject { get; set; }
-        public bool IsSeenBySender { get; set; }
-        public bool IsSeenByReceiver { get; set; }
+        public bool IsSeen { get; set; }
         public bool IsDeleted { get; set; }
 
 
@@ -25,6 +24,7 @@ namespace BugTracker.Models
         public string ReceiverId { get; set; }
         public virtual CustomUser Receiver { get; set; }
 
-        public virtual ICollection<Reply> Replies { get; set; } = new HashSet<Reply>();
+        public int InboxId { get; set; }
+        public virtual Inbox Inbox { get; set; }
     }
 }

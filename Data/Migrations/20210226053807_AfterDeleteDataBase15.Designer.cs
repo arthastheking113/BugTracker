@@ -3,15 +3,17 @@ using System;
 using BugTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210226053807_AfterDeleteDataBase15")]
+    partial class AfterDeleteDataBase15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,13 +177,13 @@ namespace BugTracker.Data.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("InboxId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsSeenByReceiver")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsSeenBySender")
+                    b.Property<bool>("IsSeen")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Message")
@@ -197,6 +199,8 @@ namespace BugTracker.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InboxId");
 
                     b.HasIndex("ReceiverId");
 
@@ -362,48 +366,6 @@ namespace BugTracker.Data.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectAttachment");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.Reply", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("InboxId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ReceiverId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SenderId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InboxId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Reply");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Status", b =>
@@ -737,6 +699,10 @@ namespace BugTracker.Data.Migrations
 
             modelBuilder.Entity("BugTracker.Models.Inbox", b =>
                 {
+                    b.HasOne("BugTracker.Models.Inbox", null)
+                        .WithMany("Inboxes")
+                        .HasForeignKey("InboxId");
+
                     b.HasOne("BugTracker.Models.CustomUser", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverId");
@@ -822,29 +788,6 @@ namespace BugTracker.Data.Migrations
                     b.Navigation("CustomUser");
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.Reply", b =>
-                {
-                    b.HasOne("BugTracker.Models.Inbox", "Inbox")
-                        .WithMany("Replies")
-                        .HasForeignKey("InboxId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BugTracker.Models.CustomUser", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId");
-
-                    b.HasOne("BugTracker.Models.CustomUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId");
-
-                    b.Navigation("Inbox");
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Ticket", b =>
@@ -1008,7 +951,7 @@ namespace BugTracker.Data.Migrations
 
             modelBuilder.Entity("BugTracker.Models.Inbox", b =>
                 {
-                    b.Navigation("Replies");
+                    b.Navigation("Inboxes");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Project", b =>

@@ -92,7 +92,7 @@
                         <!-- Messages Dropdown Menu -->
                         @{
                             var userId = UserManager.GetUserId(User);
-                            var message = ApplicationDbContext.Inbox.Where(i => i.ReceiverId == userId).Where(i => i.IsSeen == false).ToList();
+                            var message = ApplicationDbContext.Inbox.Where(i => i.ReceiverId == userId || i.SenderId == userId).Where(i => i.IsSeenBySender == true).ToList();
                             var currentTime = DateTime.Now;
                         }
                         <li class="nav-item dropdown">

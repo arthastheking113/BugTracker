@@ -100,7 +100,7 @@
 
                                                         <td class="mailbox-name">@((await userManager.FindByIdAsync(item.SenderId)).FullName)</td>
                                                         <td class="mailbox-subject">
-                                                            @if (!item.IsSeen)
+                                                            @if (item.IsSeenBySender)
                                                             {
                                                                 <p><b>@Html.DisplayFor(modelItem => item.Subject)</b></p>
                                                             }

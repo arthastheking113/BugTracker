@@ -59,12 +59,11 @@
                                     <h3 class="card-title">Compose New Message</h3>
                                 </div>
                                 <!-- /.card-header -->
-                                <form asp-action="Reply" method="post">
+                                <form asp-controller="Replies" asp-action="Create" method="post">
                                     <div class="card-body">
 
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                                        <input type="hidden" asp-for="ReceiverId" value="@ViewBag.senderIds" />
+                                        <input type="hidden" name="InboxId" value="@ViewBag.inboxId" />
                                         <div class="form-group">
                                             <label asp-for="Subject" class="control-label"></label>
                                             <input asp-for="Subject" class="form-control" />
