@@ -30,8 +30,8 @@ namespace BugTracker.Controllers
         {
             var userId = _userManager.GetUserId(User);
             //var text = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.IsSeen == false).Where(i => i.Replies.Count > 0).Include(i => i.Receiver).Include(i => i.Sender);
-            var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.IsSeenBySender == true).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId || i.SenderId == userId).Include(i => i.Replies).Include(i => i.Receiver).Include(i => i.Sender);
+            var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["send"] = send;
@@ -43,8 +43,8 @@ namespace BugTracker.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var applicationDbContext2 = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext2.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var applicationDbContext2 = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId || i.SenderId == userId).Include(i => i.Replies).Include(i => i.Receiver).Include(i => i.Sender);
+            var unread = (await applicationDbContext2.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["send"] = send;
@@ -56,8 +56,8 @@ namespace BugTracker.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == true).Include(i => i.Receiver).Include(i => i.Sender);
-            var applicationDbContext2 = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext2.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var applicationDbContext2 = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId || i.SenderId == userId).Include(i => i.Replies).Include(i => i.Receiver).Include(i => i.Sender);
+            var unread = (await applicationDbContext2.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["send"] = send;
@@ -74,7 +74,6 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-
             var inbox = await _context.Inbox
                 .Include(i => i.Receiver)
                 .Include(i => i.Sender)
@@ -84,16 +83,24 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
+
             var userId = _userManager.GetUserId(User);
             var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["send"] = send;
             ViewData["unread"] = unread;
             ViewData["delete"] = delete;
-            inbox.IsSeenByReceiver = true;
+            inbox.IsSeen = true;
+            if (inbox.Replies.FirstOrDefault(t => t.InboxId == id) != null)
+            {
+                inbox.Replies.FirstOrDefault(t => t.InboxId == id).IsSeen = true;
+            }
+            
             await _context.SaveChangesAsync();
+        
+
             return View(inbox);
         }
 
@@ -108,14 +115,15 @@ namespace BugTracker.Controllers
             var inbox = await _context.Inbox
                 .Include(i => i.Receiver)
                 .Include(i => i.Sender)
+                .Include(i => i.Replies)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (inbox == null)
             {
                 return NotFound();
             }
             var userId = _userManager.GetUserId(User);
-            var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender).Include(i => i.Replies);
+            var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["send"] = send;
@@ -130,7 +138,7 @@ namespace BugTracker.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["inboxId"] = inboxId;
@@ -168,7 +176,7 @@ namespace BugTracker.Controllers
 
 
                 var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-                var unread = (await applicationDbContext.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+                var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
                 var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
                 var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
                 ViewData["send"] = send;
@@ -226,7 +234,7 @@ namespace BugTracker.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
-            var unread = (await applicationDbContext.Where(i => i.IsSeenByReceiver == false).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
+            var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             var send = (_context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.SenderId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
             ViewData["send"] = send;

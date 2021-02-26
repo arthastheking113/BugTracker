@@ -115,7 +115,7 @@
                                         <div class="mailbox-read-info">
                                             <h5>Subject: @item.Subject</h5>
                                             <h6>
-                                                From:  @((await userManager.FindByIdAsync(item.SenderId)).FullName) - Email: @((await userManager.FindByIdAsync(item.SenderId)).Email)
+                                                Reply From:  @((await userManager.FindByIdAsync(item.SenderId)).FullName) - Email: @((await userManager.FindByIdAsync(item.SenderId)).Email)
                                                 <span class="mailbox-read-time float-right">Sent on: @item.Created</span>
                                             </h6>
                                         </div>
@@ -135,6 +135,7 @@
 
                                             <form asp-controller="Inboxes" asp-action="reply" method="get">
                                                 <input type="hidden" name="senderId" value="@Model.SenderId" />
+                                                <input type="hidden" name="inboxId" value="@Model.Id" />
                                                 <button type="submit" class="btn btn-default mr-2"><i class="fas fa-reply"></i> Reply</button>
                                             </form>
 

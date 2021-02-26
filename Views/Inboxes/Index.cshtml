@@ -93,26 +93,32 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @{
+                                                    var userId = userManager.GetUserId(User);
+                                                }
                                                 @foreach (var item in Model)
                                                 {
+                                                    @if ((item.Replies.Count > 0) || item.ReceiverId == userId)
+                                                    {
+                                                        <tr onclick="document.location = 'inboxes/Details/@item.Id';">
 
-                                                    <tr onclick="document.location = 'inboxes/Details/@item.Id';">
+                                                            <td class="mailbox-name">@((await userManager.FindByIdAsync(item.SenderId)).FullName)</td>
+                                                            <td class="mailbox-subject">
+                                                                @if ((!item.IsSeen && item.ReceiverId == userId) || (item.SenderId == userId && item.Replies.FirstOrDefault(i => i.InboxId == item.Id).IsSeen == false))
+                                                                {
+                                                                    <p><b>@Html.DisplayFor(modelItem => item.Subject)</b></p>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p>@Html.DisplayFor(modelItem => item.Subject)</p>
+                                                                }
 
-                                                        <td class="mailbox-name">@((await userManager.FindByIdAsync(item.SenderId)).FullName)</td>
-                                                        <td class="mailbox-subject">
-                                                            @if (item.IsSeenBySender)
-                                                            {
-                                                                <p><b>@Html.DisplayFor(modelItem => item.Subject)</b></p>
-                                                            }
-                                                            else
-                                                            {
-                                                                <p>@Html.DisplayFor(modelItem => item.Subject)</p>
-                                                            }
+                                                            </td>
+                                                            <td class="mailbox-date">@Html.DisplayFor(modelItem => item.Created)</td>
+                                                            <td> <a asp-action="temporaryDelete" asp-route-id="@item.Id">Delete</a></td>
+                                                        </tr>
+                                                    }
 
-                                                        </td>
-                                                        <td class="mailbox-date">@Html.DisplayFor(modelItem => item.Created)</td>
-                                                        <td> <a asp-action="temporaryDelete" asp-route-id="@item.Id">Delete</a></td>
-                                                    </tr>
 
                                                 }
 

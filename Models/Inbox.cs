@@ -12,8 +12,8 @@ namespace BugTracker.Models
         public string Message { get; set; }
         public DateTime Created { get; set; }
         public string Subject { get; set; }
-        public bool IsSeenBySender { get; set; }
-        public bool IsSeenByReceiver { get; set; }
+        public bool IsSeen { get; set; }
+
         public bool IsDeleted { get; set; }
 
 
