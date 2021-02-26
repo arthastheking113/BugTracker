@@ -70,7 +70,7 @@ namespace BugTracker.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Project.Include(p => p.Company).Include(p => p.Tickets).Include(p => p.CustomUsers);
-
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             return View(await applicationDbContext.ToListAsync());
         }
 

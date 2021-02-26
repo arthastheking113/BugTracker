@@ -13,71 +13,77 @@
     var users = new MultiSelectList(userManager.Users, "Id", "FullName");
     var roles = new SelectList(roleService.NonDemoRoles(), "Name", "Name");
 }
-<div class="container-fluid pl-3">
-    <h1>Manage Role</h1>
+
     <div class="row">
         <div class="col">
-            <form asp-action="ManageRole" method="post">
-                <div class="form-group">
+            <div class="card">
+                <div class="card-header bg-dark">
+                    <h3 class="card-title">Manage Role</h3>
+                </div>
+                <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <div class="card card-default">
-                                <div class="card-body" style="padding:0;">
+                            <form asp-action="ManageRole" method="post">
+                                <div class="form-group">
                                     <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group">
+                                        <div class="col">
+                                            <div class="card card-default">
+                                                <div class="card-body" style="padding:0;">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <select class="form-control  select2bs4" style="width: 100%;" name="role" asp-items="@roles"></select>
+                                                            </div>
+                                                            <div class="form-group">
 
-                                                <select class="duallistbox" size="30" multiple="multiple" name="userId" asp-items="@users"></select>
+                                                                <select class="duallistbox" size="15" multiple="multiple" name="userId" asp-items="@users"></select>
+                                                            </div>
+                                                            <!-- /.form-group -->
+                                                        </div>
+                                                        <!-- /.col -->
+                                                    </div>
+                                                    <!-- /.row -->
+                                                </div>
+                                                <!-- /.card-body -->
                                             </div>
-                                            <!-- /.form-group -->
                                         </div>
-                                        <!-- /.col -->
                                     </div>
-                                    <!-- /.row -->
                                 </div>
-                                <!-- /.card-body -->
-                            </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-secondary form-control">Add</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="col-3">
-                            <div class="form-group">
-                                <select class="form-control  select2bs4" style="width: 100%;" name="role" asp-items="@roles"></select>
-                            </div>
-
+                        <div class="col-5">
+                            @foreach (var user in people)
+                            {
+                                <div class="row">
+                                    <div class="col-1"></div>
+                                    <div class="col">@user.FullName</div>
+                                    <div class="col"></div>
+                                    <div class="col-3">
+                                        @foreach (var roless in (await roleService.ListUserRoleAsync(user)))
+                                        {
+                                            <div class="row">
+                                                @roless
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-1"></div>
+                                </div>
+                                <hr />
+                            }
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col">
-                            <button type="submit" class="btn btn-secondary form-control">Add</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="col-5">
-            @foreach (var user in people)
-            {
-                <div class="row">
-                    <div class="col-1"></div>
-                    <div class="col">@user.FullName</div>
-                    <div class="col"></div>
-                    <div class="col-3">
-
-                        @foreach (var roless in (await roleService.ListUserRoleAsync(user)))
-                        {
-                            <div class="row">
-                                @roless
-                            </div>
-                        }
-
-                    </div>
-                    <div class="col-1"></div>
-
-                </div>
-                <hr />
-            }
+            </div>
         </div>
     </div>
-</div>
+   
+   
+
 
