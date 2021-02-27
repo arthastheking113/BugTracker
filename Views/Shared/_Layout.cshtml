@@ -146,7 +146,8 @@
                                     {
                                         commentdate = eslapseSecond.ToString() + " Seconds Ago";
                                     }
-                                    <a asp-controller="Inboxes" asp-action="Details" asp-route-id="@((ApplicationDbContext.Reply.FirstOrDefault(i => i.Id == mes.InboxId)).InboxId)" class="dropdown-item">
+                                    //((ApplicationDbContext.Reply.FirstOrDefault(i => i.Id == mes.InboxId)).InboxId)
+                                    <a asp-controller="Inboxes" asp-action="Details" asp-route-id="@(mes.InboxId)" class="dropdown-item">
                                         <!-- Message Start -->
                                         <div class="media">
                                             <img src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync((mes.SenderId))).ImageData, (await UserManager.FindByIdAsync((mes.SenderId))).ContentType)" alt="User Avatar" class="img-size-50 mr-3 img-circle">
