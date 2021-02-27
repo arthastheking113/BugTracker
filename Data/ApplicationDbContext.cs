@@ -27,6 +27,6 @@ namespace BugTracker.Data
         public DbSet<BugTracker.Models.Inbox> Inbox { get; set; }
         public DbSet<BugTracker.Models.ProjectAttachment> ProjectAttachment { get; set; }
         public DbSet<BugTracker.Models.Reply> Reply { get; set; }
-
+        public DbSet<BugTracker.Models.InboxNotification> InboxNotification { get; set; }
     }
 }

@@ -65,7 +65,7 @@ namespace BugTracker.Controllers
             ViewData["delete"] = delete;
             return View(await applicationDbContext.ToListAsync());
         }
-       
+
 
         // GET: Inboxes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -93,13 +93,20 @@ namespace BugTracker.Controllers
             ViewData["unread"] = unread;
             ViewData["delete"] = delete;
             inbox.IsSeen = true;
-            if (inbox.Replies.FirstOrDefault(t => t.InboxId == id) != null)
+
+            var notification = _context.InboxNotification.Where(n => !n.IsSeen && n.InboxId == id).ToList();
+            foreach (var item in notification)
             {
-                inbox.Replies.FirstOrDefault(t => t.InboxId == id).IsSeen = true;
+                item.IsSeen = true;
             }
-            
+            var replyIds = _context.Reply.Where(r => r.InboxId == id && r.ReceiverId == userId && !r.IsSeen).Select(r => r.Id).ToList();
+            var notification2 = _context.InboxNotification.Where(n => !n.IsSeen && replyIds.Contains(n.InboxId)).ToList();
+            foreach(var item in notification2)
+            {
+                item.IsSeen = true;
+            }
             await _context.SaveChangesAsync();
-        
+
 
             return View(inbox);
         }
@@ -268,6 +275,10 @@ namespace BugTracker.Controllers
 
                 await _emailSender.SendEmailAsync(devEmail, subject, message);
 
+
+                await _context.SaveChangesAsync();
+                var notification = new InboxNotification(inbox.Subject, inbox.ReceiverId, inbox.SenderId, inbox.Id);
+                _context.Add(notification);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));

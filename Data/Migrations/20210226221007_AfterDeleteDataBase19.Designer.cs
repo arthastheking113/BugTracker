@@ -3,15 +3,17 @@ using System;
 using BugTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210226221007_AfterDeleteDataBase19")]
+    partial class AfterDeleteDataBase19
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,40 +202,6 @@ namespace BugTracker.Data.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Inbox");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.InboxNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("InboxId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("ReceiverId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SenderId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("InboxNotification");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Invite", b =>
@@ -767,21 +735,6 @@ namespace BugTracker.Data.Migrations
                 });
 
             modelBuilder.Entity("BugTracker.Models.Inbox", b =>
-                {
-                    b.HasOne("BugTracker.Models.CustomUser", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId");
-
-                    b.HasOne("BugTracker.Models.CustomUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId");
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.InboxNotification", b =>
                 {
                     b.HasOne("BugTracker.Models.CustomUser", "Receiver")
                         .WithMany()

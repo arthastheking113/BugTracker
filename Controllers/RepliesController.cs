@@ -77,7 +77,11 @@ namespace BugTracker.Controllers
 
                 if (inbox.Replies.FirstOrDefault(t => t.InboxId == inboxId) != null)
                 {
-                    inbox.Replies.FirstOrDefault(i => i.InboxId == inboxId).IsSeen = false;
+                    var list = inbox.Replies.Where(i => i.InboxId == inboxId).ToList();
+                    foreach (var item in list)
+                    {
+                        item.IsSeen = false;
+                    }
                 }
                
                 await _context.SaveChangesAsync();
@@ -86,7 +90,14 @@ namespace BugTracker.Controllers
                 
                 reply.SenderId = userId;
                 reply.Created = DateTime.Now;
-                reply.ReceiverId = (await _context.Inbox.FirstOrDefaultAsync(r => r.Id == inboxId)).SenderId;
+                if ((await _context.Inbox.FirstOrDefaultAsync(r => r.Id == inboxId)).SenderId == userId)
+                {
+                    reply.ReceiverId = (await _context.Inbox.FirstOrDefaultAsync(r => r.Id == inboxId)).ReceiverId;
+                }
+                else
+                {
+                    reply.ReceiverId = (await _context.Inbox.FirstOrDefaultAsync(r => r.Id == inboxId)).SenderId;
+                }
                 _context.Add(reply);
                 await _context.SaveChangesAsync();
 
@@ -100,6 +111,10 @@ namespace BugTracker.Controllers
 
                 await _emailSender.SendEmailAsync(devEmail, subject, message);
 
+                await _context.SaveChangesAsync();
+
+                var notification = new InboxNotification(reply.Subject, reply.ReceiverId, reply.SenderId, reply.Id);
+                _context.Add(notification);
                 await _context.SaveChangesAsync();
 
 

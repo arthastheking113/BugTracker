@@ -98,15 +98,20 @@
                             var myNotifications = new List<Inbox>();
                             myNotifications.AddRange(ApplicationDbContext.Inbox.Where(i => replyParents.Contains(i.Id) || (i.ReceiverId == userId && i.IsSeen == false)));
 
+
+                            var replyList = new List<InboxNotification>();
+                            replyList.AddRange(ApplicationDbContext.InboxNotification.Where(n => !n.IsSeen && n.ReceiverId == userId));
+
+
                             var message = ApplicationDbContext.Inbox.Where(i => (i.ReceiverId == userId && i.IsSeen == false)).ToList();
                             var currentTime = DateTime.Now;
                         }
                         <li class="nav-item dropdown">
                             <a class="nav-link" data-toggle="dropdown" href="#">
                                 <i class="far fa-comments"></i>
-                                @if (myNotifications.Count != 0)
+                                @if (replyList.Count != 0)
                                 {
-                                    <span class="badge badge-danger navbar-badge">@myNotifications.Count</span>
+                                    <span class="badge badge-danger navbar-badge">@replyList.Count</span>
                                 }
                                 else
                                 {
@@ -116,7 +121,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 
-                                @foreach (var mes in myNotifications)
+                                @foreach (var mes in replyList)
                                 {
                                     var timeSpan = currentTime.Subtract(mes.Created);
                                     var eslapseSecond = timeSpan.Seconds;
@@ -141,7 +146,7 @@
                                     {
                                         commentdate = eslapseSecond.ToString() + " Seconds Ago";
                                     }
-                                    <a asp-controller="Inboxes" asp-action="Details" asp-route-id="@mes.Id" class="dropdown-item">
+                                    <a asp-controller="Inboxes" asp-action="Details" asp-route-id="@((ApplicationDbContext.Reply.FirstOrDefault(i => i.Id == mes.InboxId)).InboxId)" class="dropdown-item">
                                         <!-- Message Start -->
                                         <div class="media">
                                             <img src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync((mes.SenderId))).ImageData, (await UserManager.FindByIdAsync((mes.SenderId))).ContentType)" alt="User Avatar" class="img-size-50 mr-3 img-circle">
