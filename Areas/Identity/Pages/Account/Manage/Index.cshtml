@@ -42,7 +42,7 @@
                         <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.Input.ImageData)" class="form-control" />
                         <input type="hidden" name="contentType" value="@Model.Input.ContentType" class="form-control" />
                     }
-            
+
                     <div class="form-group">
                         <label asp-for="Input.ImageData" class="control-label"></label>
                         <input type="file" name="image" />
@@ -63,6 +63,10 @@
                     <div class="form-group">
                         <label asp-for="Username"></label>
                         <input asp-for="Username" class="form-control" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.CompanyId" class="control-label"></label>
+                        <select asp-for="Input.CompanyId" class="form-control" asp-items="@ViewBag.CompanyId"></select>
                     </div>
                     <div class="form-group">
                         <label asp-for="Input.PhoneNumber"></label>

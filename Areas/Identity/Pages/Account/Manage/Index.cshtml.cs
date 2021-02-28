@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BugTracker.Areas.Identity.Pages.Account.Manage
 {
@@ -84,7 +85,7 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             await LoadAsync(user);
             return Page();
         }
