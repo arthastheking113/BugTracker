@@ -5,7 +5,9 @@
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
 @using BugTracker.Services
+@using BugTracker.Service 
 @inject ICustomFileService CustomFileService 
+@inject IImageService imageService 
 
 @{
     ViewData["Title"] = "Details";
@@ -109,7 +111,7 @@
                         </div>
                         <div class="row">
                             <div class="col text-center">
-                                <button type="submit" class="btn btn-outline-secondary md-btn-flat">Submit</button>
+                                <button type="submit" class="btn btn-outline-secondary md-btn-flat">Upload</button>
                             </div>
                         </div>
                     </form>      
@@ -139,7 +141,7 @@
                                                 </div>
                                                 <div class="file-name">
                                                     <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
-                                                    <small>Size: @CustomFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                                    <small>Size: @CustomFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("dd MMMM yyyy - hh:mm tt")</span></small>
                                                 </div>
                                             </a>
                                         </div>
@@ -160,62 +162,153 @@
     </div>
 
     <div class="col">
+
+
         <div class="card">
             <div class="card-header bg-dark">
-                Comment
+                <h3 class="card-title">Ticket Histories</h3>
+                <div class="card-tools">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="Search Histories" id="searchTicketHistory">
+                        <div class="input-group-append">
+                            <div class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
-                <form asp-controller="Comments" asp-action="Create" method="post">
-                    <input type="hidden" name="TicketId" value="@Model.Id" />
-                    <input type="hidden" name="CustomUserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
-                    <div class="form-group">
-                        <textarea name="Content" class="form-control" rows="4"></textarea>
-                    </div>
+                @{
+                    var history = ApplicationDbContext.TicketHistory.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Created).ToList();
+                }
+                <table class="table" id="tickethistory">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Created
+                            </th>
+                            <th>
+                                Property
+                            </th>
+                            <th>
+                                Old Value
+                            </th>
+                            <th>
+                                New Value
+                            </th>
+                            <th>
+                                User
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in history)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                   @item.Created.ToString("dddd dd MMMM yyyy hh:mm tt")
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Property)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.OldValue)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.NewValue)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustomUser.FullName)
+                                </td>
 
-                    <input type="submit" value="Comment" class="btn btn-secondary" />
-                </form>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
+    
         <div class="row">
-            @{
-                var comments = ApplicationDbContext.Comment.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Updated).ToList();
-            }
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        @foreach (var comment in comments)
-                        {
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-dark">
+                        Comment
+                    </div>
+                    <div class="card-body">
+                        <form asp-controller="Comments" asp-action="Create" method="post">
+                            <input type="hidden" name="TicketId" value="@Model.Id" />
+                            <input type="hidden" name="CustomUserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
+                            <div class="form-group">
+                                <textarea name="Content" class="form-control" rows="4"></textarea>
+                            </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    @((await UserManager.FindByIdAsync(comment.CustomUserId)).FullName)
+                            <input type="submit" value="Comment" class="btn btn-secondary" />
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    @{
+                        var comments = ApplicationDbContext.Comment.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Updated).ToList();
+                    }
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                @foreach (var comment in comments)
+                                {
+
+                                <div class="media mb-4" style="border-bottom:2px solid rgb(28, 213, 219)">
+                                    <img class="d-flex mr-3 rounded-circle" style="width:5%" src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync(comment.CustomUserId)).ImageData,(await UserManager.FindByIdAsync(comment.CustomUserId)).ContentType)" alt="">
+                                    <div class="media-body">
+                                        <div class="row">
+                                            <div class="col text-left">
+                                                <h5 class="mt-0">@comment.CustomUser.FullName</h5>
+                                            </div>
+                                            @if (User.IsInRole("Administrator") || User.IsInRole("Moderator"))
+                                            {
+                                                <div class="col text-right">
+                                                    <a class="btn btn-secondary" asp-controller="PostComments" asp-action="Edit" asp-route-id="@comment.Id">Edit</a>
+                                                    <a class="btn btn-secondary" asp-controller="PostComments" asp-action="Delete" asp-route-id="@comment.Id">Delete</a>
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                        <div class="row" style="margin:0px;padding:0px;margin-bottom:15px">
+                                            <div class="col text-left" style="padding:0px 0px">
+                                                @Html.Raw(comment.Content)
+                                            </div>
+                                            <div class="col text-right">
+                                                <p style="margin:0px;padding:0px;">@comment.Created.ToString("dd MMMM yyyy - hh:mm tt")</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+                                   
+                                }
+
                             </div>
-                            <br />
-                            <div class="row">
-                                <div class="col">
-                                    @comment.Content
-                                </div>
-                                <div class="col text-right">
-                                    @comment.Updated
-                                </div>
-                            </div>
-                            <hr />
-                        }
+                        </div>
 
                     </div>
                 </div>
-
             </div>
+
+
         </div>
-
-
 
     </div>
     
 
 
 </div>
+
 <br />
 <br />
 

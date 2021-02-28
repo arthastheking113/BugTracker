@@ -30,12 +30,15 @@
                                             <div class="card card-default">
                                                 <div class="card-body" style="padding:0;">
                                                     <div class="row">
-                                                        <div class="col-12">
+                                                        <div class="col-12 text-center">
                                                             <div class="form-group">
+                                                                <label class="form-control bg-dark"><i class="fas fa-chevron-down"></i> Select Role <i class="fas fa-chevron-down"></i></label>
+
                                                                 <select class="form-control  select2bs4" style="width: 100%;" name="role" asp-items="@roles"></select>
                                                             </div>
+                                                            <br /><hr />
                                                             <div class="form-group">
-
+                                                                <label class="form-control bg-dark"><i class="fas fa-chevron-down"></i> Select Users <i class="fas fa-chevron-down"></i></label>
                                                                 <select class="duallistbox" size="15" multiple="multiple" name="userId" asp-items="@users"></select>
                                                             </div>
                                                             <!-- /.form-group -->

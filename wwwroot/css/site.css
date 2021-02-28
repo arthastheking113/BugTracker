@@ -85,10 +85,16 @@ body {
 #viewProject_filter {
     display: none;
 }
+#tickethistory_filter {
+    display: none;
+}
 #viewCompany_filter {
     display: none;
 }
 #notificationTable_filter {
+    display: none;
+}
+#useroverview_filter {
     display: none;
 }
 

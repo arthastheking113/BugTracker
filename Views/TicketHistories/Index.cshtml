@@ -43,7 +43,7 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
+                @item.Created.ToString("dd MMMM yyyy - hh:mm tt")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Property)

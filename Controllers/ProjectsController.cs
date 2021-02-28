@@ -96,6 +96,14 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
+            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name");
+
+
             return View(project);
         }
 

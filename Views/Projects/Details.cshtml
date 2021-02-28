@@ -36,10 +36,75 @@
             <div class="row">
                 <div class="col">
                     <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary"> <i class="fas fa-arrow-circle-left"></i> Back</a>
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">
+                        <i class="fas fa-plus-square"></i> Create New Ticket
+                    </button>
 
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create New Ticket</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form asp-controller="Tickets" asp-action="Create" method="post" >
+                                    <div class="modal-body">
+
+                                        <input type="hidden" class="form-control" name="projectId" value="@Model.Id" />
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <div class="form-group">
+                                            <label class="control-label">Name</label>
+                                            <input name="Name" class="form-control" />
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="control-label">Description</label>
+                                            <input name="Description" class="form-control" />
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" name="IsAssigned" type="checkbox" value="true" /> Assigned?
+                                            </label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label name="DeveloperId" class="control-label">Developer</label>
+                                            <select name="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId"></select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label name="StatusId" class="control-label">Status</label>
+                                            <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label name="PriorityId" class="control-label">Priority</label>
+                                            <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label name="TicketTypeId" class="control-label">TicketType</label>
+                                            <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="submit" class="btn btn-primary">Create</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
                     <a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>
-                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create" method="get"><i class="fas fa-plus-square"></i> Create New Ticket</a>
+
+         
                     <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets</a>
                 </div>
             </div>
@@ -121,15 +186,17 @@
                                             <span class="username">
                                                 <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First())</a>
                                             </span>
-                                            <span class="description">Shared publicly - @ticket.Created</span>
+                                            <span class="description">Shared publicly - @ticket.Created.ToString("dd MMMM yyyy - hh:mm tt")</span>
                                         </div>
                                         <!-- /.user-block -->
-                                        <p>
+                                        <a class="text-dark" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
                                             @ticket.Description
-                                        </p>
-                                        <div class="row">
-                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-comment-dots"></i> @ticket.Comments.Count Comments </a>
-                                            <a asp-controller="Tickets  " asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm"> <i class="fas fa-file"></i> @ticket.Comments.Count Files</a>
+                                        </a>
+                            
+                                        <div class="row mt-2">
+                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-comment-dots"></i> @ticket.Comments.Count Comments </a>
+                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"> <i class="fas fa-file"></i> @((ApplicationDbContext.Attachment.Where(a => a.TicketId == ticket.Id).ToList()).Count) Files Attached </a>  
+                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="link-black text-sm mr-2"><i class="fas fa-user-edit"></i> @((ApplicationDbContext.TicketHistory.Where(a => a.TicketId == ticket.Id).ToList()).Count) Changes </a>
                                         </div>
 
                                     </div>

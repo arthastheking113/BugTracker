@@ -39,6 +39,12 @@ namespace BugTracker.Controllers
         {
             return View();
         }
+
+        public IActionResult UserOverview()
+        {
+            var user = _dbContext.Users.ToList();
+            return View(user);
+        }
         public IActionResult Contact()
         {
             return View();

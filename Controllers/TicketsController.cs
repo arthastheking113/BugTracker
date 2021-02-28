@@ -84,8 +84,9 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
-        public IActionResult Create()
+        public IActionResult Create(int? projectId)
         {
+            ViewData["projectIdfromView"] = projectId;
             ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
@@ -104,7 +105,11 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
-              
+                var Id = ticket.ProjectId;
+                if (ticket.IsAssigned == null)
+                {
+                    ticket.IsAssigned = false;
+                }
                 ticket.OwnnerId = _userManager.GetUserId(User);
                 ticket.Created = DateTime.Now;
                 ticket.Updated = ticket.Created;
@@ -139,7 +144,7 @@ namespace BugTracker.Controllers
 
 
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","Projects",new { Id });
             }
             ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
