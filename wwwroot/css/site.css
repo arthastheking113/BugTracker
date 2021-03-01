@@ -97,6 +97,9 @@ body {
 #useroverview_filter {
     display: none;
 }
+#viewUserRole_filter {
+    display: none;
+}
 
 .info-box {
     transition: 0.4s;

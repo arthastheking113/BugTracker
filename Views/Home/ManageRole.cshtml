@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col">
                             <form asp-action="ManageRole" method="post">
-                                <div class="form-group">
+                             
                                     <div class="row">
                                         <div class="col">
                                             <div class="card card-default">
@@ -51,17 +51,85 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
+                         
+                               
                                     <div class="row">
                                         <div class="col">
                                             <button type="submit" class="btn btn-secondary form-control">Add</button>
                                         </div>
                                     </div>
-                                </div>
+                                
                             </form>
                         </div>
-                        <div class="col-5">
+                        <div class="col-6">
+
+                            <div class="card">
+                                <div class="card-header bg-dark">
+                                    <h3 class="card-title">All Projects</h3>
+                                    <div class="card-tools">
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control" placeholder="Search Users/Roles" id="searchUserRole">
+                                            <div class="input-group-append">
+                                                <div class="btn btn-primary">
+                                                    <i class="fas fa-search"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped projects table-hover" id="viewUserRole">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                   User Name
+                                                </th>
+                                                <th>
+                                                    Roles
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var user in people)
+                                            {
+                                            <tr>
+                                                <td>
+                                                    @user.FullName
+                                                </td>
+                                                <td>
+                                                    @foreach (var roless in (await roleService.ListUserRoleAsync(user)))
+                                                    {
+                                                        <div class="row">
+                                                            @roless
+                                                        </div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+
+
+                            @*<div class="row">
+                                <div class="col-1"></div>
+                                <div class="col"><b>User Name</b></div>
+                                <div class="col"></div>
+                                <div class="col-3">
+
+
+                                    <div class="row">
+                                        <b>Roles</b>
+                                    </div>
+
+                                </div>
+                                <div class="col-1"></div>
+                            </div><br />
+                            <hr />
+
                             @foreach (var user in people)
                             {
                                 <div class="row">
@@ -79,7 +147,7 @@
                                     <div class="col-1"></div>
                                 </div>
                                 <hr />
-                            }
+                            }*@
                         </div>
                     </div>
                 </div>

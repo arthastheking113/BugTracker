@@ -33,7 +33,7 @@ function display_ct() {
 
 
  $(function () {
-     oTable = $("#example1,#homeTable,#notificationTable,#viewTicket,#viewProject,#viewCompany,#tickethistory,#useroverview").DataTable({
+     oTable = $("#example1,#homeTable,#notificationTable,#viewTicket,#viewProject,#viewCompany,#tickethistory,#useroverview,#viewUserRole").DataTable({
       "responsive": true,
       "autoWidth": false,
         "paging": true,
@@ -51,7 +51,7 @@ function display_ct() {
 
   
   });
-$('#myInputTextField,#myInputHomeField,#inputNotification,#searchTicket,#searchProject,#searchCompany,#searchTicketHistory,#searchUser').keyup(function () {
+$('#myInputTextField,#myInputHomeField,#inputNotification,#searchTicket,#searchProject,#searchCompany,#searchTicketHistory,#searchUser,#searchUserRole').keyup(function () {
     oTable.search($(this).val()).draw();
 });
 
