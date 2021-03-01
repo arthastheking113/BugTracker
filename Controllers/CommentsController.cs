@@ -9,6 +9,8 @@ using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
