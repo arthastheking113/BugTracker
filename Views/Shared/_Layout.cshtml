@@ -50,7 +50,7 @@
 </head>
 <body class="sidebar-mini layout-fixed sidebar-collapse" onload=display_ct();  style="background-image: url('@ViewData["background"]');width:100%;height:auto; background-repeat: no-repeat;background-attachment: fixed;background-size: cover;">
 
-    <div >
+    <div>
         <!-- Sidebar -->
 
         @if (SignInManager.IsSignedIn(User))
@@ -82,8 +82,8 @@
 
                     <!-- SEARCH FORM -->
                     <form class="form-inline ml-3 mr-4">
-                        <div class="input-group input-group-sm  ">                           
-                            <div class="gcse-search"></div>     
+                        <div class="input-group input-group-sm  ">
+                            <div class="gcse-search"></div>
                         </div>
                     </form>
 
@@ -168,11 +168,11 @@
                                 <a asp-controller="Inboxes" asp-action="Index" class="dropdown-item dropdown-footer">See All Messages</a>
                             </div>
                         </li>
-                        @{ 
+                        @{
 
                             var notification = ApplicationDbContext.Notification.Where(s => s.IsViewed == false).Where(n => n.RecipientId == userId).ToList();
                             var number_of_notification = notification.Count;
-                           
+
 
                             //-------last notification time section---------------
 
@@ -224,7 +224,7 @@
                                     }
                                     <a asp-controller="Notifications" asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">
                                         <i class="fas fa-file mr-2"></i> @item.Name
-                                    <span class="float-right text-muted text-sm">@commentdate2</span>
+                                        <span class="float-right text-muted text-sm">@commentdate2</span>
                                     </a>
                                     <br />
                                     <div class="dropdown-divider"></div>
@@ -233,7 +233,6 @@
                                 <a asp-controller="Notifications" asp-action="Index" class="dropdown-item dropdown-footer">See All Notifications</a>
                             </div>
                         </li>
-
                     </ul>
                     <ul class="navbar-nav ml-auto mr-auto">
                         <li class="nav-item dropdown">
@@ -284,7 +283,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-    with font-awesome or any other icon font library -->
+                        with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -567,7 +566,7 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col">
-                                            <a href="https://www.linkedin.com/in/duy-lan-le-445262163/"  target="_blank" class="btn btn-primary btn-block text-white">
+                                            <a href="https://www.linkedin.com/in/duy-lan-le-445262163/" target="_blank" class="btn btn-primary btn-block text-white">
                                                 <i class="fab fa-linkedin"></i> Linked
                                             </a>
                                         </div>
@@ -607,11 +606,11 @@
                 </main>
             </div>
         }
-            <footer class="footer text-muted text-center" style="border:none;background-color:#ffffff00">
-                <div class="container" style="border:none;background-color:#ffffff00">
-                    &copy; 2021 - BugTracker - Made by <a href="https://duylanle-portfolio.netlify.app/" target="_blank">Duy Lan Le</a>
-                </div>
-            </footer>
+        <footer class="footer text-muted text-center" style="border:none;background-color:#ffffff00">
+            <div class="container" style="border:none;background-color:#ffffff00">
+                &copy; 2021 - BugTracker - Made by <a href="https://duylanle-portfolio.netlify.app/" target="_blank">Duy Lan Le</a>
+            </div>
+        </footer>
 
     </div>
 
