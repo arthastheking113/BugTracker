@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,13 @@ namespace BugTracker.Controllers
 
         public IActionResult Index()
         {
+            ViewData["CompanyId"] = new SelectList(_dbContext.Company, "Id", "Name");
+            ViewData["DeveloperId"] = new SelectList(_dbContext.Users, "Id", "FullName");
+            ViewData["OwnnerId"] = new SelectList(_dbContext.Users, "Id", "FullName");
+            ViewData["PriorityId"] = new SelectList(_dbContext.Priority, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_dbContext.Project, "Id", "Name");
+            ViewData["StatusId"] = new SelectList(_dbContext.Status, "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(_dbContext.TicketType, "Id", "Name");
             return View();
         }
 

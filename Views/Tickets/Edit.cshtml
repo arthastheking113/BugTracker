@@ -1,5 +1,14 @@
 ﻿@model BugTracker.Models.Ticket
-
+@using Microsoft.AspNetCore.Identity
+@using BugTracker.Data
+@using BugTracker.Data.Enums
+@inject ApplicationDbContext ApplicationDbContext
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
+@using BugTracker.Services
+@using BugTracker.Service
+@inject ICustomFileService CustomFileService
+@inject IImageService imageService
 @{
     ViewData["Title"] = "Edit";
 }
@@ -31,44 +40,79 @@
                         </div>
 
                         <input type="hidden" asp-for="Created" class="form-control" />
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
-                            </label>
-                        </div>
 
-                        <div class="form-group">
-                            <label asp-for="DeveloperId" class="control-label"></label>
-                            <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId"></select>
-                            <span asp-validation-for="DeveloperId" class="text-danger"></span>
-                        </div>
+                        @if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString())))
+                        {
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DeveloperId" class="control-label"></label>
+                                <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId"></select>
+                                <span asp-validation-for="DeveloperId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ProjectId" class="control-label"></label>
+                                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
+                                <span asp-validation-for="ProjectId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TicketTypeId" class="control-label"></label>
+                                <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PriorityId" class="control-label"></label>
+                                <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                <span asp-validation-for="PriorityId" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" disabled asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DeveloperId" class="control-label"></label>
+                                <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId" disabled></select>
+                                <span asp-validation-for="DeveloperId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ProjectId" class="control-label"></label>
+                                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId" disabled></select>
+                                <span asp-validation-for="ProjectId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TicketTypeId" class="control-label"></label>
+                                <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId" disabled></select>
+                                <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PriorityId" class="control-label"></label>
+                                <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId" disabled></select>
+                                <span asp-validation-for="PriorityId" class="text-danger"></span>
+                            </div>
+                        }
+
 
                         <input type="hidden" asp-for="OwnnerId" class="form-control" />
 
-                        <div class="form-group">
-                            <label asp-for="ProjectId" class="control-label"></label>
-                            <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
-                            <span asp-validation-for="ProjectId" class="text-danger"></span>
-                        </div>
+
                         <div class="form-group">
                             <label asp-for="StatusId" class="control-label"></label>
                             <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
                             <span asp-validation-for="StatusId" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="PriorityId" class="control-label"></label>
-                            <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
-                            <span asp-validation-for="PriorityId" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="TicketTypeId" class="control-label"></label>
-                            <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
-                            <span asp-validation-for="TicketTypeId" class="text-danger"></span>
-                        </div>
-                        
+
+
+
                         <div class="form-group">
                             <input type="submit" value="Save" class="btn btn-success float-left mr-2">
-                            <a  asp-action="Index" class="btn btn-secondary">Cancel</a>
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
                         </div>
 
                     </div>

@@ -12,9 +12,12 @@ using BugTracker.Data.Enums;
 using Microsoft.AspNetCore.Http;
 using BugTracker.Service;
 using System.Drawing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
+   
+    [Authorize(Roles = "Admin, ProjectManager")]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
