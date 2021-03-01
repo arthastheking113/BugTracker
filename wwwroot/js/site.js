@@ -4,6 +4,8 @@
 }
 
 function display_ct() {
+    document.getElementById('gsc-i-id1').placeholder = 'Search...';
+    //$("#gsc-i-id1").addClass("form-control form-control-navbar");
     var x = new Date()
     let options = {
         hour: "2-digit", minute: "2-digit",
@@ -12,6 +14,7 @@ function display_ct() {
     };
     document.getElementById('ct').innerText = x.toLocaleTimeString("en-us", options);
     display_c();
+
 }
 
 //document.getElementById("aboutButton").addEventListener("click", function () {

@@ -101,7 +101,35 @@ body {
     display: none;
 }
 
+/*Begin google search bar*/
+.gsc-control-cse {
+    padding: 0 !important;
+    border-radius: 40% !important;
+   /* width: 120% !important;*/
+   
+}
+/*.gsc-control-cse-en {
+    width: 120% !important;
+}*/
+.gsib_a {
+    border-radius: 10% !important;
+}
 
+.gsc-input {
+    /* background-color: #fcfcfc !important;*/
+   
+    padding-right: 0 !important;
+    font-size: 100% !important;
+}
+.gsc-search-button {
+    margin-left: 0 !important;
+}
+
+.gsc-search-button-v2 {
+    padding: 6px 14px !important;
+    font-size: 85% !important;
+}
+/* End google search bar*/
 .info-box {
     transition: 0.4s;
 }
