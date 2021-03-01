@@ -304,10 +304,10 @@
                                                @(ticket.Description)
                                             </td>
                                             <td>
-                                                @ticket.Created.ToString("dddd, dd MMMM yyyy")
+                                                @ticket.Created.ToString("dd MMMM yyyy - hh:mm tt")
                                             </td>
                                             <td>
-                                                @(ticket.Updated)
+                                                @(ticket.Updated.ToString("dd MMMM yyyy - hh:mm tt"))
                                             </td>
                                             <td>
                                                 @((projects.FirstOrDefault(p => p.Id == ticket.ProjectId)).Name)

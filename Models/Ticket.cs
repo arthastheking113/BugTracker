@@ -21,7 +21,7 @@ namespace BugTracker.Models
         public bool IsAssigned { get; set; }
 
         [Display(Name = "Updated")]
-        public DateTimeOffset? Updated { get; set; }
+        public DateTimeOffset Updated { get; set; }
 
         [Display(Name = "Developer")]
         public string DeveloperId { get; set; }

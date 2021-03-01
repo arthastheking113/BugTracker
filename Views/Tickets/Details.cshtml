@@ -39,13 +39,13 @@
                         @Html.DisplayNameFor(model => model.Created)
                     </dt>
                     <dd class="col-sm-10">
-                        @Model.Created.ToString("dddd, dd MMMM yyyy")
+                        @Model.Created.ToString("dddd dd MMMM yyyy hh:mm tt")
                     </dd>
                     <dt class="col-sm-2">
                         @Html.DisplayNameFor(model => model.Updated)
                     </dt>
                     <dd class="col-sm-10">
-                        @Model.Updated.ToString()
+                        @Model.Updated.ToString("dddd dd MMMM yyyy hh:mm tt")
                     </dd>
                     <dt class="col-sm-2">
                         @Html.DisplayNameFor(model => model.Developer)
@@ -239,14 +239,14 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header bg-dark">
-                        Comment
+                        Comments (@ApplicationDbContext.Comment.Where(c => c.TicketId == Model.Id).ToList().Count)
                     </div>
                     <div class="card-body">
                         <form asp-controller="Comments" asp-action="Create" method="post">
                             <input type="hidden" name="TicketId" value="@Model.Id" />
                             <input type="hidden" name="CustomUserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
                             <div class="form-group">
-                                <textarea name="Content" class="form-control" rows="4"></textarea>
+                                <textarea id="Content" name="Content" class="form-control" rows="4"></textarea>
                             </div>
 
                             <input type="submit" value="Comment" class="btn btn-secondary" />
@@ -256,13 +256,36 @@
                 <div class="row">
                     @{
                         var comments = ApplicationDbContext.Comment.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Updated).ToList();
+                        var currentTime = DateTime.Now;
                     }
                     <div class="container">
                         <div class="row">
                             <div class="col">
                                 @foreach (var comment in comments)
                                 {
+                                    var timeSpan = currentTime.Subtract(comment.Created);
+                                    var eslapseSecond = timeSpan.Seconds;
+                                    var eslapseMinute = timeSpan.Minutes;
+                                    var eslapseHours = timeSpan.Hours;
+                                    var eslapseDate = timeSpan.Days;
+                                    string commentdate;
+                                    if (eslapseDate >= 1)
+                                    {
+                                        commentdate = eslapseDate.ToString() + " Days Ago";
 
+                                    }
+                                    else if (eslapseHours >= 1)
+                                    {
+                                        commentdate = eslapseHours.ToString() + " Hours Ago";
+                                    }
+                                    else if (eslapseMinute >= 1)
+                                    {
+                                        commentdate = eslapseMinute.ToString() + " Minutes Ago";
+                                    }
+                                    else
+                                    {
+                                        commentdate = eslapseSecond.ToString() + " Seconds Ago";
+                                    }
                                 <div class="media mb-4" style="border-bottom:2px solid rgb(28, 213, 219)">
                                     <img class="d-flex mr-3 rounded-circle" style="width:5%" src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync(comment.CustomUserId)).ImageData,(await UserManager.FindByIdAsync(comment.CustomUserId)).ContentType)" alt="">
                                     <div class="media-body">
@@ -285,7 +308,7 @@
                                                 @Html.Raw(comment.Content)
                                             </div>
                                             <div class="col text-right">
-                                                <p style="margin:0px;padding:0px;">@comment.Created.ToString("dd MMMM yyyy - hh:mm tt")</p>
+                                                <p style="margin:0px;padding:0px;">@commentdate</p>
                                             </div>
                                         </div>
                                     </div>

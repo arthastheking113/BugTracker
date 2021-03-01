@@ -80,10 +80,10 @@
                                     @Html.DisplayFor(modelItem => item.Description)
                                 </td>
                                 <td>
-                                    @item.Created.ToString("dddd, dd MMMM yyyy")
+                                    @item.Created.ToString("dd MMMM yyyy - hh:mm tt")
                                 </td>
                                 <td>
-                                    @item.Updated.ToString()
+                                    @item.Updated.ToString("dd MMMM yyyy - hh:mm tt")
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Developer.FullName)
