@@ -37,7 +37,8 @@ function display_ct() {
       "responsive": true,
       "autoWidth": false,
         "paging": true,
-        "searching": true,
+         "searching": true,
+
     });
     $('#example2').DataTable({
       "paging": true,
