@@ -42,7 +42,7 @@ namespace BugTracker.Controllers
             {
                 result.Labels.Add(priority.Name);
                 result.Data.Add(_context.Ticket.Where(t => t.PriorityId == priority.Id).Count());
-                if (count < 10)
+                if (count < 11)
                 {
                     result.BackgroundColor.Add(_backgroundColors[count]);
                 }
