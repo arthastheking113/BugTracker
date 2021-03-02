@@ -1,4 +1,58 @@
-﻿function display_c() {
+﻿
+(function ($) {
+    "use strict";
+
+    var nav = $('nav');
+    var navHeight = nav.outerHeight();
+
+    $('.navbar-toggler').on('click', function () {
+        if (!$('#mainNav').hasClass('navbar-reduce')) {
+            $('#mainNav').addClass('navbar-reduce');
+        }
+    })
+
+    // Preloader
+    $(window).on('load', function () {
+        if ($('#preloader').length) {
+            $('#preloader').delay(10).fadeOut('slow', function () {
+                $(this).remove();
+            });
+        }
+    });
+
+    // Back to top button
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 100) {
+            $('.back-to-top').fadeIn('slow');
+        } else {
+            $('.back-to-top').fadeOut('slow');
+        }
+    });
+    $('.back-to-top').click(function () {
+        $('html, body').animate({
+            scrollTop: 0
+        }, 1500, 'easeInOutExpo');
+        return false;
+    });
+
+    // Closes responsive menu when a scroll trigger link is clicked
+    $('.js-scroll').on("click", function () {
+        $('.navbar-collapse').collapse('hide');
+    });
+
+    // Activate scrollspy to add active class to navbar items on scroll
+    $('body').scrollspy({
+        target: '#mainNav',
+        offset: navHeight
+    });
+    /*--/ End Scrolling nav /--*/
+
+
+})(jQuery);
+
+
+
+function display_c() {
     var refresh = 1000; // Refresh rate in milli seconds
     mytime = setTimeout('display_ct()', refresh)
 }
@@ -89,5 +143,4 @@ $(function () {
 
 
 
-// Write your JavaScript code.
-$('expandbutton').trigger('mouseenter') 
+
