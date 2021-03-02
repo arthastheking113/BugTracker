@@ -22,17 +22,73 @@ namespace BugTracker.Controllers
         private readonly ICustomRoleService _customRoleService;
         private readonly ApplicationDbContext _dbContext;
         private readonly IEmailSender _emailSender;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ICustomRoleService customRoleService, ApplicationDbContext dbContext, IEmailSender emailSender)
+        public HomeController(ILogger<HomeController> logger, ICustomRoleService customRoleService, ApplicationDbContext dbContext, IEmailSender emailSender, UserManager<CustomUser> userManager)
         {
             _logger = logger;
            _customRoleService = customRoleService;
             _dbContext = dbContext;
             _emailSender = emailSender;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
+            var currentTime = DateTime.Now;
+            var role = await _customRoleService.ListUserRoleAsync((await _userManager.GetUserAsync(User)));
+            var userId = (await _userManager.GetUserAsync(User)).Id;
+            if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager") || role.ToList().Contains("Submitter"))
+            {
+                var userTicket = _dbContext.Ticket.Where(t => t.OwnnerId == userId || t.DeveloperId == userId).ToList();
+                ViewData["userTicket"] = userTicket;
+            }
+            else
+            {
+                var userTicket = _dbContext.Ticket.Where(t => t.IsAssigned).Where(t => t.OwnnerId == userId || t.DeveloperId == userId).ToList();
+                ViewData["userTicket"] = userTicket;
+            }
+
+
+            var projects = _dbContext.Project.ToList();
+           
+           
+          
+            var number_of_project = projects.Count;
+            var number_of_ticket = _dbContext.Ticket.ToList().Count;
+            var number_of_user = _dbContext.Users.ToList().Count;
+            var number_of_close_ticket = _dbContext.Ticket.Where(t => t.StatusId == 5).ToList().Count;
+            var persent_of_ticket_done = number_of_close_ticket * 100 / number_of_ticket;
+            var number_of_urgent_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 1).ToList().Count;
+            var number_of_high_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 2).ToList().Count;
+            var number_of_medium_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 3).ToList().Count;
+            var number_of_low_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 4).ToList().Count;
+            var number_unassign_ticket = _dbContext.Ticket.Where(t => t.IsAssigned == false).ToList().Count;
+            var number_new_ticket = _dbContext.Ticket.Where(t => t.Created >= currentTime.AddDays(-7)).ToList().Count;
+            var number_resolve_ticket = _dbContext.Ticket.Where(t => t.StatusId == 5).Where(t => t.Updated >= currentTime.AddDays(-7)).ToList().Count;
+            var number_of_company = _dbContext.Company.ToList().Count;
+
+
+            ViewData["currentTime"] = currentTime;
+            ViewData["role"] = role;
+            ViewData["userId"] = userId;
+            ViewData["projects"] = projects;
+            ViewData["number_of_project"] = number_of_project;
+            ViewData["number_of_ticket"] = number_of_ticket;
+            ViewData["number_of_user"] = number_of_user;
+            ViewData["number_of_close_ticket"] = number_of_close_ticket;
+            ViewData["persent_of_ticket_done"] = persent_of_ticket_done;
+            ViewData["number_of_urgent_ticket"] = number_of_urgent_ticket;
+            ViewData["number_of_high_ticket"] = number_of_high_ticket;
+            ViewData["number_of_medium_ticket"] = number_of_medium_ticket;
+            ViewData["number_of_low_ticket"] = number_of_low_ticket;
+            ViewData["number_unassign_ticket"] = number_unassign_ticket;
+            ViewData["number_new_ticket"] = number_new_ticket;
+            ViewData["number_resolve_ticket"] = number_resolve_ticket;
+            ViewData["number_of_company"] = number_of_company;
+
+
+
             ViewData["CompanyId"] = new SelectList(_dbContext.Company, "Id", "Name");
             ViewData["DeveloperId"] = new SelectList(_dbContext.Users, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_dbContext.Users, "Id", "FullName");
