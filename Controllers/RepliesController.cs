@@ -9,9 +9,11 @@ using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class RepliesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,14 +26,14 @@ namespace BugTracker.Controllers
             _userManager = userManager;
             _emailSender = emailSender;
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Replies
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Reply.Include(r => r.Inbox).Include(r => r.Receiver).Include(r => r.Sender);
             return View(await applicationDbContext.ToListAsync());
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Replies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -52,7 +54,7 @@ namespace BugTracker.Controllers
 
             return View(reply);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Replies/Create
         public IActionResult Create()
         {
@@ -133,7 +135,7 @@ namespace BugTracker.Controllers
             ViewData["SenderId"] = new SelectList(_context.Users, "Id", "Id", reply.SenderId);
             return View(reply);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Replies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -156,6 +158,7 @@ namespace BugTracker.Controllers
         // POST: Replies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Message,Created,Subject,IsSeen,IsDeleted,SenderId,ReceiverId,InboxId")] Reply reply)
@@ -190,7 +193,7 @@ namespace BugTracker.Controllers
             ViewData["SenderId"] = new SelectList(_context.Users, "Id", "Id", reply.SenderId);
             return View(reply);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Replies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -222,7 +225,7 @@ namespace BugTracker.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        [Authorize(Roles = "Admin")]
         private bool ReplyExists(int id)
         {
             return _context.Reply.Any(e => e.Id == id);

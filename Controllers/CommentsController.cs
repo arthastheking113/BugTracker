@@ -14,6 +14,7 @@ using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -163,6 +163,7 @@ namespace BugTracker.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRole(List<string> userId, string role)

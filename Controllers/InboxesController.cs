@@ -9,20 +9,25 @@ using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class InboxesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly ILogger<InboxesController> _logger;
 
-        public InboxesController(ApplicationDbContext context, UserManager<CustomUser> userManager, IEmailSender emailSender)
+        public InboxesController(ApplicationDbContext context, UserManager<CustomUser> userManager, IEmailSender emailSender, ILogger<InboxesController> logger)
         {
             _context = context;
             _userManager = userManager;
             _emailSender = emailSender;
+            _logger = logger;
         }
 
         // GET: Inboxes
@@ -70,11 +75,12 @@ namespace BugTracker.Controllers
         // GET: Inboxes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var userId = _userManager.GetUserId(User);
             if (id == null)
             {
                 return NotFound();
             }
-            var inbox = await _context.Inbox
+            var inbox = await _context.Inbox.Where(i => i.ReceiverId == userId || i.SenderId == userId)
                 .Include(i => i.Receiver)
                 .Include(i => i.Sender)
                 .Include(i => i.Replies)
@@ -84,7 +90,7 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var userId = _userManager.GetUserId(User);
+          
             var applicationDbContext = _context.Inbox.Where(i => i.IsDeleted == false).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender);
             var unread = (await applicationDbContext.Where(i => (i.IsSeen == false && i.ReceiverId == userId)).Include(i => i.Receiver).Include(i => i.Sender).ToListAsync()).Count;
             var delete = (_context.Inbox.Where(i => i.IsDeleted == true).Where(i => i.ReceiverId == userId).Include(i => i.Receiver).Include(i => i.Sender)).Count();
@@ -287,7 +293,7 @@ namespace BugTracker.Controllers
             ViewData["SenderId"] = new SelectList(_context.Users, "Id", "FullName", inbox.SenderId);
             return View(inbox);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Inboxes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -309,6 +315,7 @@ namespace BugTracker.Controllers
         // POST: Inboxes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Message,Created,Subject,IsSeen,SenderId,ReceiverId")] Inbox inbox)
@@ -344,6 +351,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Inboxes/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

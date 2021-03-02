@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace BugTracker.Controllers
 {
    
-    [Authorize(Roles = "Admin, ProjectManager")]
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -32,7 +32,7 @@ namespace BugTracker.Controllers
             _roleService = roleService;
             _imageService = imageService;
         }
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> ManagerUserProject()
         {
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
@@ -42,6 +42,7 @@ namespace BugTracker.Controllers
 
             return View();
         }
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManagerUserProject(string ProjectManagerId, int ProjectId, List<string> DevelopersId, List<string> SubmittersId)
@@ -109,7 +110,7 @@ namespace BugTracker.Controllers
 
             return View(project);
         }
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         // GET: Projects/Create
         public IActionResult Create()
         {
@@ -120,6 +121,7 @@ namespace BugTracker.Controllers
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image)
@@ -138,6 +140,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -157,6 +160,7 @@ namespace BugTracker.Controllers
         // POST: Projects/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image, Byte[]? imageData, string contentType)
@@ -211,7 +215,7 @@ namespace BugTracker.Controllers
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
             return View(project);
         }
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -232,6 +236,7 @@ namespace BugTracker.Controllers
         }
 
         // POST: Projects/Delete/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

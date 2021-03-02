@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Identity;
 using BugTracker.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BugTracker.Data.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -90,6 +92,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize(Roles = "Admin, ProjectManager, Submitter")]
         public IActionResult Create(int? projectId)
         {
             ViewData["projectIdfromView"] = projectId;
@@ -234,6 +237,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -258,6 +262,7 @@ namespace BugTracker.Controllers
         }
 
         // POST: Tickets/Delete/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
