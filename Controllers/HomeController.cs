@@ -113,6 +113,8 @@ namespace BugTracker.Controllers
             return View();
         }
 
+
+        [Authorize(Roles = "Admin")]
         public IActionResult UserOverview()
         {
             var user = _dbContext.Users.ToList();
@@ -158,13 +160,14 @@ namespace BugTracker.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult ManageRole()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRole(List<string> userId, string role)
         {

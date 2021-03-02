@@ -34,6 +34,12 @@ namespace BugTracker.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
+            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name");
             if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString())|| await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
             {
                 var applicationDbContext = _context.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
@@ -54,11 +60,11 @@ namespace BugTracker.Controllers
 
          
         }
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> ProjectIndex(int? id)
         {
           
-            var applicationDbContext = _context.Ticket.Where(u => u.ProjectId == id).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+            var applicationDbContext = _context.Ticket.Where(u => u.ProjectId == id).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Updated);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -119,6 +125,7 @@ namespace BugTracker.Controllers
                 {
                     ticket.IsAssigned = false;
                 }
+
                 ticket.OwnnerId = _userManager.GetUserId(User);
                 ticket.Created = DateTime.Now;
                 ticket.Updated = ticket.Created;
@@ -151,9 +158,16 @@ namespace BugTracker.Controllers
                     await _context.SaveChangesAsync();
                 }
 
+                if (!(await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
+                {
+                    return RedirectToAction("Details", "Projects", new { Id });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
 
-
-                return RedirectToAction("Details","Projects",new { Id });
+                
             }
             ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
