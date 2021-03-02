@@ -37,6 +37,12 @@ namespace BugTracker.Controllers
                 var applicationDbContext = _context.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
                 return View(await applicationDbContext.ToListAsync());
             }
+            else if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString()))
+            {
+                var userId = _userManager.GetUserId(User);
+                var applicationDbContext = _context.Ticket.Where(u => u.OwnnerId == userId).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+                return View(await applicationDbContext.ToListAsync());
+            }
             else
             {
                 var userId = _userManager.GetUserId(User);

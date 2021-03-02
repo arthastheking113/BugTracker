@@ -1,4 +1,5 @@
 ﻿using BugTracker.Data;
+using BugTracker.Data.Enums;
 using BugTracker.Models;
 using BugTracker.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,22 +40,9 @@ namespace BugTracker.Controllers
             var currentTime = DateTime.Now;
             var role = await _customRoleService.ListUserRoleAsync((await _userManager.GetUserAsync(User)));
             var userId = (await _userManager.GetUserAsync(User)).Id;
-            if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager") || role.ToList().Contains("Submitter"))
-            {
-                var userTicket = _dbContext.Ticket.Where(t => t.OwnnerId == userId || t.DeveloperId == userId).ToList();
-                ViewData["userTicket"] = userTicket;
-            }
-            else
-            {
-                var userTicket = _dbContext.Ticket.Where(t => t.IsAssigned).Where(t => t.OwnnerId == userId || t.DeveloperId == userId).ToList();
-                ViewData["userTicket"] = userTicket;
-            }
-
-
             var projects = _dbContext.Project.ToList();
            
-           
-          
+              
             var number_of_project = projects.Count;
             var number_of_ticket = _dbContext.Ticket.ToList().Count;
             var number_of_user = _dbContext.Users.ToList().Count;
@@ -96,7 +85,27 @@ namespace BugTracker.Controllers
             ViewData["ProjectId"] = new SelectList(_dbContext.Project, "Id", "Name");
             ViewData["StatusId"] = new SelectList(_dbContext.Status, "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_dbContext.TicketType, "Id", "Name");
-            return View();
+
+
+
+            if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString()) || await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+            {
+                var applicationDbContext = _dbContext.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+                return View(await applicationDbContext.ToListAsync());
+            }
+            else if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString()))
+            {
+          
+                var applicationDbContext = _dbContext.Ticket.Where(u => u.OwnnerId == userId).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+                return View(await applicationDbContext.ToListAsync());
+            }
+            else
+            {
+             
+                var applicationDbContext = _dbContext.Ticket.Where(u => u.DeveloperId == userId).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
+                return View(await applicationDbContext.ToListAsync());
+            }
+       
         }
 
         public IActionResult Privacy()
