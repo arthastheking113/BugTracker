@@ -46,12 +46,12 @@ namespace BugTracker.Controllers
             var number_of_project = projects.Count;
             var number_of_ticket = _dbContext.Ticket.ToList().Count;
             var number_of_user = _dbContext.Users.ToList().Count;
-            var number_of_close_ticket = _dbContext.Ticket.Where(t => t.StatusId == 5).ToList().Count;
+            var number_of_close_ticket = _dbContext.Ticket.Where(t => t.StatusId == (_dbContext.Status.FirstOrDefault(t => t.Name == "Close").Id)).ToList().Count;
             var persent_of_ticket_done = number_of_close_ticket * 100 / number_of_ticket;
-            var number_of_urgent_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 1).ToList().Count;
-            var number_of_high_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 2).ToList().Count;
-            var number_of_medium_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 3).ToList().Count;
-            var number_of_low_ticket = _dbContext.Ticket.Where(t => t.PriorityId == 4).ToList().Count;
+            var number_of_urgent_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Urgent").Id)).ToList().Count;
+            var number_of_high_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "High").Id)).ToList().Count;
+            var number_of_medium_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Medium").Id)).ToList().Count;
+            var number_of_low_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Low").Id)).ToList().Count;
             var number_unassign_ticket = _dbContext.Ticket.Where(t => t.IsAssigned == false).ToList().Count;
             var number_new_ticket = _dbContext.Ticket.Where(t => t.Created >= currentTime.AddDays(-7)).ToList().Count;
             var number_resolve_ticket = _dbContext.Ticket.Where(t => t.StatusId == 5).Where(t => t.Updated >= currentTime.AddDays(-7)).ToList().Count;

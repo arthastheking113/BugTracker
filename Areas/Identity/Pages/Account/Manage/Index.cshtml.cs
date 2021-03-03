@@ -48,6 +48,7 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
             [Display(Name = "First Name")]
             [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
             public string FirstName { get; set; }
+
             [Display(Name = "Company")]
             public int? CompanyId { get; set; }
 
@@ -97,14 +98,16 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            user.FirstName = Input.FirstName;
-            user.LastName = Input.LastName;
-            user.CompanyId = Input.CompanyId;
+           
+           
             if (!ModelState.IsValid)
             {
                 await LoadAsync(user);
                 return Page();
             }
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+            user.CompanyId = Input.CompanyId;
             if (image != null)
             {
                 user.ImageData = await _imageService.EncodeFileAsync(image);
