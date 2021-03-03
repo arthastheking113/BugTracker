@@ -100,12 +100,14 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["DeveloperId"] = new SelectList(await _projectService.DeveloperOnProjectAsync(project.Id), "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
+
 
 
             return View(project);
@@ -210,7 +212,7 @@ namespace BugTracker.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","Projects", new { id });
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
             return View(project);

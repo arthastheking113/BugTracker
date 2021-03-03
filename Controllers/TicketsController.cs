@@ -22,13 +22,15 @@ namespace BugTracker.Controllers
         private readonly UserManager<CustomUser> _userManager;
         private readonly ICustomHistoryService _customHistoryService;
         private readonly IEmailSender _emailSender;
+        private readonly CustomProjectService _projectService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender)
+        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender, CustomProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
             _customHistoryService = customHistoryService;
             _emailSender = emailSender;
+            _projectService = projectService;
         }
 
         // GET: Tickets
@@ -164,6 +166,17 @@ namespace BugTracker.Controllers
                 }
                 else
                 {
+                    Notification notification = new Notification
+                    {
+                        Name = "New Ticket is Created by Submitter",
+                        TicketId = ticket.Id,
+                        Description = "New Ticket is Created by Submitter and Waiting for being Assigned",
+                        Created = DateTime.Now,
+                        SenderId = ticket.OwnnerId,
+                        RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
+                    };
+                    await _context.Notification.AddAsync(notification);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
 

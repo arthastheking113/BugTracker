@@ -50,7 +50,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form asp-controller="Tickets" asp-action="Create" method="post" >
+                                <form asp-controller="Tickets" asp-action="Create" method="post">
                                     <div class="modal-body">
 
                                         <input type="hidden" class="form-control" name="projectId" value="@Model.Id" />
@@ -61,7 +61,7 @@
                                             <span asp-validation-for="Name" class="text-danger"></span>
                                         </div>
                                         <div class="form-group">
-                                            <label  class="control-label">Description</label>
+                                            <label class="control-label">Description</label>
                                             <input name="Description" class="form-control" />
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
@@ -101,11 +101,123 @@
                             </div>
                         </div>
                     </div>
-                    <a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>
-                    <a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>
 
-         
-                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets</a>
+                    @*<a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>*@
+
+
+
+
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal2">
+                        <i class="fas fa-tasks"></i> Create New Projects
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel2">Create New Project</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form asp-controller="Projects" asp-action="Create" method="post">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label asp-for="Name" class="control-label"></label>
+                                            <input name="Name" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Description" class="control-label"></label>
+                                            <textarea name="Description" class="form-control" rows="4"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="CompanyId" class="control-label"></label>
+                                            <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Upload Image</label>
+                                            <input type="file" name="image" />
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="submit" class="btn btn-primary">Create</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>*@
+
+
+
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal3">
+                        <i class="fas fa-edit"></i> Edit Project
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel3">Edit Project</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form asp-controller="Projects" asp-action="Edit" method="post" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <input type="hidden" asp-for="Id" />
+                                        <div class="form-group">
+                                            <label class="control-label">Upload Image</label>
+                                            <input type="file" name="image" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Name" class="control-label"></label>
+                                            <input asp-for="Name" class="form-control" />
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                        <input type="hidden" asp-for="Created" class="form-control" />
+                                        <div class="form-group">
+                                            <label asp-for="Description" class="control-label"></label>
+                                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                        </div>
+                                        @if (Model.ImageData != null && Model.ContentType != null)
+                                        {
+                                            <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.ImageData)" class="form-control" />
+                                            <input type="hidden" name="contentType" value="@Model.ContentType" class="form-control" />
+                                        }
+                                        <div class="form-group">
+                                            <label asp-for="CompanyId" class="control-label"></label>
+                                            <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                            <span asp-validation-for="CompanyId" class="text-danger"></span>
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="submit" class="btn btn-primary">Create</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets On System</a>
+                </div>
+                <div class="col text-right">                   
+                    <p style="margin-top: 1%; margin-bottom: 0; color: black; font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; ">Created on: @Model.Created.ToString("dd MMMM yyyy - hh:mm tt")</p>                  
                 </div>
             </div>
 
@@ -164,7 +276,7 @@
                                     <h4 class="mt-2">Recent Activity</h4>
                                 </div>
                                 <div class="col text-right mr-2">
-                                    <h4 class="mt-2"><a asp-controller="Tickets" asp-action="ProjectIndex" asp-route-id="@Model.Id" class="btn btn-secondary">View All Ticket</a></h4>
+                                    <h4 class="mt-2"><a asp-controller="Tickets" asp-action="ProjectIndex" asp-route-id="@Model.Id" class="btn btn-secondary"><i class="fas fa-eye"></i> View All Tickets In This Project</a></h4>
                                 </div>
                             </div>
                             <hr class="mt-0" />
@@ -267,6 +379,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+                    <img src="@(imageService.DecodeFile(Model.ImageData,Model.ContentType))" style="width:100%" />
                     <h3 class="text-primary"><i class="fas fa-paint-brush"></i> @Html.DisplayFor(model => model.Name)</h3>
                     <p class="text-muted">@Html.DisplayFor(model => model.Description)</p>
                     <br>
