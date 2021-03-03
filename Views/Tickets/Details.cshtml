@@ -109,10 +109,10 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="@Model.Id" name="TicketId">
                         <div class="media-body ml-3 ">
-                            <label>Description<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" /></label>      
+                            <label>Description<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" required/></label>      
                             <label class="btn btn-outline-secondary btn-sm">
                                 Upload File
-                                <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
+                                <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" required/>
                             </label>
                         </div>
                         <div class="row">

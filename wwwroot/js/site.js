@@ -68,7 +68,7 @@ function display_ct() {
     };
     document.getElementById('ct').innerText = x.toLocaleTimeString("en-us", options);
     display_c();
-
+   
 }
 
 //document.getElementById("aboutButton").addEventListener("click", function () {

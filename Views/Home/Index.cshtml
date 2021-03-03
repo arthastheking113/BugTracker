@@ -17,7 +17,7 @@
 
         @if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager"))
         {
-            <div class="col-sm-7">
+            <div class="col-sm-8">
                 <div class="card">
                     <div class="card-header bg-dark">
                         <h5 class="card-title">Quick Management Action</h5>
@@ -98,7 +98,7 @@
                         @*<a asp-controller="Projects" asp-action="Create" class="btn btn-secondary pb-2 mb-2"> <i class="fas fa-tasks"></i> Create New Projects</a>*@
 
                         <button type="button" class="btn btn-secondary pb-2 mb-2" data-toggle="modal" data-target="#exampleModal2">
-                            <i class="fas fa-tasks"></i> Create New Project
+                            <i class="fas fa-plus-circle"></i> Create New Project
                         </button>
 
                         <!-- Modal -->
@@ -142,7 +142,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-tasks"></i> View Projects </a>
                         <a asp-controller="Home" asp-action="ManageRole" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-people-arrows"></i> Role's Management </a>
                         <a asp-controller="Projects" asp-action="ManagerUserProject" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-user-edit"></i> Project User Management</a>
                         <a asp-controller="Invites" asp-action="Create" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-location-arrow"></i> Create a Invite Ticket</a>
@@ -151,7 +151,7 @@
                 </div>
             </div>
 
-            <div class="col">
+            <div class="col-4">
                 <div class="card">
                     <div class="card-header bg-dark">
                         <h5 class="card-title">Quick Inbox and Notification Action</h5>

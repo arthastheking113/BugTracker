@@ -489,7 +489,7 @@ namespace BugTracker.Data.Migrations
                     b.Property<int>("TicketTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("Updated")
+                    b.Property<DateTimeOffset>("Updated")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -515,6 +515,9 @@ namespace BugTracker.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone");

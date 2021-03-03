@@ -10,6 +10,7 @@ using BugTracker.Models;
 using System.IO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using BugTracker.Services;
 
 namespace BugTracker.Controllers
 {
@@ -18,11 +19,13 @@ namespace BugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
+        private readonly ICustomFileService _fileService;
 
-        public TicketAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager)
+        public TicketAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomFileService fileService)
         {
             _context = context;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
         // GET: TicketAttachments
@@ -65,7 +68,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FormFile,Image,Description,Created,FileName,FileData,TicketId,CustomUserId")] TicketAttachment ticketAttachment)
+        public async Task<IActionResult> Create([Bind("Id,FormFile,Image,Description,Created,FileName,ContentType,FileData,TicketId,CustomUserId")] TicketAttachment ticketAttachment)
         {
             if (ModelState.IsValid)
             {
@@ -74,6 +77,7 @@ namespace BugTracker.Controllers
 
                 ticketAttachment.FileData = ms.ToArray();
                 ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                ticketAttachment.ContentType = ticketAttachment.FormFile.ContentType;
                 ticketAttachment.Created = DateTimeOffset.Now;
                 ticketAttachment.CustomUserId = _userManager.GetUserId(User);
                 var id = ticketAttachment.TicketId;
@@ -84,6 +88,24 @@ namespace BugTracker.Controllers
             ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
             ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);
             return View(ticketAttachment);
+        }
+
+
+        public async Task<FileResult> DownloadFile(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+            TicketAttachment attachment = await _context.Attachment.FirstOrDefaultAsync(t => t.Id == id);
+
+            var ContentType = _fileService.ConvertByteArrayToFile(attachment.FileData, attachment.FileName);
+
+            if (attachment == null)
+            {
+                return null;
+            }
+            return File(attachment.FileData, attachment.ContentType);
         }
 
         // GET: TicketAttachments/Edit/5
@@ -109,7 +131,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Created,FileName,FileData,TicketId,CustomUserId")] TicketAttachment ticketAttachment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FormFile,Image,Description,Created,FileName,ContentType,FileData,TicketId,CustomUserId")] TicketAttachment ticketAttachment)
         {
             if (id != ticketAttachment.Id)
             {
@@ -120,6 +142,17 @@ namespace BugTracker.Controllers
             {
                 try
                 {
+                    if (ticketAttachment.FormFile != null)
+                    {
+                        MemoryStream ms = new MemoryStream();
+                        await ticketAttachment.FormFile.CopyToAsync(ms);
+                        ticketAttachment.FileData = ms.ToArray();
+                        ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                        ticketAttachment.ContentType = ticketAttachment.FormFile.ContentType;
+                    }
+                    
+                    ticketAttachment.Created = DateTimeOffset.Now;
+                    ticketAttachment.CustomUserId = _userManager.GetUserId(User);                 
                     _context.Update(ticketAttachment);
                     await _context.SaveChangesAsync();
                 }
@@ -134,7 +167,7 @@ namespace BugTracker.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Tickets", new { id });
             }
             ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
             ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);

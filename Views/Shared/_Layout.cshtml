@@ -437,7 +437,26 @@
         }
         else
         {
-            <div>
+            <div>                                
+                <audio id="myaudio" autoplay loop>
+                    <source src="~/audio/night_sound_edited.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+               <button id="audiobutton" class="btn btn-secondary" onclick="togglePlay()" type="button"><i id="audio" class="fas fa-volume-mute"></i></button>
+              
+                <script>
+                    var myAudio = document.getElementById("myaudio");
+                    var menu = document.getElementById('audio');
+                   
+                    function togglePlay() {
+                        if (menu.className == "fas fa-volume-mute") {
+                            menu.className = "fas fa-volume-up";
+                        } else {
+                            menu.className = 'fas fa-volume-mute';
+                        }
+                        return myAudio.paused ? myAudio.play() : myAudio.pause();
+                    };
+                </script>
                 <main role="main">
                     @RenderBody()
                     <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModal" aria-hidden="true">
@@ -611,12 +630,12 @@
         </footer>
         <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
         <div id="preloader">
-                <div class="center">
-                    <p style="text-align: center;font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-                        Just A Second, I'm Loading...
-                    </p>
-                </div>
+            <div class="center">
+                <p style="text-align: center;font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                    Just A Second, I'm Loading...
+                </p>
             </div>
+        </div>
     </div>
 
     <script src="~/plugins/jquery/jquery.min.js"></script>

@@ -8,6 +8,7 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
+
 @{
     ViewData["Title"] = "Details";
 }
@@ -20,11 +21,23 @@
                 <h3>Image Details</h3>
             </div>
             <div class="card-body">
-
                 <div class="row">
-
                     <div class="col-6">
-                        <img style="width:80%;" src="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName)) " />
+                        <div class="row">
+                            <img style="width:80%;" src="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName)) " />
+                        </div>
+                        <br />
+
+                        <div class="row">
+                            <div class="col text-right">
+                                <a class="btn btn-secondary" asp-controller="TicketAttachments" asp-action="DownloadFile" asp-route-id="@Model.Id"> <i class="fas fa-eye"></i> View Or <i class="fas fa-file-download"></i> Download File</a>
+                            </div>
+                            <div class="col text-left">
+                                <a class="btn btn-secondary" href="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName))" download="@(Model.FileName)">
+                                    <i class="fas fa-file-download"></i> Download File
+                                </a>
+                            </div> 
+                        </div>
                     </div>
                     <div class="col">
                         <div class="row">
@@ -55,8 +68,8 @@
                         </div>
                         @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString()) || await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
                         {
-                            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-                            <a asp-action="Index">Back to List</a>
+                            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                            <a class="btn btn-secondary" asp-action="Index">Back to List</a>
                         }
 
                     </div>

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using BugTracker.Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 
+
 namespace BugTracker.Controllers
 {
     [Authorize]
@@ -22,9 +23,9 @@ namespace BugTracker.Controllers
         private readonly UserManager<CustomUser> _userManager;
         private readonly ICustomHistoryService _customHistoryService;
         private readonly IEmailSender _emailSender;
-        private readonly CustomProjectService _projectService;
+        private readonly ICustomProjectService _projectService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender, CustomProjectService projectService)
+        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender, ICustomProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
