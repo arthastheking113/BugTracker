@@ -164,11 +164,7 @@ namespace BugTracker.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    if (!(await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
-                    {
-                        return RedirectToAction("Details", "Projects", new { Id });
-                    }
-                    else
+                    if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
                     {
                         Notification notification = new Notification
                         {
@@ -183,6 +179,27 @@ namespace BugTracker.Controllers
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
+                    else if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Developer.ToString())))
+                    {
+                        Notification notification = new Notification
+                        {
+                            Name = "New Ticket is Created by Developer",
+                            TicketId = ticket.Id,
+                            Description = "New Ticket is Created by Developer and Waiting for being Approve",
+                            Created = DateTime.Now,
+                            SenderId = ticket.OwnnerId,
+                            RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
+                        };
+                        await _context.Notification.AddAsync(notification);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    { 
+                        return RedirectToAction("Details", "Projects", new { Id });
+                    }
+                  
+                
 
 
                 }

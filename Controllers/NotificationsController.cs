@@ -57,6 +57,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Notifications/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["RecipientId"] = new SelectList(_context.Users, "Id", "FullName");
@@ -85,6 +86,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Notifications/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -142,6 +144,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Notifications/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
