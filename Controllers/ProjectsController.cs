@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using BugTracker.Service;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -24,13 +25,15 @@ namespace BugTracker.Controllers
         private readonly ICustomProjectService _projectService;
         private readonly ICustomRoleService _roleService;
         private readonly IImageService _imageService;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService, IImageService imageService)
+        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService, IImageService imageService, UserManager<CustomUser> userManager)
         {
             _context = context;
             _projectService = projectService;
             _roleService = roleService;
             _imageService = imageService;
+            _userManager = userManager;
         }
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> ManagerUserProject()
@@ -47,25 +50,29 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManagerUserProject(string ProjectManagerId, int ProjectId, List<string> DevelopersId, List<string> SubmittersId)
         {
-            var currentlyOnProject = await _projectService.UserOnProjectAsync(ProjectId);
-            foreach (var user in currentlyOnProject)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                await _projectService.RemoveUserFromProjectAsync(user.Id, ProjectId);
+                var currentlyOnProject = await _projectService.UserOnProjectAsync(ProjectId);
+                foreach (var user in currentlyOnProject)
+                {
+                    await _projectService.RemoveUserFromProjectAsync(user.Id, ProjectId);
+                }
+                await _projectService.AddUserToProjectAsync(ProjectManagerId, ProjectId);
+                foreach (var user in DevelopersId)
+                {
+                    await _projectService.AddUserToProjectAsync(user, ProjectId);
+                }
+                foreach (var user in SubmittersId)
+                {
+                    await _projectService.AddUserToProjectAsync(user, ProjectId);
+                }
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+                ViewData["ProjectManagerId"] = new SelectList(await _roleService.UsersInRoleAsync(Roles.ProjectManager.ToString()), "Id", "FullName");
+                ViewData["DevelopersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Developer.ToString()), "Id", "FullName");
+                ViewData["SubmittersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Submitter.ToString()), "Id", "FullName");
+                return View();
             }
-            await _projectService.AddUserToProjectAsync(ProjectManagerId, ProjectId);
-            foreach (var user in DevelopersId)
-            {
-                await _projectService.AddUserToProjectAsync(user, ProjectId);
-            }
-            foreach (var user in SubmittersId)
-            {
-                await _projectService.AddUserToProjectAsync(user, ProjectId);
-            }
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-            ViewData["ProjectManagerId"] = new SelectList(await _roleService.UsersInRoleAsync(Roles.ProjectManager.ToString()), "Id", "FullName");
-            ViewData["DevelopersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Developer.ToString()), "Id", "FullName");
-            ViewData["SubmittersId"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Submitter.ToString()), "Id", "FullName");
-            return View();
+            return RedirectToAction("DemoUser", "Projects");
         }
 
 
@@ -116,6 +123,7 @@ namespace BugTracker.Controllers
         // GET: Projects/Create
         public IActionResult Create()
         {
+
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             return View();
         }
@@ -128,18 +136,29 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                project.ImageData = await _imageService.EncodeFileAsync(image);
-                project.ContentType = _imageService.RecordContentType(image);
-                project.Created = DateTime.Now;
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    project.ImageData = await _imageService.EncodeFileAsync(image);
+                    project.ContentType = _imageService.RecordContentType(image);
+                    project.Created = DateTime.Now;
+                    _context.Add(project);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
+                return View(project);
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
-            return View(project);
+
+            return RedirectToAction("DemoUser", "Projects");
         }
+
+        public IActionResult DemoUser()
+        {
+            return View();
+        }
+
 
         // GET: Projects/Edit/5
         [Authorize(Roles = "Admin, ProjectManager")]
@@ -167,55 +186,58 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image, Byte[]? imageData, string contentType)
         {
-            if (id != project.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (id != project.Id)
                 {
-
-
-                    if (image != null)
+                    return NotFound();
+                }
+                if (ModelState.IsValid)
+                {
+                    try
                     {
-                        project.ImageData = await _imageService.EncodeFileAsync(image);
-                        project.ContentType = _imageService.RecordContentType(image);
-                    }
-                    else
-                    {
-                        if (imageData != null && contentType != null)
+
+                        if (image != null)
                         {
-                            project.ImageData = imageData;
-                            project.ContentType = contentType;
+                            project.ImageData = await _imageService.EncodeFileAsync(image);
+                            project.ContentType = _imageService.RecordContentType(image);
                         }
                         else
                         {
-                            project.ImageData = null;
-                            project.ContentType = null;
+                            if (imageData != null && contentType != null)
+                            {
+                                project.ImageData = imageData;
+                                project.ContentType = contentType;
+                            }
+                            else
+                            {
+                                project.ImageData = null;
+                                project.ContentType = null;
+                            }
+
                         }
+                        _context.Update(project);
+                        await _context.SaveChangesAsync();
+
 
                     }
-
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectExists(project.Id))
+                    catch (DbUpdateConcurrencyException)
                     {
-                        return NotFound();
+                        if (!ProjectExists(project.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    return RedirectToAction("Details", "Projects", new { id });
                 }
-                return RedirectToAction("Details","Projects", new { id });
+                ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
+                return View(project);
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
-            return View(project);
+            return RedirectToAction("DemoUser", "Projects");
         }
         [Authorize(Roles = "Admin, ProjectManager")]
         // GET: Projects/Delete/5
@@ -243,10 +265,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Project.FindAsync(id);
-            _context.Project.Remove(project);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var project = await _context.Project.FindAsync(id);
+                _context.Project.Remove(project);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool ProjectExists(int id)

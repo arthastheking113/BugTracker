@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
@@ -15,10 +18,14 @@ namespace BugTracker.Controllers
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly ICustomRoleService _roleService;
 
-        public CompaniesController(ApplicationDbContext context)
+        public CompaniesController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomRoleService roleService)
         {
             _context = context;
+            _userManager = userManager;
+            _roleService = roleService;
         }
 
         // GET: Companies
@@ -58,13 +65,17 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Company company)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(company);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(company);
             }
-            return View(company);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: Companies/Edit/5
@@ -90,32 +101,36 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Company company)
         {
-            if (id != company.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
+                if (id != company.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(company);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!CompanyExists(company.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(company);
             }
-            return View(company);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: Companies/Delete/5
@@ -141,10 +156,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var company = await _context.Company.FindAsync(id);
-            _context.Company.Remove(company);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var company = await _context.Company.FindAsync(id);
+                _context.Company.Remove(company);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool CompanyExists(int id)

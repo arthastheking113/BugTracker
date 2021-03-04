@@ -24,14 +24,16 @@ namespace BugTracker.Controllers
         private readonly ICustomHistoryService _customHistoryService;
         private readonly IEmailSender _emailSender;
         private readonly ICustomProjectService _projectService;
+        private readonly ICustomRoleService _roleService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender, ICustomProjectService projectService)
+        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender, ICustomProjectService projectService, ICustomRoleService roleService)
         {
             _context = context;
             _userManager = userManager;
             _customHistoryService = customHistoryService;
             _emailSender = emailSender;
             _projectService = projectService;
+            _roleService = roleService;
         }
 
         // GET: Tickets
@@ -121,75 +123,79 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,IsAssigned,Created,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                var Id = ticket.ProjectId;
-                if (ticket.IsAssigned == null)
+                if (ModelState.IsValid)
                 {
-                    ticket.IsAssigned = false;
-                }
-
-                ticket.OwnnerId = _userManager.GetUserId(User);
-                ticket.Created = DateTime.Now;
-                ticket.Updated = ticket.Created;
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-
-                var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
-
-                if (ticket.IsAssigned == true && ticket.StatusId != currentStatus)
-                {
-                    Notification notification = new Notification
+                    var Id = ticket.ProjectId;
+                    if (ticket.IsAssigned == null)
                     {
-                        Name = "New Ticket Assign",
-                        TicketId = ticket.Id,
-                        Description = "You have a new ticket.",
-                        Created = DateTime.Now,
-                        SenderId = ticket.OwnnerId,
-                        RecipientId = ticket.DeveloperId
-                    };
-                    await _context.Notification.AddAsync(notification);
+                        ticket.IsAssigned = false;
+                    }
+
+                    ticket.OwnnerId = _userManager.GetUserId(User);
+                    ticket.Created = DateTime.Now;
+                    ticket.Updated = ticket.Created;
+                    _context.Add(ticket);
                     await _context.SaveChangesAsync();
 
+                    var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
 
-                    string devEmail = (await _userManager.FindByIdAsync(ticket.DeveloperId)).Email;
-                    string subject = "New Ticket Assignment";
-                    string message = $"You have been Assigned a new ticket {ticket.Name} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}";
-
-                    await _emailSender.SendEmailAsync(devEmail, subject, message);
-
-                    await _context.SaveChangesAsync();
-                }
-
-                if (!(await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
-                {
-                    return RedirectToAction("Details", "Projects", new { Id });
-                }
-                else
-                {
-                    Notification notification = new Notification
+                    if (ticket.IsAssigned == true && ticket.StatusId != currentStatus)
                     {
-                        Name = "New Ticket is Created by Submitter",
-                        TicketId = ticket.Id,
-                        Description = "New Ticket is Created by Submitter and Waiting for being Assigned",
-                        Created = DateTime.Now,
-                        SenderId = ticket.OwnnerId,
-                        RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
-                    };
-                    await _context.Notification.AddAsync(notification);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+                        Notification notification = new Notification
+                        {
+                            Name = "New Ticket Assign",
+                            TicketId = ticket.Id,
+                            Description = "You have a new ticket.",
+                            Created = DateTime.Now,
+                            SenderId = ticket.OwnnerId,
+                            RecipientId = ticket.DeveloperId
+                        };
+                        await _context.Notification.AddAsync(notification);
+                        await _context.SaveChangesAsync();
 
-                
+
+                        string devEmail = (await _userManager.FindByIdAsync(ticket.DeveloperId)).Email;
+                        string subject = "New Ticket Assignment";
+                        string message = $"You have been Assigned a new ticket {ticket.Name} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}";
+
+                        await _emailSender.SendEmailAsync(devEmail, subject, message);
+
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (!(await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
+                    {
+                        return RedirectToAction("Details", "Projects", new { Id });
+                    }
+                    else
+                    {
+                        Notification notification = new Notification
+                        {
+                            Name = "New Ticket is Created by Submitter",
+                            TicketId = ticket.Id,
+                            Description = "New Ticket is Created by Submitter and Waiting for being Assigned",
+                            Created = DateTime.Now,
+                            SenderId = ticket.OwnnerId,
+                            RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
+                        };
+                        await _context.Notification.AddAsync(notification);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+
+
+                }
+                ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
+                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
+                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Id", ticket.PriorityId);
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", ticket.ProjectId);
+                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", ticket.StatusId);
+                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Id", ticket.TicketTypeId);
+                return View(ticket);
             }
-            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
-            ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
-            ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Id", ticket.PriorityId);
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", ticket.ProjectId);
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", ticket.StatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Id", ticket.TicketTypeId);
-            return View(ticket);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: Tickets/Edit/5
@@ -221,47 +227,51 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,IsAssigned,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)
         {
-            if (id != ticket.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
-            Ticket oldTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (id != ticket.Id)
                 {
-
-                    ticket.OwnnerId = _userManager.GetUserId(User);
-                    ticket.Updated = DateTime.Now;
-                    _context.Update(ticket);
-                    await _context.SaveChangesAsync();
-
-                    var userId = _userManager.GetUserId(User);
-                    Ticket newTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
-                    await _customHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
-
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                Ticket oldTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
+
+                if (ModelState.IsValid)
                 {
-                    if (!TicketExists(ticket.Id))
+                    try
                     {
-                        return NotFound();
+
+                        ticket.OwnnerId = _userManager.GetUserId(User);
+                        ticket.Updated = DateTime.Now;
+                        _context.Update(ticket);
+                        await _context.SaveChangesAsync();
+
+                        var userId = _userManager.GetUserId(User);
+                        Ticket newTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
+                        await _customHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
+
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!TicketExists(ticket.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
+                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
+                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Id", ticket.PriorityId);
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", ticket.ProjectId);
+                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", ticket.StatusId);
+                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Id", ticket.TicketTypeId);
+                return View(ticket);
             }
-            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
-            ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
-            ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Id", ticket.PriorityId);
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", ticket.ProjectId);
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", ticket.StatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Id", ticket.TicketTypeId);
-            return View(ticket);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: Tickets/Delete/5
@@ -295,10 +305,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticket = await _context.Ticket.FindAsync(id);
-            _context.Ticket.Remove(ticket);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var ticket = await _context.Ticket.FindAsync(id);
+                _context.Ticket.Remove(ticket);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool TicketExists(int id)
