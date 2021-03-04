@@ -32,7 +32,7 @@ namespace BugTracker.Service
         {
             if (imageData == null)
             {
-                return "http://placehold.it/750x300";
+                return "/img/project_example.jpeg";
             }
             var imageArray = Convert.ToBase64String(imageData);
             return $"data:{contentType};base64,{imageArray}";

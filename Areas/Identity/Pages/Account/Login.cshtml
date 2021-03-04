@@ -148,103 +148,89 @@
 
 </div>
 <div class="container-fluid" style="opacity: 0.7;">
-    <div class="row">
-        <div class="col"></div>
-        <div class="col">
-            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
-                <div class="row">
-                    <div class="col text-center">
-                        <h4><span class="iconify" data-icon="wpf:administrator" data-inline="true"></span> Demo Admin</h4>
+    <form id="account" method="post" class="form-horizontal form-material">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col">
+                <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                    <div class="row">
+                        <div class="col text-center">
+                            <h4><span class="iconify" data-icon="wpf:administrator" data-inline="true"></span> Demo Admin</h4>
+                        </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        Log in as an Admin with full of functions.
+                    <div class="row mb-2">
+                        <div class="col">
+                            Log in as an Admin with full of functions.
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center">
-                        <form id="account" method="post">
-                            <input type="hidden" asp-for="Input.Email" value="demoadmin@gmail.com" class="form-control" />
-                            <input type="hidden" asp-for="Input.Password" value="Nhoclanro1!" class="form-control" />
-                            <button type="submit" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Admin</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
-                <div class="row">
-                    <div class="col  text-center">
-                        <h4><span class="iconify" data-icon="fa-solid:users-cog" data-inline="true"></span> Demo PM</h4>
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        Log in as a Project Manager to manage your team.
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center">
-                        <form id="account" method="post">
-                            <input type="hidden" asp-for="Input.Email" value="demopm@gmail.com" class="form-control" />
-                            <input type="hidden" asp-for="Input.Password" value="Nhoclanro1!" class="form-control" />
-                            <button type="submit" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo PM</button>
-                        </form>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button type="submit" name="demoEmail" value="DemoAdminEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Admin</button>
+                        
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
-                <div class="row">
-                    <div class="col text-center">
-                        <h4><span class="iconify" data-icon="fa-solid:user-secret" data-inline="true"></span> Demo Developer</h4>
+            <div class="col">
+                <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                    <div class="row">
+                        <div class="col  text-center">
+                            <h4><span class="iconify" data-icon="fa-solid:users-cog" data-inline="true"></span> Demo PM</h4>
+                        </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        Log in as a Developer to work as a normal employee.
+                    <div class="row mb-2">
+                        <div class="col">
+                            Log in as a Project Manager to manage your team.
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center">
-                        <form id="account" method="post">
-                            <input type="hidden" asp-for="Input.Email" value="demodev@gmail.com" class="form-control" />
-                            <input type="hidden" asp-for="Input.Password" value="Nhoclanro1!" class="form-control" />
-                            <button type="submit" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Developer</button>
-                        </form>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button type="submit" name="demoEmail" value="DemoPmEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo PM</button>                      
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="shadow-lg p-3 mb-4 bg-dark rounded">
-                <div class="row">
-                    <div class="col text-center">
-                        <h4><span class="iconify" data-icon="fa-solid:user" data-inline="true"></span> Demo Submitter</h4>
+            <div class="col">
+                <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                    <div class="row">
+                        <div class="col text-center">
+                            <h4><span class="iconify" data-icon="fa-solid:user-secret" data-inline="true"></span> Demo Developer</h4>
+                        </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        Log in as a Submitter to work with developer.
+                    <div class="row mb-2">
+                        <div class="col">
+                            Log in as a Developer to work as a normal employee.
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center">
-                        <form id="account" method="post">
-                            <input type="hidden" asp-for="Input.Email" value="demosub@gmail.com" class="form-control" />
-                            <input type="hidden" asp-for="Input.Password" value="Nhoclanro1!" class="form-control" />
-                            <button type="submit" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Submitter</button>
-                        </form>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button type="submit" name="demoEmail" value="DemoDevEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Developer</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="col">
+                <div class="shadow-lg p-3 mb-4 bg-dark rounded">
+                    <div class="row">
+                        <div class="col text-center">
+                            <h4><span class="iconify" data-icon="fa-solid:user" data-inline="true"></span> Demo Submitter</h4>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            Log in as a Submitter to work with developer.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button type="submit" name="demoEmail" value="DemoSubEmail" class="btn btn-primary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Submitter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
         </div>
-        <div class="col"></div>
-    </div>
-
+    </form>
 
 </div>
 
