@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BugTracker.Data;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
@@ -27,13 +29,17 @@ namespace BugTracker.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
+        private readonly ICustomRoleService _roleService;
+
         public RegisterModel(
             UserManager<CustomUser> userManager,
             SignInManager<CustomUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, ApplicationDbContext context)
+            IEmailSender emailSender, ApplicationDbContext context
+            ,ICustomRoleService roleService)
         {
             _context = context;
+            _roleService = roleService;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -93,6 +99,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new CustomUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, CompanyId = Input.CompanyId };
+                await _roleService.AddUserToRoleAsync(user, Roles.NewUser.ToString());
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

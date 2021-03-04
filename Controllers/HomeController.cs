@@ -115,7 +115,6 @@ namespace BugTracker.Controllers
 
 
         [Authorize(Roles = "Admin")]
-
         public IActionResult UserOverview()
         {
             var user = _dbContext.Users.ToList();
