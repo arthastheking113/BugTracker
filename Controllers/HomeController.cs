@@ -46,7 +46,7 @@ namespace BugTracker.Controllers
             var number_of_project = projects.Count;
             var number_of_ticket = _dbContext.Ticket.ToList().Count;
             var number_of_user = _dbContext.Users.ToList().Count;
-            var number_of_close_ticket = _dbContext.Ticket.Where(t => t.StatusId == (_dbContext.Status.FirstOrDefault(t => t.Name == "Close").Id)).ToList().Count;
+            var number_of_close_ticket = _dbContext.Ticket.Where(t => t.StatusId == (_dbContext.Status.FirstOrDefault(t => t.Name == "Closed").Id)).ToList().Count;
             var persent_of_ticket_done = number_of_close_ticket * 100 / number_of_ticket;
             var number_of_urgent_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Urgent").Id)).ToList().Count;
             var number_of_high_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "High").Id)).ToList().Count;
@@ -115,6 +115,7 @@ namespace BugTracker.Controllers
 
 
         [Authorize(Roles = "Admin")]
+
         public IActionResult UserOverview()
         {
             var user = _dbContext.Users.ToList();
@@ -171,20 +172,24 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRole(List<string> userId, string role)
         {
-            foreach (var id in userId)
+            if (!(await _customRoleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                CustomUser user = await _dbContext.Users.FindAsync(id);
-                if (!await _customRoleService.IsUserInRoleAsync(user, role))
+                foreach (var id in userId)
                 {
-                    var userRole = await _customRoleService.ListUserRoleAsync(user);
-                    foreach (var roles in userRole)
+                    CustomUser user = await _dbContext.Users.FindAsync(id);
+                    if (!await _customRoleService.IsUserInRoleAsync(user, role))
                     {
-                        await _customRoleService.RemoveUserFromRoleAsync(user, roles);
+                        var userRole = await _customRoleService.ListUserRoleAsync(user);
+                        foreach (var roles in userRole)
+                        {
+                            await _customRoleService.RemoveUserFromRoleAsync(user, roles);
+                        }
+                        await _customRoleService.AddUserToRoleAsync(user, role);
                     }
-                    await _customRoleService.AddUserToRoleAsync(user, role);
                 }
+                return View();
             }
-            return View();
+            return RedirectToAction("DemoUser", "Projects");
         }
 
     }

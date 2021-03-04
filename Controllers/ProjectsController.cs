@@ -196,7 +196,6 @@ namespace BugTracker.Controllers
                 {
                     try
                     {
-
                         if (image != null)
                         {
                             project.ImageData = await _imageService.EncodeFileAsync(image);
@@ -214,12 +213,9 @@ namespace BugTracker.Controllers
                                 project.ImageData = null;
                                 project.ContentType = null;
                             }
-
                         }
                         _context.Update(project);
                         await _context.SaveChangesAsync();
-
-
                     }
                     catch (DbUpdateConcurrencyException)
                     {
