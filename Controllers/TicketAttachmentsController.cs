@@ -11,6 +11,7 @@ using System.IO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
@@ -20,12 +21,14 @@ namespace BugTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
         private readonly ICustomFileService _fileService;
+        private readonly ICustomRoleService _roleService;
 
-        public TicketAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomFileService fileService)
+        public TicketAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomFileService fileService, ICustomRoleService roleService)
         {
             _context = context;
             _userManager = userManager;
             _fileService = fileService;
+            _roleService = roleService;
         }
 
         // GET: TicketAttachments
@@ -70,24 +73,28 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FormFile,Image,Description,Created,FileName,ContentType,FileData,TicketId,CustomUserId")] TicketAttachment ticketAttachment)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                MemoryStream ms = new MemoryStream();
-                await ticketAttachment.FormFile.CopyToAsync(ms);
+                if (ModelState.IsValid)
+                {
+                    MemoryStream ms = new MemoryStream();
+                    await ticketAttachment.FormFile.CopyToAsync(ms);
 
-                ticketAttachment.FileData = ms.ToArray();
-                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
-                ticketAttachment.ContentType = ticketAttachment.FormFile.ContentType;
-                ticketAttachment.Created = DateTimeOffset.Now;
-                ticketAttachment.CustomUserId = _userManager.GetUserId(User);
-                var id = ticketAttachment.TicketId;
-                _context.Add(ticketAttachment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details","Tickets", new { id });
+                    ticketAttachment.FileData = ms.ToArray();
+                    ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                    ticketAttachment.ContentType = ticketAttachment.FormFile.ContentType;
+                    ticketAttachment.Created = DateTimeOffset.Now;
+                    ticketAttachment.CustomUserId = _userManager.GetUserId(User);
+                    var id = ticketAttachment.TicketId;
+                    _context.Add(ticketAttachment);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", "Tickets", new { id });
+                }
+                ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
+                ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);
+                return View(ticketAttachment);
             }
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
-            ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);
-            return View(ticketAttachment);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
 
@@ -133,45 +140,49 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FormFile,Image,Description,Created,FileName,ContentType,FileData,TicketId,CustomUserId")] TicketAttachment ticketAttachment)
         {
-            if (id != ticketAttachment.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
+                if (id != ticketAttachment.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    if (ticketAttachment.FormFile != null)
+                    try
                     {
-                        MemoryStream ms = new MemoryStream();
-                        await ticketAttachment.FormFile.CopyToAsync(ms);
-                        ticketAttachment.FileData = ms.ToArray();
-                        ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
-                        ticketAttachment.ContentType = ticketAttachment.FormFile.ContentType;
+                        if (ticketAttachment.FormFile != null)
+                        {
+                            MemoryStream ms = new MemoryStream();
+                            await ticketAttachment.FormFile.CopyToAsync(ms);
+                            ticketAttachment.FileData = ms.ToArray();
+                            ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                            ticketAttachment.ContentType = ticketAttachment.FormFile.ContentType;
+                        }
+
+                        ticketAttachment.Created = DateTimeOffset.Now;
+                        ticketAttachment.CustomUserId = _userManager.GetUserId(User);
+                        _context.Update(ticketAttachment);
+                        await _context.SaveChangesAsync();
                     }
-                    
-                    ticketAttachment.Created = DateTimeOffset.Now;
-                    ticketAttachment.CustomUserId = _userManager.GetUserId(User);                 
-                    _context.Update(ticketAttachment);
-                    await _context.SaveChangesAsync();
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!TicketAttachmentExists(ticketAttachment.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction("Details", "Tickets", new { id });
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TicketAttachmentExists(ticketAttachment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Details", "Tickets", new { id });
+                ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
+                ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);
+                return View(ticketAttachment);
             }
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.CustomUserId);
-            ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Id", ticketAttachment.TicketId);
-            return View(ticketAttachment);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: TicketAttachments/Delete/5
@@ -199,10 +210,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticketAttachment = await _context.Attachment.FindAsync(id);
-            _context.Attachment.Remove(ticketAttachment);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var ticketAttachment = await _context.Attachment.FindAsync(id);
+                _context.Attachment.Remove(ticketAttachment);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool TicketAttachmentExists(int id)

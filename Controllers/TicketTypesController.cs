@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
@@ -15,10 +18,14 @@ namespace BugTracker.Controllers
     public class TicketTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICustomRoleService _roleService;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public TicketTypesController(ApplicationDbContext context)
+        public TicketTypesController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomRoleService roleService)
         {
             _context = context;
+            _roleService = roleService;
+            _userManager = userManager;
         }
 
         // GET: TicketTypes
@@ -58,13 +65,17 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] TicketType ticketType)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                _context.Add(ticketType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(ticketType);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(ticketType);
             }
-            return View(ticketType);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: TicketTypes/Edit/5
@@ -90,32 +101,36 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] TicketType ticketType)
         {
-            if (id != ticketType.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
+                if (id != ticketType.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(ticketType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TicketTypeExists(ticketType.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(ticketType);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!TicketTypeExists(ticketType.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(ticketType);
             }
-            return View(ticketType);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: TicketTypes/Delete/5
@@ -141,10 +156,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticketType = await _context.TicketType.FindAsync(id);
-            _context.TicketType.Remove(ticketType);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var ticketType = await _context.TicketType.FindAsync(id);
+                _context.TicketType.Remove(ticketType);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool TicketTypeExists(int id)

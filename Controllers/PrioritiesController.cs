@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
@@ -15,10 +18,14 @@ namespace BugTracker.Controllers
     public class PrioritiesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly ICustomRoleService _roleService;
 
-        public PrioritiesController(ApplicationDbContext context)
+        public PrioritiesController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomRoleService roleService)
         {
             _context = context;
+            _userManager = userManager;
+            _roleService = roleService;
         }
 
         // GET: Priorities
@@ -58,13 +65,17 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Priority priority)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                _context.Add(priority);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(priority);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(priority);
             }
-            return View(priority);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: Priorities/Edit/5
@@ -90,32 +101,36 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Priority priority)
         {
-            if (id != priority.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
+                if (id != priority.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(priority);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PriorityExists(priority.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(priority);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!PriorityExists(priority.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(priority);
             }
-            return View(priority);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: Priorities/Delete/5
@@ -141,10 +156,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var priority = await _context.Priority.FindAsync(id);
-            _context.Priority.Remove(priority);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var priority = await _context.Priority.FindAsync(id);
+                _context.Priority.Remove(priority);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool PriorityExists(int id)

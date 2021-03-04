@@ -10,6 +10,8 @@ using BugTracker.Models;
 using System.IO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
@@ -18,11 +20,13 @@ namespace BugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
+        private readonly ICustomRoleService _roleService;
 
-        public ProjectAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager)
+        public ProjectAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomRoleService roleService)
         {
             _context = context;
             _userManager = userManager;
+            _roleService = roleService;
         }
 
         // GET: ProjectAttachments
@@ -67,23 +71,27 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FormFile,Image,Description,Created,FileName,FileData,ProjectId,CustomUserId")] ProjectAttachment projectAttachment)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                MemoryStream ms = new MemoryStream();
-                await projectAttachment.FormFile.CopyToAsync(ms);
+                if (ModelState.IsValid)
+                {
+                    MemoryStream ms = new MemoryStream();
+                    await projectAttachment.FormFile.CopyToAsync(ms);
 
-                projectAttachment.FileData = ms.ToArray();
-                projectAttachment.FileName = projectAttachment.FormFile.FileName;
-                projectAttachment.Created = DateTimeOffset.Now;
-                projectAttachment.CustomUserId = _userManager.GetUserId(User);
-                var id = projectAttachment.ProjectId;
-                _context.Add(projectAttachment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details","Projects",new { id });
+                    projectAttachment.FileData = ms.ToArray();
+                    projectAttachment.FileName = projectAttachment.FormFile.FileName;
+                    projectAttachment.Created = DateTimeOffset.Now;
+                    projectAttachment.CustomUserId = _userManager.GetUserId(User);
+                    var id = projectAttachment.ProjectId;
+                    _context.Add(projectAttachment);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", "Projects", new { id });
+                }
+                ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
+                return View(projectAttachment);
             }
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
-            return View(projectAttachment);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: ProjectAttachments/Edit/5
@@ -111,34 +119,38 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Created,FileName,FileData,ProjectId,CustomUserId")] ProjectAttachment projectAttachment)
         {
-            if (id != projectAttachment.Id)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                return NotFound();
-            }
+                if (id != projectAttachment.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(projectAttachment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectAttachmentExists(projectAttachment.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(projectAttachment);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!ProjectAttachmentExists(projectAttachment.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
+                return View(projectAttachment);
             }
-            ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
-            return View(projectAttachment);
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         // GET: ProjectAttachments/Delete/5
@@ -166,10 +178,14 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var projectAttachment = await _context.ProjectAttachment.FindAsync(id);
-            _context.ProjectAttachment.Remove(projectAttachment);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            {
+                var projectAttachment = await _context.ProjectAttachment.FindAsync(id);
+                _context.ProjectAttachment.Remove(projectAttachment);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("DemoUser", "Projects");
         }
 
         private bool ProjectAttachmentExists(int id)
