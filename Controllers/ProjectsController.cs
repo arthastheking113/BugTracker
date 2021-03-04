@@ -17,8 +17,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
-   
-    [Authorize]
+
+    [Authorize(Roles = "Admin, ProjectManager")]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
