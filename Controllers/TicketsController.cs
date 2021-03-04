@@ -103,7 +103,6 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
-        [Authorize(Roles = "Admin, ProjectManager, Submitter")]
         public IActionResult Create(int? projectId)
         {
             ViewData["projectIdfromView"] = projectId;
