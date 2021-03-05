@@ -34,20 +34,16 @@
         }, 1500, 'easeInOutExpo');
         return false;
     });
-
     // Closes responsive menu when a scroll trigger link is clicked
     $('.js-scroll').on("click", function () {
         $('.navbar-collapse').collapse('hide');
     });
-
     // Activate scrollspy to add active class to navbar items on scroll
     $('body').scrollspy({
         target: '#mainNav',
         offset: navHeight
     });
     /*--/ End Scrolling nav /--*/
-
-
 })(jQuery);
 
 
@@ -67,8 +63,7 @@ function display_ct() {
         day: "numeric"
     };
     document.getElementById('ct').innerText = x.toLocaleTimeString("en-us", options);
-    display_c();
-   
+    display_c();  
 }
 
 //document.getElementById("aboutButton").addEventListener("click", function () {
@@ -126,21 +121,14 @@ $('#Content').summernote({
     dialogsInBody: true
 });
 $(function () {
-
     //Initialize Select2 Elements
     $('.select2').select2()
     //Initialize Select2 Elements
     $('.select2bs4').select2({
         theme: 'bootstrap4'
     })
-
-
     //Bootstrap Duallistbox
     $('.duallistbox').bootstrapDualListbox()
-
-  
 })
-
-
 
 
