@@ -39,7 +39,14 @@ namespace BugTracker.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "FullName");
+            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
+            var allProject = _context.Project.ToList();
+            foreach (var item in allProject)
+            {
+                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                allDeveloper = allDeveloper.Concat(developer);
+            }
+            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
@@ -103,10 +110,20 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
-        public IActionResult Create(int? projectId)
+        public async Task<IActionResult> CreateAsync(int? projectId)
         {
+            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
+            var allProject = _context.Project.ToList();
+            foreach (var item in allProject)
+            {
+                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                allDeveloper = allDeveloper.Concat(developer);
+            }
+
+
+
             ViewData["projectIdfromView"] = projectId;
-            ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
@@ -139,7 +156,7 @@ namespace BugTracker.Controllers
                     await _context.SaveChangesAsync();
 
                     var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
-
+                    
                     if (ticket.IsAssigned == true && ticket.StatusId != currentStatus)
                     {
                         Notification notification = new Notification
@@ -203,12 +220,19 @@ namespace BugTracker.Controllers
 
 
                 }
-                ViewData["DeveloperId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperId);
-                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
-                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Id", ticket.PriorityId);
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", ticket.ProjectId);
-                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", ticket.StatusId);
-                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Id", ticket.TicketTypeId);
+                IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
+                var allProject = _context.Project.ToList();
+                foreach (var item in allProject)
+                {
+                    var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                    allDeveloper = allDeveloper.Concat(developer);
+                }
+                ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
+                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
+                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
+                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
+                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
                 return View(ticket);
             }
             return RedirectToAction("DemoUser", "Projects");

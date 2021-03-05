@@ -25,14 +25,21 @@ namespace BugTracker.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<CustomUser> _userManager;
+        private readonly ICustomProjectService _projectService;
 
-        public HomeController(ILogger<HomeController> logger, ICustomRoleService customRoleService, ApplicationDbContext dbContext, IEmailSender emailSender, UserManager<CustomUser> userManager)
+        public HomeController(ILogger<HomeController> logger, 
+            ICustomRoleService customRoleService, 
+            ApplicationDbContext dbContext, 
+            IEmailSender emailSender, 
+            UserManager<CustomUser> userManager,
+            ICustomProjectService projectService)
         {
             _logger = logger;
            _customRoleService = customRoleService;
             _dbContext = dbContext;
             _emailSender = emailSender;
             _userManager = userManager;
+            _projectService = projectService;
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -76,10 +83,16 @@ namespace BugTracker.Controllers
             ViewData["number_resolve_ticket"] = number_resolve_ticket;
             ViewData["number_of_company"] = number_of_company;
 
-
+            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
+            var allProject = _dbContext.Project.ToList();
+            foreach (var item in allProject)
+            {
+                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                allDeveloper = allDeveloper.Concat(developer);
+            }
 
             ViewData["CompanyId"] = new SelectList(_dbContext.Company, "Id", "Name");
-            ViewData["DeveloperId"] = new SelectList(_dbContext.Users, "Id", "FullName");
+            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_dbContext.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_dbContext.Priority, "Id", "Name");
             ViewData["ProjectId"] = new SelectList(_dbContext.Project, "Id", "Name");
