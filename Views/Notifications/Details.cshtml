@@ -5,17 +5,17 @@
 }
 
 
-<br /><br />
+<br /><br /><br /><br />
 <div class="row">
-    <div class="col-3"></div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header">
-                Notification Details
+    <div class="col"></div>
+    <div class="col-6">
+        <div class="card shadow-lg mb-5 bg-white rounded">
+            <div class="card-header bg-dark">
+                <h3 class="card-title">Notification Details</h3>
             </div>
 
             <div class="card-body">
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col">
                         @Html.DisplayNameFor(model => model.Name)
                     </div>
@@ -23,8 +23,8 @@
                         @Html.DisplayFor(model => model.Name)
                     </div>
                 </div>
-               
-                <div class="row">
+
+                <div class="row mb-3">
                     <div class="col">
                         @Html.DisplayNameFor(model => model.Description)
                     </div>
@@ -32,8 +32,8 @@
                         @Html.DisplayFor(model => model.Description)
                     </div>
                 </div>
-               
-                <div class="row">
+
+                <div class="row mb-3">
                     <div class="col">
                         @Html.DisplayNameFor(model => model.Sender)
                     </div>
@@ -41,28 +41,35 @@
                         @Html.DisplayFor(model => model.Sender.FullName)
                     </div>
                 </div>
-              
-                <div class="row">
+
+                <div class="row mb-3">
                     <div class="col">
                         @Html.DisplayNameFor(model => model.Ticket)
+                    </div>
+                    <div class="col">
+                        @Html.DisplayFor(model => model.Ticket.Name)
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        Ticket Description
                     </div>
                     <div class="col">
                         @Html.DisplayFor(model => model.Ticket.Description)
                     </div>
                 </div>
-
                 <hr />
-               <div class="row">
-                   <div class="col text-center">
-                       <a class="btn btn-secondary" asp-action="Index"><i class="fas fa-arrow-left"></i> Back to List</a>
-                       <a class="btn btn-info" asp-controller="Tickets" asp-action="Details" asp-route-id="@Model.TicketId"><i class="fas fa-eye"></i> View Ticket Details</a>
-                   </div>
-               </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <a class="btn btn-secondary" asp-action="Index"><i class="fas fa-arrow-left"></i> Back to List</a>
+                        <a class="btn btn-info" asp-controller="Tickets" asp-action="Details" asp-route-id="@Model.TicketId"><i class="fas fa-eye"></i> View Ticket Details</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
 
-    <div class="col-3"></div>
+    <div class="col"></div>
 </div>
 

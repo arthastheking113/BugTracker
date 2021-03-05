@@ -8,20 +8,35 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BugTracker.Data.Enums;
+using System.Diagnostics;
+using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Encodings.Web;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BugTracker.Controllers
 {
     [Authorize]
     public class InvitesController : Controller
     {
+        private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public InvitesController(ApplicationDbContext context)
+        public InvitesController(ILogger<HomeController> logger, ApplicationDbContext context,UserManager<CustomUser> userManager, IEmailSender emailSender)
         {
+            _logger = logger;
             _context = context;
+            _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         // GET: Invites
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Invite.Include(i => i.Company).Include(i => i.Invitee).Include(i => i.Invitor);
@@ -53,8 +68,6 @@ namespace BugTracker.Controllers
         public IActionResult Create()
         {
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "FullName");
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "FullName");
             return View();
         }
 
@@ -67,14 +80,59 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                CustomUser newUser = new CustomUser 
+                { 
+                    FirstName = "Invite",
+                    LastName = "User",
+                    UserName = invite.Email,
+                    Email = invite.Email,
+                    EmailConfirmed = false,
+                    CompanyId = invite.CompanyId
+                };
+                try
+                {
+                    var newUserFind = await _userManager.FindByEmailAsync(newUser.Email);
+                    if (newUserFind == null)
+                    {
+                        var result = await _userManager.CreateAsync(newUser, "Abc123!");
+                        if (result.Succeeded)
+                        {
+                            string returnUrl = null;
+                            returnUrl  ??= Url.Content("~/");
+                            _logger.LogInformation("User created a new account with password.");
+                            var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                            var callbackUrl = Url.Page(
+                                "/Account/ConfirmEmail",
+                                pageHandler: null,
+                                values: new { area = "Identity", userId = newUser.Id, code = code, returnUrl = returnUrl },
+                                protocol: Request.Scheme);
+
+                            await _emailSender.SendEmailAsync(newUser.Email, "Invite Email From Lan's Bug Tracker",
+                                $"You received a invite ticket from Lan's Bug Tracker <br> <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a> to join our software. <br> Your UserName is: {newUser.Email} <br> Your Password is: Abc123!");
+
+                        }
+                        await _userManager.AddToRoleAsync(newUser, Roles.NewUser.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("*************  ERROR  *************");
+                    Debug.WriteLine("Error Create User For Invite Ticket.");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine("***********************************");
+                    throw;
+                }
+                invite.InvitorId = (await _userManager.GetUserAsync(User)).Id;
+                invite.InviteeId = (await _userManager.FindByEmailAsync(newUser.Email)).Id;
+                invite.InviteDate = DateTime.Now;
+
                 _context.Add(invite);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","Home");
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", invite.CompanyId);
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "FullName", invite.InviteeId);
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "FullName", invite.InvitorId);
-            return View(invite);
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Invites/Edit/5
@@ -91,8 +149,6 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", invite.CompanyId);
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "FullName", invite.InviteeId);
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "FullName", invite.InvitorId);
             return View(invite);
         }
 
@@ -126,12 +182,10 @@ namespace BugTracker.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", invite.CompanyId);
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "FullName", invite.InviteeId);
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "FullName", invite.InvitorId);
-            return View(invite);
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Invites/Delete/5
