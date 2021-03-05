@@ -57,6 +57,7 @@ namespace BugTracker
             services.AddScoped<ICustomHistoryService, CustomHistoryService>();
 
             services.AddScoped<ICustomFileService, CustomFileService>();
+            services.AddScoped<ICustomNotificationService, CustomNotificationService>();
 
 
         }

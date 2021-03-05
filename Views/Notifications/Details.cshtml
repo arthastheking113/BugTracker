@@ -50,10 +50,12 @@
                         @Html.DisplayFor(model => model.Ticket.Description)
                     </div>
                 </div>
+
                 <hr />
                <div class="row">
                    <div class="col text-center">
-                       <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+                       <a class="btn btn-secondary" asp-action="Index"><i class="fas fa-arrow-left"></i> Back to List</a>
+                       <a class="btn btn-info" asp-controller="Tickets" asp-action="Details" asp-route-id="@Model.TicketId"><i class="fas fa-eye"></i> View Ticket Details</a>
                    </div>
                </div>
             </div>
