@@ -46,7 +46,14 @@
     /*--/ End Scrolling nav /--*/
 })(jQuery);
 
-
+function showDemuUser() {
+    var x = document.getElementById("demoUserLogin");
+    if (x.style.display === "none") {
+        x.style.display = "";
+    } else {
+        x.style.display = "none";
+    }
+}
 
 function display_c() {
     var refresh = 1000; // Refresh rate in milli seconds

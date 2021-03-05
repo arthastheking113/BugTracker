@@ -15,8 +15,7 @@
 
 <div class="container" style="opacity: 0.7;">
     <br />
-    <br />
-    <br />
+    <br /><br /><br />
     <div class="row">
         <div class="col-3"></div>
 
@@ -33,17 +32,24 @@
                 <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                     <hr />
                     <div asp-validation-summary="All" class="text-danger"></div>
-
-                    <div class="form-group">
-                        <label asp-for="Input.FirstName"></label>
-                        <input asp-for="Input.FirstName" class="form-control" />
-                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label asp-for="Input.FirstName"></label>
+                                <input asp-for="Input.FirstName" class="form-control" />
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label asp-for="Input.LastName"></label>
+                                <input asp-for="Input.LastName" class="form-control" />
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="Input.LastName"></label>
-                        <input asp-for="Input.LastName" class="form-control" />
-                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                    </div>
+                   
+                   
                     <div class="form-group">
                         <label asp-for="Input.CompanyId" class="control-label"></label>
                         <select asp-for="Input.CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
@@ -53,17 +59,24 @@
                         <input asp-for="Input.Email" class="form-control" />
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
-
-                    <div class="form-group">
-                        <label asp-for="Input.Password" class="control-label"></label>
-                        <input asp-for="Input.Password" class="form-control" />
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <div class="row pb-4">
+                        <div class="col">
+                            <div class="form-group">
+                                <label asp-for="Input.Password" class="control-label"></label>
+                                <input asp-for="Input.Password" class="form-control" />
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group ">
+                                <label asp-for="Input.ConfirmPassword" class="control-label"></label>
+                                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group pb-4">
-                        <label asp-for="Input.ConfirmPassword" class="control-label"></label>
-                        <input asp-for="Input.ConfirmPassword" class="form-control" />
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                    </div>
+                   
+                   
 
                     <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 140%;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;border:0;" type="submit">Register</button>
                 </form>

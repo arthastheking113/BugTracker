@@ -510,7 +510,7 @@
                                 <div class="modal-body">
                                     <div class="row pb-3">
                                         <div class="col">
-                                            In order to test the Bug Tracker, you can simply click on Login as either Admin, Project Manager, Developer, or Submitter. To test all of the Bug Tracker functions, I recommend you to login as Demo Admin.
+                                            In order to test the Bug Tracker, you can simply click on "Login as Demo User" and choose either Admin, Project Manager, Developer, or Submitter. To test all of the Bug Tracker functions, I recommend you to login as Demo Admin.
 
                                         </div>
                                     </div>
@@ -607,10 +607,10 @@
 
 
                                         @*<div class="col">
-                                                <a class="btn btn-secondary btn-block">
-                                                    How to use?
-                                                </a>
-                                            </div>*@
+                                <a class="btn btn-secondary btn-block">
+                                    How to use?
+                                </a>
+                            </div>*@
                                     </div>
                                     <hr />
                                     <div class="row">
@@ -622,6 +622,112 @@
                                             Phone: 402-304-0329
                                         </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="DemoUserLogin" tabindex="-1" aria-labelledby="DemoUserLogin" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl">
+                            <div class="modal-content bg-dark" style="opacity: 0.7;">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="DemoUserLogin">Login As Demo User</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="container-fluid mb-0 pb-0" style="opacity: 0.95;">
+                                        <form id="account" method="post" class="form-horizontal form-material">
+                                            <div class="row mb-0 pb-0" id="demoUserLogin">
+                                               
+                                                <div class="col">
+                                                    <div class="shadow-lg p-3  bg-dark rounded">
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <h4><span class="iconify" data-icon="wpf:administrator" data-inline="true"></span> Demo Admin</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                Log in as an Admin with full of functions.
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <button type="submit" name="demoEmail" value="DemoAdminEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Admin</button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="shadow-lg p-3  bg-dark rounded">
+                                                        <div class="row">
+                                                            <div class="col  text-center">
+                                                                <h4><span class="iconify" data-icon="fa-solid:users-cog" data-inline="true"></span> Demo PM</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                Log in as a Project Manager to manage your team.
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <button type="submit" name="demoEmail" value="DemoPmEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo PM</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="shadow-lg p-3  bg-dark rounded">
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <h4><span class="iconify" data-icon="fa-solid:user-secret" data-inline="true"></span> Demo Developer</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                Log in as a Developer to work as a normal employee.
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <button type="submit" name="demoEmail" value="DemoDevEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Developer</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="shadow-lg p-3  bg-dark rounded">
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <h4><span class="iconify" data-icon="fa-solid:user" data-inline="true"></span> Demo Submitter</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                Log in as a Submitter to work with developer.
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col text-center">
+                                                                <button type="submit" name="demoEmail" value="DemoSubEmail" class="btn btn-secondary"><span class="iconify" data-icon="clarity:login-solid" data-inline="true"></span> Login as Demo Submitter</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                            </div>
+                                        </form>
+
+                                    </div>
+
                                 </div>
                                 <div class="modal-footer">
 
