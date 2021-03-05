@@ -266,7 +266,7 @@
                 </div>
             </div>
         }
-        else
+        else if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Developer.ToString())))
         {
             <div class="col-sm">
                 <div class="card">
@@ -364,6 +364,21 @@
                 </div>
             </div>
 
+        }
+        else
+        {
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-dark">
+                        <h5 class="card-title">Quick Inbox and Notification Action</h5>
+                    </div>
+                    <div class="card-body">
+                        <a asp-controller="Inboxes" asp-action="Create" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-plus-square"></i> Compose New Inbox</a>
+                        <a asp-controller="Inboxes" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="far fa-comments"></i> View My Inbox</a>
+                        <a asp-controller="Notifications" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="far fa-bell"></i> View My Notifications</a>
+                    </div>
+                </div>
+            </div>
         }
     </div>
 

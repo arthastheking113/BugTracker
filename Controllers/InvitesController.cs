@@ -113,6 +113,18 @@ namespace BugTracker.Controllers
 
                         }
                         await _userManager.AddToRoleAsync(newUser, Roles.NewUser.ToString());
+                        var admin = await _userManager.FindByEmailAsync("arthastheking113@gmail.com");
+                 
+                        WelcomeNotification notification = new WelcomeNotification
+                        {
+                            Name = "Welcome To The Bug Tracker",
+                            Description = "You have been Invited to the bug tracker service, please wait our admin and project manager assign you a differnt role in the system. You can contact our staff by the inbox system.",
+                            Created = DateTime.Now,
+                            SenderId = (admin).Id,
+                            RecipientId = newUser.Id
+                        };
+                        await _context.WelcomeNotification.AddAsync(notification);
+                        await _context.SaveChangesAsync();
                     }
                 }
                 catch (Exception ex)

@@ -29,6 +29,8 @@ namespace BugTracker.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var applicationDbContext = _context.Notification.Where(r => r.RecipientId == userId).Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
+            var welcomeNotification = _context.WelcomeNotification.Where(n => n.RecipientId == userId).Include(n => n.Recipient).Include(n => n.Sender).ToList();
+            ViewData["welcomeNotification"] = welcomeNotification;
             return View(await applicationDbContext.ToListAsync());
         }
 

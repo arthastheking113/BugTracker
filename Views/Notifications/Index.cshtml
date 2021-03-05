@@ -1,12 +1,16 @@
 ﻿@model IEnumerable<BugTracker.Models.Notification>
 @using BugTracker.Data.Enums
 @using BugTracker.Services
+@using BugTracker.Data
+@inject ApplicationDbContext ApplicationDbContext  
 @inject ICustomRoleService RoleService
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
 @{
     ViewData["Title"] = "Notifications";
+    var userId = UserManager.GetUserId(User);
+
 }
 
 <div class="row">
@@ -107,6 +111,63 @@
                                     {
                                         <a class="btn btn-info btn-sm mb-1" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i> Edit</a>
                                         <a class="btn btn-danger btn-sm mb-1" asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i> Delete</a>
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in ViewBag.welcomeNotification)
+                        {
+                            <tr>
+                                @if (item.IsViewed == false)
+                                {
+                                    <td>
+                                        <b>@item.Name</b>
+                                    </td>
+                                    <td>
+                                        <b>@item.Description</b>
+                                    </td>
+                                    <td>
+                                        <b>@item.Sender.FullName</b>
+                                    </td>
+                                    <td>
+                                        <b>@item.Recipient.FullName</b>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @item.Name
+                                    </td>
+                                    <td>
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                        @item.Sender.FullName
+                                    </td>
+                                    <td>
+                                        @item.Recipient.FullName
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                       
+                                    </td>
+                                }
+
+                                <td class="project-actions text-right">
+                                    <a class="btn btn-primary btn-sm mb-1" asp-controller="WelcomeNotifications" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-folder"></i> View</a>
+                                    @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString()))
+                                    {
+                                        <a class="btn btn-info btn-sm mb-1" asp-controller="WelcomeNotifications" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                        <a class="btn btn-danger btn-sm mb-1" asp-controller="WelcomeNotifications" asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i> Delete</a>
                                     }
 
                                 </td>

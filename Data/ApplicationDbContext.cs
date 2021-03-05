@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BugTracker.Data
 {
@@ -28,5 +29,6 @@ namespace BugTracker.Data
         public DbSet<BugTracker.Models.ProjectAttachment> ProjectAttachment { get; set; }
         public DbSet<BugTracker.Models.Reply> Reply { get; set; }
         public DbSet<BugTracker.Models.InboxNotification> InboxNotification { get; set; }
+        public DbSet<BugTracker.Models.WelcomeNotification> WelcomeNotification { get; set; }
     }
 }

@@ -64,6 +64,7 @@ namespace BugTracker.Controllers
             var number_resolve_ticket = _dbContext.Ticket.Where(t => t.StatusId == 5).Where(t => t.Updated >= currentTime.AddDays(-7)).ToList().Count;
             var number_of_company = _dbContext.Company.ToList().Count;
 
+          
 
             ViewData["currentTime"] = currentTime;
             ViewData["role"] = role;
