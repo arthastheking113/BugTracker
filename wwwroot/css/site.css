@@ -10,7 +10,6 @@ for details on configuring this project to bundle and minify static web assets. 
 .center {
     height: 200px;
     position: relative;
-    border: 3px solid green;
 }
 
 a.navbar-brand {
