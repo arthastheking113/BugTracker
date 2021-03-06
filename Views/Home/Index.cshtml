@@ -13,8 +13,6 @@
 }
 <div class="container-fluid">
     <div class="row mt-2">
-
-
         @if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager"))
         {
             <div class="col-sm-8">
@@ -45,12 +43,12 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
                                                 <label class="control-label">Name</label>
-                                                <input name="Name" class="form-control" />
+                                                <input name="Name" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">Description</label>
-                                                <input name="Description" class="form-control" />
+                                                <input name="Description" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
@@ -118,12 +116,12 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
                                                 <label class="control-label">Name</label>
-                                                <input name="Name" class="form-control" />
+                                                <input name="Name" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">Description</label>
-                                                <input name="Description" class="form-control" />
+                                                <input name="Description" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
@@ -196,12 +194,12 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
                                                 <label class="control-label">Name</label>
-                                                <input name="Name" class="form-control" />
+                                                <input name="Name" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">Description</label>
-                                                <input name="Description" class="form-control" />
+                                                <input name="Description" class="form-control"  required/>
 
                                             </div>
                                             <div class="form-group">
@@ -296,12 +294,12 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
                                                 <label class="control-label">Name</label>
-                                                <input name="Name" class="form-control" />
+                                                <input name="Name" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">Description</label>
-                                                <input name="Description" class="form-control" />
+                                                <input name="Description" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">

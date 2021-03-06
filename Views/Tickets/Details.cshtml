@@ -109,7 +109,7 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="@Model.Id" name="TicketId">
                         <div class="media-body ml-3 ">
-                            <label>Description<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" required/></label>      
+                            <label>Description<input name="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" required/></label>      
                             <label class="btn btn-outline-secondary btn-sm">
                                 Upload File
                                 <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" required/>
@@ -252,7 +252,7 @@
                             <input type="hidden" name="TicketId" value="@Model.Id" />
                             <input type="hidden" name="CustomUserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
                             <div class="form-group">
-                                <textarea id="Content" name="Content" class="form-control" rows="4"></textarea>
+                                <textarea id="Content" name="Content" class="form-control" rows="4" required></textarea>
                             </div>
 
                             <input type="submit" value="Comment" class="btn btn-secondary" />
