@@ -49,7 +49,13 @@
     <script async src="https://cse.google.com/cse.js?cx=031b060c4c58cdae4"></script>
 
 </head>
-<body class="sidebar-mini layout-fixed sidebar-collapse" onload=display_ct(); style="background-image: url('@ViewData["background"]');width:100%;height:auto; background-repeat: no-repeat;background-attachment: fixed;background-size: cover;">
+<body class="sidebar-mini layout-fixed sidebar-collapse" onload=display_ct(); style="background-image: url('@ViewData["background"]');
+        width: 100%;
+        height: auto;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+">
     <div>
         <!-- Sidebar -->
         @if (SignInManager.IsSignedIn(User))

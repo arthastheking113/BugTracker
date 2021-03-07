@@ -1,5 +1,46 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
+
+/*.slide-in-bck-center {
+    -webkit-animation: slide-in-bck-center 2s cubic-bezier(0.550, 0.085, 0.680, 0.530) 1s both;
+    animation: slide-in-bck-center 2s cubic-bezier(0.550, 0.085, 0.680, 0.530) 1s both;
+}*/
+
+/**
+ * ----------------------------------------
+ * animation slide-in-bck-center
+ * ----------------------------------------
+ */
+/*@-webkit-keyframes slide-in-bck-center {
+    0% {
+        -webkit-transform: translateZ(600px);
+        transform: translateZ(600px);
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 0.7;
+    }
+}*/
+
+@keyframes slide-in-bck-center {
+    0% {
+        -webkit-transform: translateZ(600px);
+        transform: translateZ(600px);
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 0.7;
+    }
+}
+
+
+
 .vertical-center {
     margin: 0;
     position: absolute;
