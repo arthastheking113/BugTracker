@@ -27,7 +27,9 @@ namespace BugTracker.Controllers
         private readonly IImageService _imageService;
         private readonly UserManager<CustomUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService, IImageService imageService, UserManager<CustomUser> userManager)
+        public ProjectsController(ApplicationDbContext context, ICustomProjectService projectService, ICustomRoleService roleService, 
+            IImageService imageService, 
+            UserManager<CustomUser> userManager)
         {
             _context = context;
             _projectService = projectService;

@@ -26,7 +26,12 @@ namespace BugTracker.Controllers
         private readonly ICustomProjectService _projectService;
         private readonly ICustomRoleService _roleService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomHistoryService customHistoryService, IEmailSender emailSender, ICustomProjectService projectService, ICustomRoleService roleService)
+        public TicketsController(ApplicationDbContext context, 
+            UserManager<CustomUser> userManager, 
+            ICustomHistoryService customHistoryService, 
+            IEmailSender emailSender, 
+            ICustomProjectService projectService, 
+            ICustomRoleService roleService)
         {
             _context = context;
             _userManager = userManager;
