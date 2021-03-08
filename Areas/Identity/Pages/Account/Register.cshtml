@@ -12,14 +12,12 @@
     <div class="star"></div>
 </div>
 <div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div>
-
-<div class="container" style="opacity: 0.6;">
+<div class="container-fluid" style="opacity: 0.6;">
     <br />
     <br /><br /><br />
     <div class="row">
-        <div class="col-3"></div>
-
-        <div class="col">
+        <div class="col"></div>
+        <div class="col-3">
             <div class="shadow-lg p-3 mb-5 bg-dark rounded">
                 <div class="row">
                     <div class="col border-right">
@@ -47,9 +45,7 @@
                                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                   
-                   
+                    </div>                                      
                     <div class="form-group">
                         <label asp-for="Input.CompanyId" class="control-label"></label>
                         <select asp-for="Input.CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
@@ -74,13 +70,9 @@
                                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                   
-                   
-
+                    </div>                                  
                     <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 140%;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;border:0;" type="submit">Register</button>
                 </form>
-
                 <div class="row pt-2 ">
                     <div class="col text-center">
                         <a class="nav-link text-white " asp-area="Identity" asp-page="/Account/Login">Or Login as a Demo User?</a>
@@ -89,7 +81,7 @@
             </div>
         </div>
 
-        <div class="col-3"></div>
+        <div class="col"></div>
     </div>
 
 </div>

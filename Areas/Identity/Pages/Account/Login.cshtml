@@ -1,11 +1,9 @@
 ﻿@page
 @model LoginModel
-
 @{
     ViewData["Title"] = "Log in";
     ViewData["background"] = "/img/4kpic4.jpg";
 }
-
 <div class="sky-container">
     <div class="star"></div>
     <div class="star"></div>
@@ -14,14 +12,12 @@
     <div class="star"></div>
 </div>
 <div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div>
-<div class="container" style="opacity: 0.6;">
+<div class="container-fluid" style="opacity: 0.6;">
     <br />
     <br /> <br /><br />
     <div class="row">
         <div class="col"></div>
-
-        <div class="col-6">
-
+        <div class="col-3">
             <div class="shadow-lg p-3 mb-4 bg-dark rounded ">
                 <div class="row">
                     <div class="col border-right">
@@ -31,7 +27,6 @@
                         <a class="nav-link" asp-area="Identity" asp-page="/Account/Register"><h2 style="color:darkgrey" class="text-center">Register</h2></a>
                     </div>
                 </div>
-
                 <form id="account" method="post">
                     <hr />
                     <div asp-validation-summary="All" class="text-danger"></div>
@@ -54,7 +49,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-
                         <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 130%;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;border:0;" type="submit">Login</button>
                     </div>
                 </form>
@@ -129,7 +123,6 @@
                             <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#howtouse">
                                 How to use?
                             </button>
-
                         </div>
                     </div>
                     <div class="row pb-3">
@@ -149,7 +142,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col"></div>
     </div>
 </div>
