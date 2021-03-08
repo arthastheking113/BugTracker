@@ -48,6 +48,7 @@ for details on configuring this project to bundle and minify static web assets. 
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
+
 .center {
     height: 200px;
     position: relative;
@@ -56,6 +57,26 @@ for details on configuring this project to bundle and minify static web assets. 
 .vertical-line {
     border-left: 1px solid white;
    
+}
+
+
+.col-lg-3half {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+    .col-lg-3half {
+        float: left;
+    }
+
+    .col-lg-3half {
+        width: 29.16666667%;
+    }
+
+    
 }
 
 a.navbar-brand {
