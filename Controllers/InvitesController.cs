@@ -44,6 +44,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Invites/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -65,6 +66,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Invites/Create
+
         public IActionResult Create()
         {
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
@@ -148,6 +150,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Invites/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -201,6 +204,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Invites/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -41,6 +41,17 @@ namespace BugTracker.Controllers
             _userManager = userManager;
             _projectService = projectService;
         }
+        public async Task<JsonResult> DevelopersOnProject(int id)
+        {
+            var devs = await _projectService.DeveloperOnProjectAsync(id);
+            var model = new DeveloperOnProject();
+            foreach (var dev in devs)
+            {
+                model.Ids.Add(dev.Id);
+                model.FullName.Add(dev.FullName);
+            }
+            return Json(model);
+        }
 
         public async Task<IActionResult> IndexAsync()
         {

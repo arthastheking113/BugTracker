@@ -62,7 +62,9 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label name="ProjectId" class="control-label">Project</label>
-                                                    <select name="ProjectId" class="form-control" asp-items="@ViewBag.ProjectId"></select>
+                                                    <select name="ProjectId" id="projectId" onchange="getDevelopersOnProject()" class="form-control" asp-items="@ViewBag.ProjectId">
+                                                        <option value="">Choose Project</option>
+                                                    </select>
                                                 </div>
                                                 @if (!(await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Submitter.ToString())))
                                                 {
@@ -74,7 +76,9 @@
 
                                                     <div class="form-group">
                                                         <label name="DeveloperId" class="control-label">Developer</label>
-                                                        <select name="DeveloperId" class="form-control" asp-items="@ViewBag.DeveloperId"></select>
+                                                        <select name="DeveloperId" id="DeveloperId" class="form-control">
+                                                            <option value="">Choose Developer</option>
+                                                        </select>
                                                     </div>
                                                 }
 
