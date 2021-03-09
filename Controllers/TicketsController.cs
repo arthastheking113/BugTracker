@@ -118,12 +118,22 @@ namespace BugTracker.Controllers
                 .Include(t => t.Comments)
                 .Include(t => t.TicketHistories).ThenInclude(t => t.CustomUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
+           
+
             if (ticket == null)
             {
                 return NotFound();
             }
+            var userId = _userManager.GetUserId(User);
+            if (userId == ticket.DeveloperId || userId == ticket.OwnnerId)
+            {
+                return View(ticket);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Tickets");
+            }
             
-            return View(ticket);
         }
 
         // GET: Tickets/Create

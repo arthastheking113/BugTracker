@@ -77,40 +77,40 @@ function showDemuUser() {
     }
 }
 
-//function display_c() {
-//    var refresh = 1000; // Refresh rate in milli seconds
-//    mytime = setTimeout('display_ct()', refresh)
-//}
+function display_c() {
+    var refresh = 1000; // Refresh rate in milli seconds
+    mytime = setTimeout('display_ct()', refresh)
+}
 
-//function display_ct() {
-//    document.getElementById('gsc-i-id1').placeholder = 'Search...';
-//    //$("#gsc-i-id1").addClass("form-control form-control-navbar");
-//    var x = new Date()
-//    let options = {
-//        hour: "2-digit", minute: "2-digit",
-//        second: "2-digit", weekday: "long", year: "numeric", month: "short",
-//        day: "numeric"
-//    };
-//    document.getElementById('ct').innerText = x.toLocaleTimeString("en-us", options);
-//    display_c();  
-//}
+function display_ct() {
+    document.getElementById('gsc-i-id1').placeholder = 'Search...';
+    //$("#gsc-i-id1").addClass("form-control form-control-navbar");
+    var x = new Date()
+    let options = {
+        hour: "2-digit", minute: "2-digit",
+        second: "2-digit", weekday: "long", year: "numeric", month: "short",
+        day: "numeric"
+    };
+    document.getElementById('ct').innerText = x.toLocaleTimeString("en-us", options);
+    display_c();  
+}
 
-//document.getElementById("aboutButton").addEventListener("click", function () {
-//    $('#aboutModal').modal("show");
-//});
+document.getElementById("aboutButton").addEventListener("click", function () {
+    $('#aboutModal').modal("show");
+});
 
 
-//function about() {
-//    Swal.fire(
-//        'The Internet?',
-//        'That thing is still around?',
-//        'question'
-//    )
-//}
+function about() {
+    Swal.fire(
+        'The Internet?',
+        'That thing is still around?',
+        'question'
+    )
+}
 
-//$(window).on('load', function () {
-//    $('#exampleModal').modal('show');
-//});
+$(window).on('load', function () {
+    $('#exampleModal').modal('show');
+});
 
 
  $(function () {
