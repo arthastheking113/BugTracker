@@ -9,13 +9,13 @@
 @inject UserManager<CustomUser> UserManager
 @{
     ViewData["Title"] = "Home Page";
-    var role = await roleService.ListUserRoleAsync((await UserManager.GetUserAsync(User)));
+ 
 }
 <div class="container-fluid">
     <div class="row mt-2">
-        @if (role.ToList().Contains("Admin") || role.ToList().Contains("ProjectManager"))
+        @if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString())))
         {
-            <div class="col-sm-8">
+            <div class="col-8">
                 <div class="card">
                     <div class="card-header bg-dark">
                         <h5 class="card-title">Quick Management Action</h5>
@@ -210,7 +210,7 @@
         }
         else if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Submitter.ToString())))
         {
-            <div class="col-sm">
+            <div class="col">
                 <div class="card">
                     <div class="card-header bg-dark">
                         <h5 class="card-title">Quick Management Action</h5>
@@ -354,7 +354,7 @@
         }
         else if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Developer.ToString())))
         {
-            <div class="col-sm">
+            <div class="col">
                 <div class="card">
                     <div class="card-header bg-dark">
                         <h5 class="card-title">Quick Management Action</h5>
