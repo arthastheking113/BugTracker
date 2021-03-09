@@ -143,8 +143,52 @@
                         <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-tasks"></i> View Projects </a>
                         <a asp-controller="Home" asp-action="ManageRole" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-people-arrows"></i> Role's Management </a>
                         <a asp-controller="Projects" asp-action="ManagerUserProject" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-user-edit"></i> Project User Management</a>
-                        <a asp-controller="Invites" asp-action="Create" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-location-arrow"></i> Create a Invite Ticket</a>
+                      
+                        <button type="button" class="btn btn-secondary pb-2 mb-2" data-toggle="modal" data-target="#exampleModal3">
+                            <i class="fas fa-location-arrow"></i> Create a Invite Ticket
+                        </button>
 
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel3">Create New Project</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form asp-controller="Invites" asp-action="Create" method="post">
+                                        <div class="modal-body">
+
+
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <div class="form-group">
+                                                <label name="Email" class="control-label">Email</label>
+                                                <input name="Email" class="form-control" />
+                                               
+                                            </div>
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" name="IsValid" type="checkbox" /> Is Valid?
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label name="CompanyId" class="control-label">Company</label>
+                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-location-arrow"></i> Send Invitation</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -199,7 +243,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">Description</label>
-                                                <input name="Description" class="form-control"  required/>
+                                                <input name="Description" class="form-control" required />
 
                                             </div>
                                             <div class="form-group">
@@ -247,7 +291,51 @@
                         @*<a asp-controller="Projects" asp-action="Create" class="btn btn-secondary pb-2 mb-2"> <i class="fas fa-tasks"></i> Create New Projects</a>*@
                         <a asp-controller="Tickets" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="nav-icon fas fa-ticket-alt"></i> View All Tickets</a>
 
-                        <a asp-controller="Invites" asp-action="Create" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-location-arrow"></i> Create a Invite Ticket</a>
+                        <button type="button" class="btn btn-secondary pb-2 mb-2" data-toggle="modal" data-target="#exampleModal3">
+                            <i class="fas fa-location-arrow"></i> Create a Invite Ticket
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel3">Send Invite Ticket</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form asp-controller="Invites" asp-action="Create" method="post">
+                                        <div class="modal-body">
+
+
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <div class="form-group">
+                                                <label name="Email" class="control-label">Email</label>
+                                                <input name="Email" class="form-control" />
+
+                                            </div>
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" name="IsValid" type="checkbox" /> Is Valid?
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label name="CompanyId" class="control-label">Company</label>
+                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-location-arrow"></i> Send Invitation</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -346,6 +434,52 @@
                         </div>
                         @*<a asp-controller="Projects" asp-action="Create" class="btn btn-secondary pb-2 mb-2"> <i class="fas fa-tasks"></i> Create New Projects</a>*@
                         <a asp-controller="Tickets" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="nav-icon fas fa-ticket-alt"></i> View All Tickets</a>
+                        <button type="button" class="btn btn-secondary pb-2 mb-2" data-toggle="modal" data-target="#exampleModal3">
+                            <i class="fas fa-location-arrow"></i> Create a Invite Ticket
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel3">Send Invite Ticket</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form asp-controller="Invites" asp-action="Create" method="post">
+                                        <div class="modal-body">
+
+
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <div class="form-group">
+                                                <label name="Email" class="control-label">Email</label>
+                                                <input name="Email" class="form-control" />
+
+                                            </div>
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" name="IsValid" type="checkbox" /> Is Valid?
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label name="CompanyId" class="control-label">Company</label>
+                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer">
+
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-location-arrow"></i> Send Invitation</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
