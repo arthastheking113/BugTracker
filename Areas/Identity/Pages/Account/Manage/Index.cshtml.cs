@@ -107,7 +107,7 @@ namespace BugTracker.Areas.Identity.Pages.Account.Manage
             }
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
-            user.CompanyId = Input.CompanyId;
+            user.CompanyId = (int)Input.CompanyId;
             if (image != null)
             {
                 user.ImageData = await _imageService.EncodeFileAsync(image);

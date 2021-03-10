@@ -38,8 +38,7 @@ namespace BugTracker.Services
                         var oldManager = await ProjectManagerOnProjectAsync(projectId);
                         if (oldManager != null)
                         {
-                                                    await RemoveUserFromProjectAsync(oldManager.Id, projectId);
-
+                            await RemoveUserFromProjectAsync(oldManager.Id, projectId);
                         }
                     }
                     Project project = await _context.Project.FindAsync(projectId);

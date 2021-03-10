@@ -101,7 +101,8 @@ namespace BugTracker.Controllers
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
                 allDeveloper = allDeveloper.Concat(developer);
             }
-
+            var listRole = _dbContext.Roles.Where(r => r.Name != Roles.Admin.ToString() || r.Name != Roles.ProjectManager.ToString()).ToList();
+            ViewData["Roles"] = new SelectList(listRole, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_dbContext.Company, "Id", "Name");
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_dbContext.Users, "Id", "FullName");

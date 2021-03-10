@@ -161,7 +161,7 @@
                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel3">Create New Project</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel3">Send Invite Ticket</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -172,21 +172,21 @@
 
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
-                                                <label name="Email" class="control-label">Email</label>
-                                                <input name="Email" class="form-control" />
+                                                <label name="Email" class="control-label ">Email</label>
+                                                <input name="Email" class="form-control" placeholder="Enter Your Email..." required />
 
                                             </div>
-                                            <div class="form-group form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" name="IsValid" type="checkbox" /> Is Valid?
-                                                </label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="CompanyId" class="control-label">Company</label>
-                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
-                                            </div>
-
-
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                                <div class="form-group">
+                                                    <label name="CompanyName" class="control-label">Company Name</label>
+                                                    <input name="CompanyName" class="form-control" placeholder="Name your company..." required />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="Role" class="control-label">Assign Role</label>
+                                                    <select name="Role" id="DeveloperId" class="form-control" asp-items="ViewBag.Roles"></select>
+                                                </div>
+                                            }
 
                                         </div>
                                         <div class="modal-footer">
@@ -320,19 +320,21 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
                                                 <label name="Email" class="control-label">Email</label>
-                                                <input name="Email" class="form-control" />
-
-                                            </div>
-                                            <div class="form-group form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" name="IsValid" type="checkbox" /> Is Valid?
-                                                </label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="CompanyId" class="control-label">Company</label>
-                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                                <input name="Email" class="form-control" placeholder="Enter your Email..." required />
                                             </div>
 
+
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                                <div class="form-group">
+                                                    <label name="CompanyName" class="control-label">Company Name</label>
+                                                    <input name="CompanyName" class="form-control" placeholder="Enter your company name..." required />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="Role" class="control-label">Assign Role</label>
+                                                    <select name="Role" id="DeveloperId" class="form-control" asp-items="ViewBag.Roles"></select>
+                                                </div>
+                                            }
 
 
                                         </div>
@@ -463,19 +465,21 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <div class="form-group">
                                                 <label name="Email" class="control-label">Email</label>
-                                                <input name="Email" class="form-control" />
-
-                                            </div>
-                                            <div class="form-group form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" name="IsValid" type="checkbox" /> Is Valid?
-                                                </label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="CompanyId" class="control-label">Company</label>
-                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                                <input name="Email" class="form-control" placeholder="Enter your Email..." required />
                                             </div>
 
+
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                                <div class="form-group">
+                                                    <label name="CompanyName" class="control-label">Company Name</label>
+                                                    <input name="CompanyName" class="form-control" placeholder="Enter your company name..." required />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="Role" class="control-label">Assign Role</label>
+                                                    <select name="Role" id="DeveloperId" class="form-control" asp-items="ViewBag.Roles"></select>
+                                                </div>
+                                            }
 
 
                                         </div>

@@ -117,6 +117,29 @@ namespace BugTracker.Areas.Identity.Pages.Account
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    var admin = await _userManager.FindByEmailAsync("arthastheking113@gmail.com");
+                    WelcomeNotification welcomenotification = new WelcomeNotification
+                    {
+                        Name = "Welcome To The Bug Tracker",
+                        Description = "You have created a new account in my bug tracker service, please wait our admin or project manager assign you a higher role in the system. You can contact our staff by the inbox system.",
+                        Created = DateTime.Now,
+                        SenderId = (admin).Id,
+                        RecipientId = user.Id
+                    };
+                    await _context.WelcomeNotification.AddAsync(welcomenotification);
+                    await _context.SaveChangesAsync();
+
+                    WelcomeNotification welcomenotification2 = new WelcomeNotification
+                    {
+                        Name = "New Account have been created",
+                        Description = $"A new user have been created on {DateTime.Now} with Full Name is: {user.FullName} and Email is: {user.Email}",
+                        Created = DateTime.Now,
+                        SenderId = (admin).Id,
+                        RecipientId = (admin).Id
+                    };
+                    await _context.WelcomeNotification.AddAsync(welcomenotification2);
+                    await _context.SaveChangesAsync();
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

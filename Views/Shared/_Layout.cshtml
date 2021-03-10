@@ -325,7 +325,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                            with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -464,16 +464,16 @@
                             }
                             @if (!await UserManager.IsInRoleAsync(user, Roles.NewUser.ToString()))
                             {
-                                    <li class="nav-item">
-                                        <a asp-controller="Invites" asp-action="Create" class="nav-link">
-                                            <i class="nav-icon fas fa-location-arrow"></i>
-                                            <p>
-                                                Invite Ticket
-                                            </p>
-                                        </a>
-                                    </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Invites" asp-action="Create" class="nav-link">
+                                        <i class="nav-icon fas fa-location-arrow"></i>
+                                        <p>
+                                            Invite Ticket
+                                        </p>
+                                    </a>
+                                </li>
                             }
-                            
+                           
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

@@ -82,9 +82,27 @@ namespace BugTracker.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Project.Include(p => p.Company).Include(p => p.Tickets).Include(p => p.CustomUsers);
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+            var applicationDbContext = await  _context.Project.Include(p => p.Company).Include(p => p.Tickets).Include(p => p.CustomUsers).ToListAsync();
+            List<Project> projectList = new List<Project>();
+            foreach (var project in applicationDbContext)
+            {
+                if ((await _projectService.ProjectManagerOnProjectAsync(project.Id)).Id == userId)
+                {
+                    projectList.Add(project);
+                }
+            }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
-            return View(await applicationDbContext.ToListAsync());
+            if (await _userManager.IsInRoleAsync(user, Roles.Admin.ToString()))
+            {
+                return View(applicationDbContext);
+            }
+            else
+            {
+                return View(projectList);
+            }
+           
         }
 
         // GET: Projects/Details/5
@@ -145,6 +163,7 @@ namespace BugTracker.Controllers
                     project.ImageData = await _imageService.EncodeFileAsync(image);
                     project.ContentType = _imageService.RecordContentType(image);
                     project.Created = DateTime.Now;
+                    project.CompanyId = (await _userManager.GetUserAsync(User)).CompanyId;
                     _context.Add(project);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
