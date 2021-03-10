@@ -95,22 +95,7 @@ function display_ct() {
     display_c();  
 }
 
-document.getElementById("aboutButton").addEventListener("click", function () {
-    $('#aboutModal').modal("show");
-});
 
-
-function about() {
-    Swal.fire(
-        'The Internet?',
-        'That thing is still around?',
-        'question'
-    )
-}
-
-$(window).on('load', function () {
-    $('#exampleModal').modal('show');
-});
 
 
  $(function () {

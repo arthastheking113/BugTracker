@@ -324,7 +324,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-    with font-awesome or any other icon font library -->
+                            with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -487,17 +487,17 @@
         }
         else
         {
-            <div>                                
+            <div>
                 <audio id="myaudio" loop>
                     <source src="~/audio/night_sound_edited.mp3" type="audio/mp3">
                     Your browser does not support the audio element.
                 </audio>
-               <button id="audiobutton" class="btn btn-secondary" onclick="togglePlay()" type="button"><i id="audio" class="fas fa-volume-mute"></i></button>
-              
+                <button id="audiobutton" class="btn btn-secondary" onclick="togglePlay()" type="button"><i id="audio" class="fas fa-volume-mute"></i></button>
+
                 <script>
                     var myAudio = document.getElementById("myaudio");
                     var menu = document.getElementById('audio');
-                   
+
                     function togglePlay() {
                         if (menu.className == "fas fa-volume-mute") {
                             menu.className = "fas fa-volume-up";
@@ -508,7 +508,7 @@
                     };
                 </script>
                 <main role="main">
-                    @RenderBody()                   
+                    @RenderBody()
                 </main>
             </div>
         }
@@ -571,6 +571,7 @@
     <script src="~/plugins/chart.js/Chart.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="~/js/demo.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @if (SignInManager.IsSignedIn(User))
     {
         <script>
@@ -654,7 +655,7 @@
 
         </script>
     }
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
