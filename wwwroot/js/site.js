@@ -68,19 +68,7 @@
     /*--/ End Scrolling nav /--*/
 })(jQuery);
 
-function showDemuUser() {
-    var x = document.getElementById("demoUserLogin");
-    if (x.style.display === "none") {
-        x.style.display = "";
-    } else {
-        x.style.display = "none";
-    }
-}
-if (screen.width >= 1024) {
-    document.getElementById('shooting_star').innerHTML += '<div class="sky-container"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>';
-} else {
-    document.getElementById('shooting_star').innerHTML = "";
-}
+
 function display_c() {
     var refresh = 1000; // Refresh rate in milli seconds
     mytime = setTimeout('display_ct()', refresh)
