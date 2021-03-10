@@ -176,12 +176,17 @@
                                                 <input name="Email" class="form-control" placeholder="Enter Your Email..." required />
 
                                             </div>
-                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())))
                                             {
                                                 <div class="form-group">
                                                     <label name="CompanyName" class="control-label">Company Name</label>
-                                                    <input name="CompanyName" class="form-control" placeholder="Name your company..." required />
+                                                    <input name="CompanyName" class="form-control" placeholder="Enter your company name..." required />
                                                 </div>
+
+                                            }
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                               
                                                 <div class="form-group">
                                                     <label name="Role" class="control-label">Assign Role</label>
                                                     <select name="Role" id="DeveloperId" class="form-control" asp-items="ViewBag.Roles"></select>
@@ -322,14 +327,18 @@
                                                 <label name="Email" class="control-label">Email</label>
                                                 <input name="Email" class="form-control" placeholder="Enter your Email..." required />
                                             </div>
-
-
-                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())))
                                             {
                                                 <div class="form-group">
                                                     <label name="CompanyName" class="control-label">Company Name</label>
                                                     <input name="CompanyName" class="form-control" placeholder="Enter your company name..." required />
                                                 </div>
+
+                                            }
+
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                               
                                                 <div class="form-group">
                                                     <label name="Role" class="control-label">Assign Role</label>
                                                     <select name="Role" id="DeveloperId" class="form-control" asp-items="ViewBag.Roles"></select>
@@ -467,14 +476,19 @@
                                                 <label name="Email" class="control-label">Email</label>
                                                 <input name="Email" class="form-control" placeholder="Enter your Email..." required />
                                             </div>
-
-
-                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())))
                                             {
                                                 <div class="form-group">
                                                     <label name="CompanyName" class="control-label">Company Name</label>
                                                     <input name="CompanyName" class="form-control" placeholder="Enter your company name..." required />
                                                 </div>
+                                             
+                                            }
+
+
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                            
                                                 <div class="form-group">
                                                     <label name="Role" class="control-label">Assign Role</label>
                                                     <select name="Role" id="DeveloperId" class="form-control" asp-items="ViewBag.Roles"></select>

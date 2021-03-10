@@ -76,7 +76,11 @@ namespace BugTracker.Controllers
 
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
+            var listRole = _context.Roles.Where(r => (r.Name != Roles.Admin.ToString()
+           && r.Name != Roles.ProjectManager.ToString()
+           && r.Name != Roles.DemoUser.ToString())
+           && r.Name != Roles.NewUser.ToString()).ToList();
+            ViewData["Roles"] = new SelectList(listRole, "Id", "Name");
             return View();
         }
 
