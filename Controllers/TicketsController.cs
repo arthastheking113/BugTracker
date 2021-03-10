@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
-    [Authorize]
+
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,13 +25,15 @@ namespace BugTracker.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ICustomProjectService _projectService;
         private readonly ICustomRoleService _roleService;
+        private readonly SignInManager<CustomUser> _signInManager;
 
         public TicketsController(ApplicationDbContext context, 
             UserManager<CustomUser> userManager, 
             ICustomHistoryService customHistoryService, 
             IEmailSender emailSender, 
             ICustomProjectService projectService, 
-            ICustomRoleService roleService)
+            ICustomRoleService roleService,
+            SignInManager<CustomUser> signInManager)
         {
             _context = context;
             _userManager = userManager;
@@ -39,9 +41,11 @@ namespace BugTracker.Controllers
             _emailSender = emailSender;
             _projectService = projectService;
             _roleService = roleService;
+            _signInManager = signInManager;
         }
 
         // GET: Tickets
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
@@ -97,9 +101,26 @@ namespace BugTracker.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-
+        public async Task<IActionResult> AcceptInviteAsync(string userId, string code)
+        {
+            var realGuid = Guid.Parse(code);
+            var invite = _context.Invite.FirstOrDefault(i => i.CompanyToken == realGuid && i.InviteeId == userId);
+            if (invite is null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if (invite.IsValid)
+            {
+                invite.IsValid = false;
+                var user = await _context.Users.FindAsync(userId);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return RedirectToAction("Index","Home");
+            }
+            return RedirectToAction("Index", "Home");
+        }
 
         // GET: Tickets/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -132,6 +153,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize]
         public async Task<IActionResult> CreateAsync(int? projectId)
         {
             IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
@@ -157,6 +179,7 @@ namespace BugTracker.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,IsAssigned,Created,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)
@@ -261,6 +284,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -292,6 +316,7 @@ namespace BugTracker.Controllers
         // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,IsAssigned,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)

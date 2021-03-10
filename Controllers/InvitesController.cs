@@ -112,6 +112,7 @@ namespace BugTracker.Controllers
                 }
               
                 invite.CompanyToken = Guid.NewGuid();
+                invite.CompanyId = company.Id;
                 CustomUser newUser = new CustomUser 
                 { 
                     FirstName = "Invite",
@@ -133,12 +134,12 @@ namespace BugTracker.Controllers
                             string returnUrl = null;
                             returnUrl  ??= Url.Content("~/");
                             var code = invite.CompanyToken;
-                            var callbackUrl = Url.Page(
+                            var callbackUrl = Url.Action(
                                 "AcceptInvite",
                                 "Tickets",
-                                values: new {newUser.Id, code },
+                                values: new { userId = newUser.Id, code },
                                 protocol: Request.Scheme);
-                            //var realGuid = Guid.Parse(code);
+
                             await _emailSender.SendEmailAsync(newUser.Email, "Invite Email From Lan's Bug Tracker",
                                 $"You received a invite ticket from Lan's Bug Tracker <br> <a style='background-color: #555555;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a> to join our software. <br> Your UserName is: {newUser.Email} <br> Your Password is: Abc123!");
 
@@ -226,7 +227,7 @@ namespace BugTracker.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index","Home");
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", invite.CompanyId);
+
             return RedirectToAction("Index", "Home");
         }
 
