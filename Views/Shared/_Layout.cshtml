@@ -99,7 +99,7 @@
                         <!-- Messages Dropdown Menu -->
                         @{
                             var userId = UserManager.GetUserId(User);
-
+                            var user = await UserManager.GetUserAsync(User);
                             //var replyParents = new List<int>();
                             //replyParents.AddRange(ApplicationDbContext.Reply.Where(r => r.ReceiverId == userId && r.IsSeen == false).Select(r => r.InboxId));
                             //var myNotifications = new List<Inbox>();
@@ -298,11 +298,11 @@
                     <div class="user-panel mt-3 pb-3 d-flex">
 
                         <div class="image">
-                            <img src="@imageService.DecodeFileAvatar((await UserManager.GetUserAsync(User)).ImageData,(await UserManager.GetUserAsync(User)).ContentType)" class="img-circle elevation-2" alt="User Image" />
+                            <img src="@imageService.DecodeFileAvatar(user.ImageData,user.ContentType)" class="img-circle elevation-2" alt="User Image" />
                         </div>
                         <div class="info">
 
-                            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="d-block">@((await UserManager.GetUserAsync(User)).FullName)</a>
+                            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="d-block">@(user.FullName)</a>
 
                         </div>
                     </div>
@@ -339,7 +339,7 @@
                                     <p>Inbox</p>
                                 </a>
                             </li>
-                            @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString()))
+                            @if (await UserManager.IsInRoleAsync(user, Roles.Admin.ToString()))
                             {
                                 <li class="nav-item">
                                     <a asp-controller="Companies" asp-action="Index" class="nav-link">
@@ -420,7 +420,7 @@
                                     </ul>
                                 </li>
                             }
-                            else if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+                            else if (await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString()))
                             {
                                 <li class="nav-item">
                                     <a asp-controller="Projects" asp-action="Index" class="nav-link">
@@ -449,7 +449,7 @@
                                     </a>
                                 </li>
                             }
-                            else if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Developer.ToString()) || await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Submitter.ToString()))
+                            else if (await UserManager.IsInRoleAsync(user, Roles.Developer.ToString()) || await UserManager.IsInRoleAsync(user, Roles.Submitter.ToString()))
                             {
                                 <li class="nav-item">
                                     <a asp-controller="Tickets" asp-action="Index" class="nav-link">
@@ -462,14 +462,18 @@
                                 </li>
 
                             }
-                            <li class="nav-item">
-                                <a asp-controller="Invites" asp-action="Create" class="nav-link">
-                                    <i class="nav-icon fas fa-location-arrow"></i>
-                                    <p>
-                                        Invite Ticket
-                                    </p>
-                                </a>
-                            </li>
+                            @if (!await UserManager.IsInRoleAsync(user, Roles.NewUser.ToString()))
+                            {
+                                    <li class="nav-item">
+                                        <a asp-controller="Invites" asp-action="Create" class="nav-link">
+                                            <i class="nav-icon fas fa-location-arrow"></i>
+                                            <p>
+                                                Invite Ticket
+                                            </p>
+                                        </a>
+                                    </li>
+                            }
+                            
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->
