@@ -76,7 +76,11 @@ function showDemuUser() {
         x.style.display = "none";
     }
 }
-
+if (screen.width >= 1024) {
+    document.getElementById('shooting_star').innerHTML += '<div class="sky-container"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>';
+} else {
+    document.getElementById('shooting_star').innerHTML = "";
+}
 function display_c() {
     var refresh = 1000; // Refresh rate in milli seconds
     mytime = setTimeout('display_ct()', refresh)
