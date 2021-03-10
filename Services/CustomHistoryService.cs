@@ -28,7 +28,7 @@ namespace BugTracker.Services
                     TicketId = newTicket.Id,
                     Property = "Name",
                     OldValue = oldTicket.Name,
-                    NewValue = oldTicket.Name,
+                    NewValue = newTicket.Name,
                     Created = DateTime.Now,
                     CustomUserId = userId
                 };
@@ -41,7 +41,7 @@ namespace BugTracker.Services
                     TicketId = newTicket.Id,
                     Property = "Description",
                     OldValue = oldTicket.Description,
-                    NewValue = oldTicket.Description,
+                    NewValue = newTicket.Description,
                     Created = DateTime.Now,
                     CustomUserId = userId
                 };
@@ -54,7 +54,7 @@ namespace BugTracker.Services
                     TicketId = newTicket.Id,
                     Property = "Ticket Type",
                     OldValue = oldTicket.TicketType.Name,
-                    NewValue = oldTicket.TicketType.Name,
+                    NewValue = newTicket.TicketType.Name,
                     Created = DateTime.Now,
                     CustomUserId = userId
                 };
@@ -68,7 +68,7 @@ namespace BugTracker.Services
                     TicketId = newTicket.Id,
                     Property = "Priority",
                     OldValue = oldTicket.Priority.Name,
-                    NewValue = oldTicket.Priority.Name,
+                    NewValue = newTicket.Priority.Name,
                     Created = DateTime.Now,
                     CustomUserId = userId
                 };
@@ -83,7 +83,7 @@ namespace BugTracker.Services
                     TicketId = newTicket.Id,
                     Property = "Status",
                     OldValue = oldTicket.Status.Name,
-                    NewValue = oldTicket.Status.Name,
+                    NewValue = newTicket.Status.Name,
                     Created = DateTime.Now,
                     CustomUserId = userId
                 };
@@ -98,7 +98,7 @@ namespace BugTracker.Services
                         TicketId = newTicket.Id,
                         Property = "CustomUser",
                         OldValue = oldTicket.Developer.FullName,
-                        NewValue = oldTicket.Developer.FullName,
+                        NewValue = newTicket.Developer.FullName,
                         Created = DateTime.Now,
                         CustomUserId = userId
                     };

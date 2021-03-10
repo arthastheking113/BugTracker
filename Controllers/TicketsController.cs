@@ -124,15 +124,10 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-            var userId = _userManager.GetUserId(User);
-            if (userId == ticket.DeveloperId || userId == ticket.OwnnerId)
-            {
+            //var userId = _userManager.GetUserId(User);
+           
                 return View(ticket);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Tickets");
-            }
+           
             
         }
 
