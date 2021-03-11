@@ -178,10 +178,11 @@ namespace BugTracker.Controllers
 
                                 await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
                                 //notification for new user
+
                                 WelcomeNotification welcomenotification = new WelcomeNotification
                                 {
                                     Name = "Welcome To The Bug Tracker",
-                                    Description = "You have been Invited to the bug tracker service, please wait our admin or project manager assign you a higher role in the system. You can contact our staff by the inbox system.",
+                                    Description = $"You have been Invited to the bug tracker service. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager by the inbox system.Or, you can start create new ticket and start working on it.",
                                     Created = DateTime.Now,
                                     SenderId = (admin).Id,
                                     RecipientId = newUser.Id
