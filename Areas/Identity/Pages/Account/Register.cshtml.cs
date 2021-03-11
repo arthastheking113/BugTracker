@@ -101,10 +101,11 @@ namespace BugTracker.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new CustomUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, CompanyId = Input.CompanyId };
-                await _roleService.AddUserToRoleAsync(user, Roles.NewUser.ToString());
+             
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    await _roleService.AddUserToRoleAsync(user, Roles.NewUser.ToString());
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -121,7 +122,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
                     WelcomeNotification welcomenotification = new WelcomeNotification
                     {
                         Name = "Welcome To The Bug Tracker",
-                        Description = "You have created a new account in my bug tracker service, please wait our admin or project manager assign you a higher role in the system. You can contact our staff by the inbox system.",
+                        Description = "You have created a new account in my bug tracker service, please wait our admin or project manager assign you a higher role in the system. You can contact our staff by the inbox system. My recommendation is to Login as a Demo User, you can see everything my Bug Tracker can do..",
                         Created = DateTime.Now,
                         SenderId = (admin).Id,
                         RecipientId = user.Id

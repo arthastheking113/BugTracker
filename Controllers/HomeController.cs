@@ -96,17 +96,26 @@ namespace BugTracker.Controllers
 
             IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
             var allProject = _dbContext.Project.ToList();
-            List<Project> listProject = new List<Project>();
-            foreach (var item in allProject)
-            {
-                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Concat(developer);
 
-                if (await _projectService.IsUserOnProjectAsync(userId, item.Id))
+            List<Project> listProject = new List<Project>();
+            if (!await _customRoleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString()))
+            {
+                foreach (var item in allProject)
                 {
-                    listProject.Add(item);
+                    var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                    allDeveloper = allDeveloper.Concat(developer);
+
+                    if (await _projectService.IsUserOnProjectAsync(userId, item.Id))
+                    {
+                        listProject.Add(item);
+                    }
                 }
             }
+            else
+            {
+                listProject = _dbContext.Project.ToList();
+            }
+           
             var listRole = _dbContext.Roles.Where(r => (r.Name != Roles.Admin.ToString() 
             && r.Name != Roles.ProjectManager.ToString() 
             && r.Name != Roles.DemoUser.ToString()) 

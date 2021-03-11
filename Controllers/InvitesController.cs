@@ -153,9 +153,7 @@ namespace BugTracker.Controllers
                                 }
                                 else if (await _userManager.IsInRoleAsync(loginUser, Roles.ProjectManager.ToString()))
                                 {
-
                                     await _userManager.AddToRoleAsync(newUser, _context.Roles.FirstOrDefault(r => r.Id == Role).Name);
-                                    //await _projectService.AddUserToProjectAsync(newUser.Id, );
                                 }
                                 else
                                 {
@@ -185,8 +183,8 @@ namespace BugTracker.Controllers
                     await _context.SaveChangesAsync();
 
                     await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
-                    //notification for new user
 
+                    //notification for new user
                     WelcomeNotification welcomenotification = new WelcomeNotification
                     {
                         Name = "Welcome To The Bug Tracker",
