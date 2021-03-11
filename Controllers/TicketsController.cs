@@ -267,15 +267,22 @@ namespace BugTracker.Controllers
                 }
                 IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
                 var allProject = _context.Project.ToList();
+                List<Project> listProject = new List<Project>();
                 foreach (var item in allProject)
                 {
                     var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
                     allDeveloper = allDeveloper.Concat(developer);
+
+
+                    if (await _projectService.IsUserOnProjectAsync(_userManager.GetUserId(User), item.Id))
+                    {
+                        listProject.Add(item);
+                    }
                 }
                 ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
                 ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
                 ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
+                ViewData["ProjectId"] = new SelectList(listProject, "Id", "Name", ticket.ProjectId);
                 ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
                 ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
                 return View(ticket);

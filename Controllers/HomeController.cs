@@ -96,21 +96,31 @@ namespace BugTracker.Controllers
 
             IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
             var allProject = _dbContext.Project.ToList();
+            List<Project> listProject = new List<Project>();
             foreach (var item in allProject)
             {
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
                 allDeveloper = allDeveloper.Concat(developer);
+
+                if (await _projectService.IsUserOnProjectAsync(userId, item.Id))
+                {
+                    listProject.Add(item);
+                }
             }
             var listRole = _dbContext.Roles.Where(r => (r.Name != Roles.Admin.ToString() 
             && r.Name != Roles.ProjectManager.ToString() 
             && r.Name != Roles.DemoUser.ToString()) 
             && r.Name != Roles.NewUser.ToString()).ToList();
+
+           
+  
+
             ViewData["Roles"] = new SelectList(listRole, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_dbContext.Company, "Id", "Name");
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_dbContext.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_dbContext.Priority, "Id", "Name");
-            ViewData["ProjectId"] = new SelectList(_dbContext.Project, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(listProject, "Id", "Name");
             ViewData["StatusId"] = new SelectList(_dbContext.Status, "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_dbContext.TicketType, "Id", "Name");
 
