@@ -1,9 +1,19 @@
 ﻿@model BugTracker.Models.Project
-
+@using BugTracker.Services
+@using BugTracker.Service
+@using BugTracker.Data.Enums
+@inject ICustomRoleService roleService
+@using Microsoft.AspNetCore.Identity
+@inject IImageService imageService
+@inject UserManager<CustomUser> UserManager
+@inject ICustomFileService CustomFileService
 @{
     ViewData["Title"] = "Edit";
+    var user = await UserManager.GetUserAsync(User);
 }
-<br /><br /><br />
+<br />
+<br />
+<br />
 <section class="content">
     <div class="row">
         <div class="col-2"></div>
@@ -37,11 +47,20 @@
                             <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.ImageData)" class="form-control" />
                             <input type="hidden" name="contentType" value="@Model.ContentType" class="form-control" />
                         }
-                        <div class="form-group">
-                            <label asp-for="CompanyId" class="control-label"></label>
-                            <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
-                            <span asp-validation-for="CompanyId" class="text-danger"></span>
-                        </div>
+
+                        @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())))
+                        {
+                            <div class="form-group">
+                                <label asp-for="CompanyId" class="control-label"></label>
+                                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="CompanyId" class="form-control">
+
+                        }
 
 
                         <div class="form-group">

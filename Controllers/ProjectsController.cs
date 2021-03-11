@@ -159,7 +159,7 @@ namespace BugTracker.Controllers
             var user = await _userManager.GetUserAsync(User);
             var userId = user.Id;
 
-            if (await _projectService.IsUserOnProjectAsync(userId, project.Id))
+            if (await _projectService.IsUserOnProjectAsync(userId, project.Id) || await _roleService.IsUserInRoleAsync(user, Roles.Admin.ToString()))
             {
                 return View(project);
             }
@@ -174,8 +174,6 @@ namespace BugTracker.Controllers
         // GET: Projects/Create
         public IActionResult Create()
         {
-
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             return View();
         }
 
@@ -191,6 +189,8 @@ namespace BugTracker.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var loginUser = await _userManager.GetUserAsync(User);
+                    project.CompanyId = loginUser.CompanyId;
                     project.ImageData = await _imageService.EncodeFileAsync(image);
                     project.ContentType = _imageService.RecordContentType(image);
                     project.Created = DateTime.Now;
@@ -199,7 +199,6 @@ namespace BugTracker.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
                 return View(project);
             }
 
