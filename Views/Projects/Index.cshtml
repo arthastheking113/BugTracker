@@ -1,7 +1,12 @@
 ﻿@model IEnumerable<BugTracker.Models.Project>
-
+@using Microsoft.AspNetCore.Identity
+@using BugTracker.Data.Enums
+@using BugTracker.Services 
+@inject UserManager<CustomUser> UserManager 
+@inject ICustomRoleService roleService
 @{
     ViewData["Title"] = "Projects";
+    var user = await UserManager.GetUserAsync(User);
 }
 <!-- Main content -->
 <section class="content">
@@ -17,25 +22,53 @@
                             <h3 class="card-title">Create New Project</h3>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <label class="control-label">Project Name</label>
-                                <input name="Name" class="form-control" required/>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label">Description</label>
-                                <textarea name="Description" class="form-control" rows="4" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label">Company</label>
-                                <select name="CompanyId" class="form-control" asp-items="@ViewBag.CompanyId"></select>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label">Upload Image</label>
-                                <input type="file" name="image" />
-                            </div>
+                            @if (await roleService.IsUserInRoleAsync(user, Roles.Admin.ToString()) || await roleService.IsUserInRoleAsync(user, Roles.ProjectManager.ToString()))
+                            {
+                                <div class="form-group">
+                                    <label class="control-label">Project Name</label>
+                                    <input name="Name" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Description</label>
+                                    <textarea name="Description" class="form-control" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Company</label>
+                                    <select name="CompanyId" class="form-control" asp-items="@ViewBag.CompanyId"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Upload Image</label>
+                                    <input type="file" name="image" />
+                                </div>
+                                <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary">Cancel</a>
 
-                            <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary">Cancel</a>
-                            <input type="submit" value="Create new Porject" class="btn btn-success float-left mr-2">
+                                <input type="submit"  value="Create new Porject" class="btn btn-success float-left mr-2">
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label class="control-label">Project Name</label>
+                                    <input name="Name" class="form-control" disabled />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Description</label>
+                                    <textarea name="Description" class="form-control" rows="4" disabled></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Company</label>
+                                    <select name="CompanyId" class="form-control" disabled asp-items="@ViewBag.CompanyId"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Upload Image</label>
+                                    <input type="file" name="image" disabled />
+                                </div>
+                               
+
+                                <input type="submit" disabled value="Create new Porject" class="btn btn-success float-left mr-2">
+                            }
+
+
+
 
                         </div>
                         <!-- /.card-body -->
@@ -102,8 +135,12 @@
 
                                                 <td class="project-actions text-right">
                                                     <a class="btn btn-primary btn-sm mb-1" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-folder"></i> View</a>
-                                                    <a class="btn btn-info btn-sm mb-1" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i> Edit</a>
-                                                    <a class="btn btn-danger btn-sm mb-1" asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i> Delete</a>
+                                                    @if (await roleService.IsUserInRoleAsync(user, Roles.Admin.ToString()) || await roleService.IsUserInRoleAsync(user, Roles.ProjectManager.ToString()))
+                                                    {
+                                                        <a class="btn btn-info btn-sm mb-1" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i> Edit</a>
+                                                        <a class="btn btn-danger btn-sm mb-1" asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i> Delete</a>
+                                                    }
+
                                                 </td>
                                             </tr>
                                         }

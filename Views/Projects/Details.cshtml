@@ -2,7 +2,8 @@
 @using BugTracker.Services
 @using BugTracker.Service
 @using BugTracker.Data
-@inject ApplicationDbContext ApplicationDbContext  
+@using BugTracker.Data.Enums
+@inject ApplicationDbContext ApplicationDbContext
 @inject ICustomProjectService projectService
 @inject ICustomRoleService roleService
 @using Microsoft.AspNetCore.Identity
@@ -17,7 +18,7 @@
     var unAssignTicket = Model.Tickets.Where(t => t.IsAssigned == false).ToList().Count;
     var closeTicket = Model.Tickets.Where(t => t.StatusId == 5).ToList().Count;
     var tickets = Model.Tickets.OrderByDescending(c => c.Updated).ToList();
-
+    var user = await UserManager.GetUserAsync(User);
 }
 
 <section class="content">
@@ -52,42 +53,46 @@
                                 </div>
                                 <form asp-controller="Tickets" asp-action="Create" method="post">
                                     <div class="modal-body">
-
-                                        <input type="hidden" class="form-control" name="projectId" value="@Model.Id" />
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <div class="form-group">
                                             <label class="control-label">Name</label>
-                                            <input name="Name" class="form-control" required/>
-                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                            <input name="Name" class="form-control" required />
+
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label">Description</label>
                                             <input name="Description" class="form-control" required />
-                                            <span asp-validation-for="Description" class="text-danger"></span>
-                                        </div>
 
-                                        <div class="form-group form-check">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" name="IsAssigned" type="checkbox" value="true" /> Assigned?
-                                            </label>
                                         </div>
+                                        <input type="hidden" class="form-control" name="projectId" value="@Model.Id" />
+                                        @if (!(await UserManager.IsInRoleAsync(user, Roles.Developer.ToString())))
+                                        {
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" name="IsAssigned" type="checkbox" value="true" /> Assigned?
+                                                </label>
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label name="DeveloperId" class="control-label">Developer</label>
-                                            <select name="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId"></select>
-                                        </div>
+                                            <div class="form-group">
+                                                <label name="DeveloperId" class="control-label">Developer</label>
+                                                <select name="DeveloperId" class="form-control" required asp-items="@ViewBag.DeveloperId"></select>
+                                            </div>
+                                        }
 
 
+                                        @if (!(await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())) || !(await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                        {
+                                            <div class="form-group">
+                                                <label name="StatusId" class="control-label">Status</label>
+                                                <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label name="PriorityId" class="control-label">Priority</label>
+                                                <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                            </div>
+                                        }
                                         <div class="form-group">
-                                            <label name="StatusId" class="control-label">Status</label>
-                                            <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label name="PriorityId" class="control-label">Priority</label>
-                                            <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label name="TicketTypeId" class="control-label">TicketType</label>
+                                            <label name="TicketTypeId" class="control-label">Ticket Type</label>
                                             <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
                                         </div>
 
@@ -105,119 +110,123 @@
                     @*<a asp-controller="Projects" asp-action="Create" class="btn btn-secondary"> <i class="fas fa-tasks"></i> Create New Projects</a>*@
 
 
+                    @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                    {
 
+                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal2">
+                            <i class="fas fa-tasks"></i> Create New Projects
+                        </button>
 
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal2">
-                        <i class="fas fa-tasks"></i> Create New Projects
-                    </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel2">Create New Project</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form asp-controller="Projects" asp-action="Create" method="post">
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label asp-for="Name" class="control-label"></label>
+                                                <input name="Name" class="form-control" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Description" class="control-label"></label>
+                                                <textarea name="Description" class="form-control" rows="4" required></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="CompanyId" class="control-label"></label>
+                                                <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">Upload Image</label>
+                                                <input type="file" name="image" />
+                                            </div>
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel2">Create New Project</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                        </div>
+                                        <div class="modal-footer">
+
+                                            <button type="submit" class="btn btn-primary">Create</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form asp-controller="Projects" asp-action="Create" method="post">
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label asp-for="Name" class="control-label"></label>
-                                            <input name="Name" class="form-control" required />
-                                        </div>
-                                        <div class="form-group">
-                                            <label asp-for="Description" class="control-label"></label>
-                                            <textarea name="Description" class="form-control" rows="4" required></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label asp-for="CompanyId" class="control-label"></label>
-                                            <select name="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Upload Image</label>
-                                            <input type="file" name="image" />
-                                        </div>
-
-                                    </div>
-                                    <div class="modal-footer">
-
-                                        <button type="submit" class="btn btn-primary">Create</button>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
 
-                    @*<a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>*@
-
+                        @*<a class="btn btn-secondary" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" method="get"><i class="fas fa-edit"></i> Edit Project</a>*@
 
 
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal3">
-                        <i class="fas fa-edit"></i> Edit Project
-                    </button>
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel3">Edit Project</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal3">
+                            <i class="fas fa-edit"></i> Edit Project
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel3">Edit Project</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form asp-controller="Projects" asp-action="Edit" method="post" enctype="multipart/form-data">
+                                        <div class="modal-body">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <input type="hidden" asp-for="Id" />
+                                            <div class="form-group">
+                                                <label class="control-label">Upload Image</label>
+                                                <input type="file" name="image" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Name" class="control-label"></label>
+                                                <input asp-for="Name" class="form-control" required />
+                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                            <input type="hidden" asp-for="Created" class="form-control" />
+                                            <div class="form-group">
+                                                <label asp-for="Description" class="control-label"></label>
+                                                <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                            @if (Model.ImageData != null && Model.ContentType != null)
+                                            {
+                                                <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.ImageData)" class="form-control" />
+                                                <input type="hidden" name="contentType" value="@Model.ContentType" class="form-control" />
+                                            }
+                                            <div class="form-group">
+                                                <label asp-for="CompanyId" class="control-label"></label>
+                                                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer">
+
+                                            <button type="submit" class="btn btn-primary">Create</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form asp-controller="Projects" asp-action="Edit" method="post" enctype="multipart/form-data">
-                                    <div class="modal-body">
-                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                        <input type="hidden" asp-for="Id" />
-                                        <div class="form-group">
-                                            <label class="control-label">Upload Image</label>
-                                            <input type="file" name="image" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label asp-for="Name" class="control-label"></label>
-                                            <input asp-for="Name" class="form-control" required />
-                                            <span asp-validation-for="Name" class="text-danger"></span>
-                                        </div>
-                                        <input type="hidden" asp-for="Created" class="form-control" />
-                                        <div class="form-group">
-                                            <label asp-for="Description" class="control-label"></label>
-                                            <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
-                                            <span asp-validation-for="Description" class="text-danger"></span>
-                                        </div>
-                                        @if (Model.ImageData != null && Model.ContentType != null)
-                                        {
-                                            <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.ImageData)" class="form-control" />
-                                            <input type="hidden" name="contentType" value="@Model.ContentType" class="form-control" />
-                                        }
-                                        <div class="form-group">
-                                            <label asp-for="CompanyId" class="control-label"></label>
-                                            <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
-                                            <span asp-validation-for="CompanyId" class="text-danger"></span>
-                                        </div>
-
-
-
-                                    </div>
-                                    <div class="modal-footer">
-
-                                        <button type="submit" class="btn btn-primary">Create</button>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
 
 
 
-                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets On System</a>
+                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index" method="get"><i class="fas fa-ticket-alt"></i> View All Tickets On System</a>
+                    }
+
+
                 </div>
-                <div class="col text-right">                   
-                    <p style="margin-top: 1%; margin-bottom: 0; color: black; font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; ">Created on: @Model.Created.ToString("dd MMMM yyyy - hh:mm tt")</p>                  
+                <div class="col text-right">
+                    <p style="margin-top: 1%; margin-bottom: 0; color: black; font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; ">Created on: @Model.Created.ToString("dd MMMM yyyy - hh:mm tt")</p>
                 </div>
             </div>
 
@@ -396,7 +405,10 @@
                             <div class="col">
                                 <p class="text-sm">
                                     Project Leader
-                                    <b class="d-block">@((await projectService.ProjectManagerOnProjectAsync(Model.Id)).FullName)</b>
+                                    @{ 
+                                        var projectManager = await projectService.ProjectManagerOnProjectAsync(Model.Id);
+                                    }
+                                    <b class="d-block">@(projectManager.FullName)</b>
                                 </p>
                             </div>
                         </div>
@@ -425,7 +437,7 @@
                     </div>
 
                     <h5 class="mt-5 text-muted">Project files</h5>
-             
+
                     <div class="row">
                         <form asp-action="Create" asp-controller="ProjectAttachments" enctype="multipart/form-data" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -433,12 +445,12 @@
                             <div class="media-body ml-3">
                                 <label>
                                     Description
-                                    <input name="Description" type="text" class="form-control"  />
+                                    <input name="Description" type="text" class="form-control" />
                                 </label>
                                 <label class="btn btn-outline-secondary btn-sm">
                                     Upload File
                                     <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
-                                </label>   
+                                </label>
                             </div>
                             <div class="row">
                                 <div class="col text-center">
@@ -447,33 +459,33 @@
                             </div>
                         </form>
                     </div>
-                           <div class="row clearfix">
-                        @{ 
+                    <div class="row clearfix">
+                        @{
                             var ticketAttachment = ApplicationDbContext.ProjectAttachment.Where(t => t.ProjectId == Model.Id).ToList();
                         }
                         @foreach (var item in ticketAttachment)
                         {
-                        <div class="col-2">
-                            <div class="card">
-                                <div class="file">
-                                    <a asp-controller="ProjectAttachments" asp-action="Details" asp-route-id="@item.Id">
-                                        <div class="hover">
-                                            <form asp-controller="ProjectAttachments" asp-action="Delete" asp-route-id="@item.Id" method="get" > 
-                                                <button type="submit"  class="btn btn-icon btn-danger"><i class="fa fa-trash"></i> </button>
-                                            </form>
-                                         
-                                        </div>
-                                        <div class="icon">
-                                            <img src="@CustomFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
-                                        </div>
-                                        <div class="file-name">
-                                            <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
-                                            <small>Size: @CustomFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
-                                        </div>
-                                    </a>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="file">
+                                        <a asp-controller="ProjectAttachments" asp-action="Details" asp-route-id="@item.Id">
+                                            <div class="hover">
+                                                <form asp-controller="ProjectAttachments" asp-action="Delete" asp-route-id="@item.Id" method="get">
+                                                    <button type="submit" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i> </button>
+                                                </form>
+
+                                            </div>
+                                            <div class="icon">
+                                                <img src="@CustomFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                            </div>
+                                            <div class="file-name">
+                                                <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                                <small>Size: @CustomFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>            }
+                            </div>}
                     </div>
                 </div>
             </div>

@@ -54,7 +54,7 @@
                                             <div class="form-group">
                                                 <label name="projectId" class="control-label">Projects</label>
                                                 <select name="projectId" id="projectId" class="form-control" required onchange="getDevelopersOnProject()" asp-items="ViewBag.ProjectId">
-                                                    <option value="" >Choose Project</option>
+                                                    <option value="">Choose Project</option>
                                                 </select>
                                             </div>
 
@@ -77,15 +77,18 @@
                                                 </div>
                                             }
 
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                                <div class="form-group">
+                                                    <label name="StatusId" class="control-label">Status</label>
+                                                    <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="PriorityId" class="control-label">Priority</label>
+                                                    <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                                </div>
+                                            }
 
-                                            <div class="form-group">
-                                                <label name="StatusId" class="control-label">Status</label>
-                                                <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="PriorityId" class="control-label">Priority</label>
-                                                <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
-                                            </div>
                                             <div class="form-group">
                                                 <label name="TicketTypeId" class="control-label">Ticket Type</label>
                                                 <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
@@ -186,7 +189,12 @@
                                             }
                                             @if ((await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
                                             {
-                                               
+                                                <div class="form-group">
+                                                    <label name="projectId" class="control-label">Projects</label>
+                                                    <select name="projectId" id="projectId" class="form-control" required onchange="getDevelopersOnProject()" asp-items="ViewBag.ProjectId">
+                                                        <option value="0">Choose Project</option>
+                                                    </select>
+                                                </div>
                                                 <div class="form-group">
                                                     <label name="Role" class="control-label">Assign Role</label>
                                                     <select name="Role" id="DeveloperId" class="form-control" required asp-items="ViewBag.Roles"></select>
@@ -278,18 +286,22 @@
                                             }
 
 
-                                            <div class="form-group">
-                                                <label name="StatusId" class="control-label">Status</label>
-                                                <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="PriorityId" class="control-label">Priority</label>
-                                                <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="TicketTypeId" class="control-label">Ticket Type</label>
-                                                <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
-                                            </div>
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                                <div class="form-group">
+                                                    <label name="StatusId" class="control-label">Status</label>
+                                                    <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="PriorityId" class="control-label">Priority</label>
+                                                    <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="TicketTypeId" class="control-label">Ticket Type</label>
+                                                    <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                                </div>
+                                            }
+
 
                                         </div>
                                         <div class="modal-footer">
@@ -428,18 +440,22 @@
                                             }
 
 
-                                            <div class="form-group">
-                                                <label name="StatusId" class="control-label">Status</label>
-                                                <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="PriorityId" class="control-label">Priority</label>
-                                                <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label name="TicketTypeId" class="control-label">Ticket Type</label>
-                                                <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
-                                            </div>
+                                            @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
+                                            {
+                                                <div class="form-group">
+                                                    <label name="StatusId" class="control-label">Status</label>
+                                                    <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="PriorityId" class="control-label">Priority</label>
+                                                    <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label name="TicketTypeId" class="control-label">Ticket Type</label>
+                                                    <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                                </div>
+                                            }
+
 
                                         </div>
                                         <div class="modal-footer">

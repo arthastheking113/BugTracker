@@ -92,7 +92,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Email,CompanyToken,InviteDate,IsValid,CompanyId,InvitorId,InviteeId")] Invite invite, string CompanyName, string Role)
+        public async Task<IActionResult> Create([Bind("Id,Email,CompanyToken,InviteDate,IsValid,CompanyId,InvitorId,InviteeId")] Invite invite, string CompanyName, string Role, int projectId)
         {
             if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
@@ -118,10 +118,11 @@ namespace BugTracker.Controllers
 
                     invite.CompanyToken = Guid.NewGuid();
                     invite.CompanyId = company.Id;
+                    var number_of_user_on_system = _context.Users.ToList().Count;
                     CustomUser newUser = new CustomUser
                     {
                         FirstName = "Invite",
-                        LastName = "User",
+                        LastName = $"User #{number_of_user_on_system}",
                         UserName = invite.Email,
                         Email = invite.Email,
                         EmailConfirmed = true,
@@ -172,23 +173,42 @@ namespace BugTracker.Controllers
                     }
                     var admin = await _userManager.FindByEmailAsync("arthastheking113@gmail.com");
 
-                    Project project = new Project
-                    {
-                        Name = "Project Example",
-                        Description = "This is your project Example, you can change anything in this project anytime you want",
-                        Created = DateTime.Now,
-                        CompanyId = company.Id
-                    };
-                    await _context.Project.AddAsync(project);
-                    await _context.SaveChangesAsync();
 
-                    await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
+                    if (await _userManager.IsInRoleAsync(loginUser, Roles.Admin.ToString()))
+                    {
+                        Project project = new Project
+                        {
+                            Name = "Project Example",
+                            Description = "This is your project Example, you can change anything in this project anytime you want",
+                            Created = DateTime.Now,
+                            CompanyId = company.Id
+                        };
+
+
+                        await _context.Project.AddAsync(project);
+                        await _context.SaveChangesAsync();
+                        await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
+                    }
+                    else if (await _userManager.IsInRoleAsync(loginUser, Roles.ProjectManager.ToString()))
+                    {
+                        if (projectId != 0)
+                        {
+
+                            if ((await _projectService.ProjectManagerOnProjectAsync(projectId)).Id == loginUser.Id)
+                            {
+                                await _projectService.AddUserToProjectAsync(newUser.Id, projectId);
+                            }
+                        }                       
+                    }
+
+
+
 
                     //notification for new user
                     WelcomeNotification welcomenotification = new WelcomeNotification
                     {
                         Name = "Welcome To The Bug Tracker",
-                        Description = $"You have been Invited to the bug tracker service. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager by the inbox system.Or, you can start create new ticket and start working on it.",
+                        Description = $"You have been Invited to the bug tracker service. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager ({loginUser.FullName}) by the inbox system.Or, you can start create new ticket and start working on it. You can change your name in profile setting under your name in the vertical Nav bar.",
                         Created = DateTime.Now,
                         SenderId = (admin).Id,
                         RecipientId = newUser.Id

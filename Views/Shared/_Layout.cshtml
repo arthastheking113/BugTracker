@@ -449,7 +449,28 @@
                                     </a>
                                 </li>
                             }
-                            else if (await UserManager.IsInRoleAsync(user, Roles.Developer.ToString()) || await UserManager.IsInRoleAsync(user, Roles.Submitter.ToString()))
+                            else if (await UserManager.IsInRoleAsync(user, Roles.Developer.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="Projects" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-tasks"></i>
+                                        <p>
+                                            Project
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Tickets" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fas fa-ticket-alt"></i>
+                                        <p>
+                                            Ticket
+
+                                        </p>
+                                    </a>
+                                </li>
+
+                            }
+                            else if (await UserManager.IsInRoleAsync(user, Roles.Submitter.ToString()))
                             {
                                 <li class="nav-item">
                                     <a asp-controller="Tickets" asp-action="Index" class="nav-link">
@@ -473,7 +494,7 @@
                                     </a>
                                 </li>
                             }
-                           
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

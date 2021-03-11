@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Identity;
 namespace BugTracker.Controllers
 {
 
-    [Authorize(Roles = "Admin, ProjectManager")]
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -80,32 +80,54 @@ namespace BugTracker.Controllers
 
 
         // GET: Projects
+        [Authorize(Roles = "Admin, ProjectManager,Developer")]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             var userId = user.Id;
             var applicationDbContext = await  _context.Project.Include(p => p.Company).Include(p => p.Tickets).Include(p => p.CustomUsers).ToListAsync();
             List<Project> projectList = new List<Project>();
-            foreach (var project in applicationDbContext)
+            if (await _userManager.IsInRoleAsync(user, Roles.ProjectManager.ToString()))
             {
-                if ((await _projectService.ProjectManagerOnProjectAsync(project.Id)).Id == userId)
+                foreach (var project in applicationDbContext)
                 {
-                    projectList.Add(project);
+                    if (await _projectService.IsUserOnProjectAsync(userId, project.Id))
+                    {
+                        projectList.Add(project);
+                    }
                 }
             }
+            else if (await _userManager.IsInRoleAsync(user, Roles.Developer.ToString()))
+            {
+                foreach (var project in applicationDbContext)
+                {
+                    var developerInProject = await _projectService.DeveloperOnProjectAsync(project.Id);
+                    foreach (var developer in developerInProject)
+                    {
+                        if (developer.Id == userId)
+                        {
+                            projectList.Add(project);
+                        }
+                    }
+                   
+                }
+            }
+            
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name");
             if (await _userManager.IsInRoleAsync(user, Roles.Admin.ToString()))
             {
                 return View(applicationDbContext);
             }
-            else
+            else 
             {
                 return View(projectList);
             }
+            
            
         }
 
         // GET: Projects/Details/5
+        [Authorize(Roles = "Admin, ProjectManager,Developer")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -134,10 +156,19 @@ namespace BugTracker.Controllers
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name");
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
 
+            if (await _projectService.IsUserOnProjectAsync(userId, project.Id))
+            {
+                return View(project);
+            }
+            else
+            {
+                return View();
+            }
 
-
-            return View(project);
+           
         }
         [Authorize(Roles = "Admin, ProjectManager")]
         // GET: Projects/Create
