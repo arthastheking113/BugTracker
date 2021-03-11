@@ -135,7 +135,6 @@ namespace BugTracker.Controllers
                             var result = await _userManager.CreateAsync(newUser, "Abc123!");
                             if (result.Succeeded)
                             {
-
                                 string returnUrl = null;
                                 returnUrl ??= Url.Content("~/");
                                 var code = invite.CompanyToken;
@@ -146,7 +145,7 @@ namespace BugTracker.Controllers
                                     protocol: Request.Scheme);
 
                                 await _emailSender.SendEmailAsync(newUser.Email, "Invite Email From Lan's Bug Tracker",
-                                    $"You received a invite ticket from Lan's Bug Tracker <br> <a style='background-color: #555555;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a> to join our software. <br> Your UserName is: {newUser.Email} <br> Your Password is: Abc123!");
+                                    $"<h1>You received a invite ticket from Lan's Bug Tracker</h1> <br> <a style='background-color: #555555;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Clicking here to join our software.</a>  <br> <h3>Your UserName is: {newUser.Email} </h3><br> <h3>Your Password is: Abc123!</h3>");
 
                                 if (await _userManager.IsInRoleAsync(loginUser, Roles.Admin.ToString()))
                                 {
@@ -161,60 +160,8 @@ namespace BugTracker.Controllers
                                 else
                                 {
                                     await _userManager.AddToRoleAsync(newUser, Roles.NewUser.ToString());
-                                }
-
-
-                                var admin = await _userManager.FindByEmailAsync("arthastheking113@gmail.com");
-
-                                Project project = new Project
-                                {
-                                    Name = "Project Example",
-                                    Description = "This is your project Example, you can change anything in this project anytime you want",
-                                    Created = DateTime.Now,
-                                    CompanyId = company.Id
-                                };
-                                await _context.Project.AddAsync(project);
-                                await _context.SaveChangesAsync();
-
-                                await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
-                                //notification for new user
-
-                                WelcomeNotification welcomenotification = new WelcomeNotification
-                                {
-                                    Name = "Welcome To The Bug Tracker",
-                                    Description = $"You have been Invited to the bug tracker service. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager by the inbox system.Or, you can start create new ticket and start working on it.",
-                                    Created = DateTime.Now,
-                                    SenderId = (admin).Id,
-                                    RecipientId = newUser.Id
-                                };
-                                await _context.WelcomeNotification.AddAsync(welcomenotification);
-                                await _context.SaveChangesAsync();
-
-                                //noification for admin
-                                WelcomeNotification welcomenotification2 = new WelcomeNotification
-                                {
-                                    Name = "New invite ticket has been sent",
-                                    Description = $"{loginUser.FullName} just send a Invite Ticket to {invite.Email}",
-                                    Created = DateTime.Now,
-                                    SenderId = (admin).Id,
-                                    RecipientId = (admin).Id
-                                };
-                                await _context.WelcomeNotification.AddAsync(welcomenotification2);
-                                await _context.SaveChangesAsync();
-
-                                //noification for person who send invite ticket
-                                WelcomeNotification welcomenotification3 = new WelcomeNotification
-                                {
-                                    Name = "New invite ticket has been sent",
-                                    Description = $"You just send a Invite Ticket to {invite.Email}",
-                                    Created = DateTime.Now,
-                                    SenderId = (admin).Id,
-                                    RecipientId = loginUser.Id
-                                };
-                                await _context.WelcomeNotification.AddAsync(welcomenotification3);
-                                await _context.SaveChangesAsync();
+                                }            
                             }
-
                         }
                     }
                     catch (Exception ex)
@@ -225,6 +172,55 @@ namespace BugTracker.Controllers
                         Debug.WriteLine("***********************************");
                         throw;
                     }
+                    var admin = await _userManager.FindByEmailAsync("arthastheking113@gmail.com");
+
+                    Project project = new Project
+                    {
+                        Name = "Project Example",
+                        Description = "This is your project Example, you can change anything in this project anytime you want",
+                        Created = DateTime.Now,
+                        CompanyId = company.Id
+                    };
+                    await _context.Project.AddAsync(project);
+                    await _context.SaveChangesAsync();
+
+                    await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
+                    //notification for new user
+
+                    WelcomeNotification welcomenotification = new WelcomeNotification
+                    {
+                        Name = "Welcome To The Bug Tracker",
+                        Description = $"You have been Invited to the bug tracker service. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager by the inbox system.Or, you can start create new ticket and start working on it.",
+                        Created = DateTime.Now,
+                        SenderId = (admin).Id,
+                        RecipientId = newUser.Id
+                    };
+                    await _context.WelcomeNotification.AddAsync(welcomenotification);
+                    await _context.SaveChangesAsync();
+
+                    //noification for admin
+                    WelcomeNotification welcomenotification2 = new WelcomeNotification
+                    {
+                        Name = "New invite ticket has been sent",
+                        Description = $"{loginUser.FullName} just send a Invite Ticket to {invite.Email}",
+                        Created = DateTime.Now,
+                        SenderId = (admin).Id,
+                        RecipientId = (admin).Id
+                    };
+                    await _context.WelcomeNotification.AddAsync(welcomenotification2);
+                    await _context.SaveChangesAsync();
+
+                    //noification for person who send invite ticket
+                    WelcomeNotification welcomenotification3 = new WelcomeNotification
+                    {
+                        Name = "New invite ticket has been sent",
+                        Description = $"You just send a Invite Ticket to {invite.Email}",
+                        Created = DateTime.Now,
+                        SenderId = (admin).Id,
+                        RecipientId = loginUser.Id
+                    };
+                    await _context.WelcomeNotification.AddAsync(welcomenotification3);
+                    await _context.SaveChangesAsync();
                     invite.InvitorId = loginUser.Id;
                     invite.InviteeId = newUser.Id;
                     invite.InviteDate = DateTime.Now;
