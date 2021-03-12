@@ -221,19 +221,32 @@ namespace BugTracker.Controllers
 
                         await _context.SaveChangesAsync();
                     }
-
+                    var projectName = _context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name;
                     if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
                     {
                         Notification notification = new Notification
                         {
                             Name = "New Ticket is Created by Submitter",
                             TicketId = ticket.Id,
-                            Description = "New Ticket is Created by Submitter and Waiting for being Assigned",
+                            Description = $"New Ticket is Created by Submitter in {projectName} and Waiting for being Assigned",
                             Created = DateTime.Now,
                             SenderId = ticket.OwnnerId,
                             RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
                         };
                         await _context.Notification.AddAsync(notification);
+                        await _context.SaveChangesAsync();
+
+                       
+                        Notification notification2 = new Notification
+                        {
+                            Name = "You just Create a New Ticket",
+                            TicketId = ticket.Id,
+                            Description = $"You just create a new ticket #{ticket.Id} in project {projectName} and waiting for being Assigned",
+                            Created = DateTime.Now,
+                            SenderId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id,
+                            RecipientId = ticket.OwnnerId
+                        };
+                        await _context.Notification.AddAsync(notification2);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
@@ -243,12 +256,25 @@ namespace BugTracker.Controllers
                         {
                             Name = "New Ticket is Created by Developer",
                             TicketId = ticket.Id,
-                            Description = "New Ticket is Created by Developer and Waiting for being Approve",
+                            Description = $"New Ticket is Created by Developer in {projectName} and Waiting for being Approve",
                             Created = DateTime.Now,
                             SenderId = ticket.OwnnerId,
                             RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
                         };
                         await _context.Notification.AddAsync(notification);
+                        await _context.SaveChangesAsync();
+
+
+                        Notification notification2 = new Notification
+                        {
+                            Name = "You just Create a New Ticket",
+                            TicketId = ticket.Id,
+                            Description = $"You just create a new ticket #{ticket.Id} in project {projectName} and waiting for being Assigned",
+                            Created = DateTime.Now,
+                            SenderId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id,
+                            RecipientId = ticket.OwnnerId
+                        };
+                        await _context.Notification.AddAsync(notification2);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
