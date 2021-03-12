@@ -75,7 +75,7 @@ namespace BugTracker.Controllers
             var number_resolve_ticket = _dbContext.Ticket.Where(t => t.Updated >= currentTime.AddDays(-7) && t.StatusId == (_dbContext.Status.FirstOrDefault(t => t.Name == "Closed").Id)).ToList().Count;
             var number_of_company = _dbContext.Company.ToList().Count;
 
-
+            ViewData["NumberOfTicket"] = _dbContext.Ticket.OrderBy(t => t.Id).Last().Id + 1;
             ViewData["currentTime"] = currentTime;
             ViewData["role"] = role;
             ViewData["userId"] = userId;

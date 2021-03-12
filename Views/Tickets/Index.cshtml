@@ -40,7 +40,7 @@
                                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Create New Ticket</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Create New Ticket #@ViewBag.NumberOfTicket</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -115,6 +115,9 @@
                     <thead>
                         <tr>
                             <th>
+                               Id
+                            </th>
+                            <th>
                                 @Html.DisplayNameFor(model => model.Name)
                             </th>
                             <th>
@@ -154,6 +157,9 @@
                         @foreach (var item in Model)
                         {
                             <tr>
+                                <td>
+                                    #@item.Id
+                                </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Name)
                                 </td>

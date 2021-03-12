@@ -148,7 +148,7 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["NumberOfTicket"] = _context.Ticket.OrderBy(t => t.Id).Last().Id + 1;
             ViewData["DeveloperId"] = new SelectList(await _projectService.DeveloperOnProjectAsync(project.Id), "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");

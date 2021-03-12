@@ -55,6 +55,7 @@ namespace BugTracker.Controllers
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
                 allDeveloper = allDeveloper.Concat(developer);
             }
+            ViewData["NumberOfTicket"] = _context.Ticket.OrderBy(t => t.Id).Last().Id + 1;
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
@@ -82,19 +83,14 @@ namespace BugTracker.Controllers
          
         }
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> ProjectIndex(int? id)
+        public async Task<IActionResult> ProjectIndex(int id)
         {
-            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-            var allProject = _context.Project.ToList();
-            foreach (var item in allProject)
-            {
-                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Concat(developer);
-            }
-            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
+            ViewData["ProjectName"] = _context.Project.FirstOrDefault(p => p.Id == id).Name;
+            ViewData["DeveloperId"] = new SelectList(await _projectService.DeveloperOnProjectAsync(id), "Id", "FullName");
+            ViewData["NumberOfTicket"] = _context.Ticket.OrderBy(t => t.Id).Last().Id + 1;
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["ProjectId"] = id;
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name");
             var applicationDbContext = _context.Ticket.Where(u => u.ProjectId == id).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Updated);

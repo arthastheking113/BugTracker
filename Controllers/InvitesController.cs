@@ -118,7 +118,7 @@ namespace BugTracker.Controllers
 
                     invite.CompanyToken = Guid.NewGuid();
                     invite.CompanyId = company.Id;
-                    var number_of_user_on_system = _context.Users.ToList().Count;
+                    var number_of_user_on_system = _context.Users.ToList().Count + 1;
                     CustomUser newUser = new CustomUser
                     {
                         FirstName = "Invite",
@@ -176,10 +176,11 @@ namespace BugTracker.Controllers
 
                     if (await _userManager.IsInRoleAsync(loginUser, Roles.Admin.ToString()))
                     {
+                        var number_of_project_on_system = _context.Project.Count() + 1;
                         Project project = new Project
                         {
-                            Name = "Project Example",
-                            Description = "This is your project Example, you can change anything in this project anytime you want",
+                            Name = $"Project Example #{number_of_project_on_system}",
+                            Description = $"This is your project Example #{number_of_project_on_system}, you can change anything in this project anytime you want",
                             Created = DateTime.Now,
                             CompanyId = company.Id
                         };

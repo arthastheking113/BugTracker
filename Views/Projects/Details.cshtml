@@ -46,7 +46,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create New Ticket</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">Create New Ticket #@ViewBag.NumberOfTicket</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -90,11 +90,12 @@
                                                 <label name="PriorityId" class="control-label">Priority</label>
                                                 <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
                                             </div>
+                                            <div class="form-group">
+                                                <label name="TicketTypeId" class="control-label">Ticket Type</label>
+                                                <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                            </div>
                                         }
-                                        <div class="form-group">
-                                            <label name="TicketTypeId" class="control-label">Ticket Type</label>
-                                            <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
-                                        </div>
+
 
                                     </div>
                                     <div class="modal-footer">
@@ -312,7 +313,7 @@
                                             <div class="user-block">
                                                 <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
                                                 <span class="username">
-                                                    <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First())</a>
+                                                    <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First()) - Ticket #@(ticket.Id)</a>
                                                 </span>
                                                 <span class="description">Shared publicly - @ticket.Created.ToString("dd MMMM yyyy - hh:mm tt")</span>
                                             </div>
@@ -337,7 +338,7 @@
                                             <div class="user-block">
                                                 <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
                                                 <span class="username">
-                                                    <a>Un-Assigned Ticket - Create By Submitter - @((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName)</a>
+                                                    <a>Un-Assigned Ticket - Create By Submitter - @((await UserManager.FindByIdAsync(ticket.OwnnerId)).FullName) - Ticket #@(ticket.Id)</a>
                                                 </span>
                                                 <span class="description">Shared publicly - @ticket.Created.ToString("dd MMMM yyyy - hh:mm tt")</span>
                                             </div>
@@ -370,7 +371,7 @@
                                         <div class="user-block">
                                             <img class="img-circle img-bordered-sm" src="@imageService.DecodeFileAvatar(imageData, imageType)" alt="user image">
                                             <span class="username">
-                                                <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First())</a>
+                                                <a>@((await UserManager.FindByIdAsync(ticket.DeveloperId)).FullName) - @((await UserManager.GetRolesAsync(await UserManager.FindByIdAsync(ticket.DeveloperId))).First()) - Ticket #@(ticket.Id)</a>
                                             </span>
                                             <span class="description">Shared publicly - @ticket.Created</span>
                                         </div>
