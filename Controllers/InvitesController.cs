@@ -209,7 +209,7 @@ namespace BugTracker.Controllers
                     WelcomeNotification welcomenotification = new WelcomeNotification
                     {
                         Name = "Welcome To The Bug Tracker",
-                        Description = $"You have been Invited to the bug tracker service. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager ({loginUser.FullName}) by the inbox system.Or, you can start create new ticket and start working on it. You can change your name in profile setting under your name in the vertical Nav bar.",
+                        Description = $"You have been Invited to the bug tracker service by {loginUser.FullName}. Your role is: {(await _roleService.ListUserRoleAsync(newUser)).First()}. Please contact our admin or project manager ({loginUser.FullName}) by the inbox system.Or, you can start create new ticket and start working on it. You can change your name in profile setting under your name in the vertical Nav bar.",
                         Created = DateTime.Now,
                         SenderId = (admin).Id,
                         RecipientId = newUser.Id
