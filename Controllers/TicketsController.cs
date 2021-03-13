@@ -82,7 +82,7 @@ namespace BugTracker.Controllers
 
          
         }
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = "Admin, ProjectManager, Developer")]
         public async Task<IActionResult> ProjectIndex(int id)
         {
             ViewData["ProjectName"] = _context.Project.FirstOrDefault(p => p.Id == id).Name;

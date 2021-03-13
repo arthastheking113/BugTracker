@@ -41,7 +41,7 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-
+            var userId = _userManager.GetUserId(User);
             var notification = await _context.Notification
                 .Include(n => n.Recipient)
                 .Include(n => n.Sender)
@@ -51,11 +51,16 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-            notification.IsViewed = true;
-            await _context.SaveChangesAsync();
+           
+            if (notification.RecipientId == userId)
+            {
+                notification.IsViewed = true;
+                await _context.SaveChangesAsync();
+                return View(notification);
+            }
+            return RedirectToAction(nameof(Index));
 
 
-            return View(notification);
         }
 
         // GET: Notifications/Create

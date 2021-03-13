@@ -67,11 +67,6 @@
                                             <label name="DeveloperId" class="control-label">Developer</label>
                                             <select name="DeveloperId" class="form-control" required asp-items="@ViewBag.DeveloperId"></select>
                                         </div>
-                                    }
-
-
-                                    @if (!(await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())) || !(await UserManager.IsInRoleAsync(user, Roles.ProjectManager.ToString())))
-                                    {
                                         <div class="form-group">
                                             <label name="StatusId" class="control-label">Status</label>
                                             <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
@@ -85,6 +80,9 @@
                                             <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
                                         </div>
                                     }
+
+
+                                  
 
                                 </div>
                                 <div class="modal-footer">
