@@ -53,7 +53,7 @@ namespace BugTracker.Controllers
             foreach (var item in allProject)
             {
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Concat(developer);
+                allDeveloper = allDeveloper.Union(developer);
             }
             ViewData["NumberOfTicket"] = _context.Ticket.OrderBy(t => t.Id).Last().Id + 1;
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
@@ -157,7 +157,7 @@ namespace BugTracker.Controllers
             foreach (var item in allProject)
             {
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Concat(developer);
+                allDeveloper = allDeveloper.Union(developer);
             }
 
 
@@ -228,7 +228,7 @@ namespace BugTracker.Controllers
                         {
                             Name = "New Ticket is Created by Submitter",
                             TicketId = ticket.Id,
-                            Description = $"New Ticket is Created by Submitter in {projectName} and Waiting for being Assigned",
+                            Description = $"New Ticket #{ticket.Id} is Created by Submitter in {projectName} and Waiting for being Assigned",
                             Created = DateTime.Now,
                             SenderId = ticket.OwnnerId,
                             RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
@@ -256,7 +256,7 @@ namespace BugTracker.Controllers
                         {
                             Name = "New Ticket is Created by Developer",
                             TicketId = ticket.Id,
-                            Description = $"New Ticket is Created by Developer in {projectName} and Waiting for being Approve",
+                            Description = $"New Ticket #{ticket.Id} is Created by Developer in {projectName} and Waiting for being Approve",
                             Created = DateTime.Now,
                             SenderId = ticket.OwnnerId,
                             RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
@@ -293,7 +293,7 @@ namespace BugTracker.Controllers
                 foreach (var item in allProject)
                 {
                     var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                    allDeveloper = allDeveloper.Concat(developer);
+                    allDeveloper = allDeveloper.Union(developer);
 
 
                     if (await _projectService.IsUserOnProjectAsync(_userManager.GetUserId(User), item.Id))
@@ -331,7 +331,7 @@ namespace BugTracker.Controllers
             foreach (var item in allProject)
             {
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Concat(developer);
+                allDeveloper = allDeveloper.Union(developer);
             }
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
@@ -392,7 +392,7 @@ namespace BugTracker.Controllers
                 foreach (var item in allProject)
                 {
                     var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                    allDeveloper = allDeveloper.Concat(developer);
+                    allDeveloper = allDeveloper.Union(developer);
                 }
                 ViewData["DeveloperId"] = new SelectList(allProject, "Id", "Id", ticket.DeveloperId);
                 ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);

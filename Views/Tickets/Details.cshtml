@@ -94,7 +94,7 @@
                 <div class="row">
                     <div class="col">
                         <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-                        @if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString())))
+                        @if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString())))
                         {
                         <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
                         }

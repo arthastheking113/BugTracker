@@ -22,13 +22,19 @@ namespace BugTracker.Controllers
         private readonly UserManager<CustomUser> _userManager;
         private readonly ICustomFileService _fileService;
         private readonly ICustomRoleService _roleService;
+        private readonly ICustomProjectService _projectService;
 
-        public TicketAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomFileService fileService, ICustomRoleService roleService)
+        public TicketAttachmentsController(ApplicationDbContext context, 
+            UserManager<CustomUser> userManager, 
+            ICustomFileService fileService, 
+            ICustomRoleService roleService,
+            ICustomProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
             _fileService = fileService;
             _roleService = roleService;
+            _projectService = projectService;
         }
 
         // GET: TicketAttachments
@@ -87,6 +93,19 @@ namespace BugTracker.Controllers
                     ticketAttachment.CustomUserId = _userManager.GetUserId(User);
                     var id = ticketAttachment.TicketId;
                     _context.Add(ticketAttachment);
+                    await _context.SaveChangesAsync();
+                    var loginUser = await _userManager.GetUserAsync(User);
+                    var projectId = _context.Ticket.FirstOrDefault(t => t.Id == id).ProjectId;
+                    Notification notification = new Notification
+                    {
+                        Name = $"New Attachment on Ticket #{id}",
+                        Description = $"A new attachment: {ticketAttachment.FileName} has been uploaded by {loginUser.FullName} into ticket #{id}",
+                        Created = DateTime.Now,
+                        SenderId = loginUser.Id,
+                        RecipientId = (await _projectService.ProjectManagerOnProjectAsync(projectId)).Id,
+                        TicketId = id
+                    };
+                    await _context.Notification.AddAsync(notification);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Details", "Tickets", new { id });
                 }
