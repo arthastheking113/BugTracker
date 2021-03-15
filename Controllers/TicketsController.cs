@@ -48,6 +48,8 @@ namespace BugTracker.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            var userId = _userManager.GetUserId(User);
+
             IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
             var allProject = _context.Project.ToList();
             foreach (var item in allProject)
@@ -55,32 +57,77 @@ namespace BugTracker.Controllers
                 var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
                 allDeveloper = allDeveloper.Union(developer);
             }
+
+            List<Project> listProject = new List<Project>();
+            if (!await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString()))
+            {
+                foreach (var item in allProject)
+                {
+                    var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                    allDeveloper = allDeveloper.Union(developer);
+
+                    if (await _projectService.IsUserOnProjectAsync(userId, item.Id))
+                    {
+                        listProject.Add(item);
+                    }
+                }
+            }
+            else
+            {
+                listProject = allProject;
+            }
             ViewData["NumberOfTicket"] = _context.Ticket.OrderBy(t => t.Id).Last().Id + 1;
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name");
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(listProject, "Id", "Name");
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name");
-            if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString())|| await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+
+            var ticket = await _context.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created).ToListAsync();
+
+            if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString()))
             {
                 var applicationDbContext = _context.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
                 return View(await applicationDbContext.ToListAsync());
             }
+            else if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
+            {
+                List<Project> listProjectOfProjectManager = new List<Project>();
+
+                foreach (var item in allProject)
+                {
+                    if (await _projectService.IsUserOnProjectAsync(userId, item.Id))
+                    {
+                        listProjectOfProjectManager.Add(item);
+                    }
+                }
+                List<Ticket> projectManagerView = new List<Ticket>();
+                foreach (var item in listProjectOfProjectManager)
+                {
+                    foreach (var itemInTicket in ticket)
+                    {
+                        if (itemInTicket.ProjectId == item.Id)
+                        {
+                            projectManagerView.Add(itemInTicket);
+                        }
+                    }
+                }
+                return View(projectManagerView);
+            }
             else if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString()))
             {
-                var userId = _userManager.GetUserId(User);
-                var applicationDbContext = _context.Ticket.Where(u => u.OwnnerId == userId).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
-                return View(await applicationDbContext.ToListAsync());
+
+                var ticketsView = ticket.Where(u => u.OwnnerId == userId);
+                return View(ticketsView);
             }
             else
             {
-                var userId = _userManager.GetUserId(User);
-                var applicationDbContext = _context.Ticket.Where(u => u.DeveloperId == userId).Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created);
-                return View(await applicationDbContext.ToListAsync());
+                var ticketsView = ticket.Where(u => u.DeveloperId == userId || (u.OwnnerId == userId && !u.IsAssigned));
+                return View(ticketsView);
             }
 
-         
+
         }
         [Authorize(Roles = "Admin, ProjectManager, Developer")]
         public async Task<IActionResult> ProjectIndex(int id)

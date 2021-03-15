@@ -125,8 +125,6 @@ namespace BugTracker.Controllers
             }
             TicketAttachment attachment = await _context.Attachment.FirstOrDefaultAsync(t => t.Id == id);
 
-            var ContentType = _fileService.ConvertByteArrayToFile(attachment.FileData, attachment.FileName);
-
             if (attachment == null)
             {
                 return null;

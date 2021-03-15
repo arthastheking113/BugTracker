@@ -21,12 +21,17 @@ namespace BugTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
         private readonly ICustomRoleService _roleService;
+        private readonly ICustomFileService _fileService;
 
-        public ProjectAttachmentsController(ApplicationDbContext context, UserManager<CustomUser> userManager, ICustomRoleService roleService)
+        public ProjectAttachmentsController(ApplicationDbContext context, 
+            UserManager<CustomUser> userManager, 
+            ICustomRoleService roleService,
+            ICustomFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _roleService = roleService;
+            _fileService = fileService;
         }
 
         // GET: ProjectAttachments
@@ -56,6 +61,22 @@ namespace BugTracker.Controllers
             return View(projectAttachment);
         }
 
+        public async Task<FileResult> DownloadFile(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+            ProjectAttachment attachment = await _context.ProjectAttachment.FirstOrDefaultAsync(t => t.Id == id);
+
+
+            if (attachment == null)
+            {
+                return null;
+            }
+            return File(attachment.FileData, attachment.ContentType);
+        }
+
         // GET: ProjectAttachments/Create
         public IActionResult Create()
         {
@@ -80,6 +101,8 @@ namespace BugTracker.Controllers
 
                     projectAttachment.FileData = ms.ToArray();
                     projectAttachment.FileName = projectAttachment.FormFile.FileName;
+                    projectAttachment.ContentType = projectAttachment.FormFile.ContentType;
+
                     projectAttachment.Created = DateTimeOffset.Now;
                     projectAttachment.CustomUserId = _userManager.GetUserId(User);
                     var id = projectAttachment.ProjectId;

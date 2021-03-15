@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-4">
-                        @if (!(await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Developer.ToString())))
+                        @if (!(await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.NewUser.ToString())))
                         {
                             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">
                                 <i class="fas fa-plus-square"></i> Create New Ticket
@@ -66,7 +66,7 @@
                                                         <option value="">Choose Project</option>
                                                     </select>
                                                 </div>
-                                                @if (!(await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Submitter.ToString())))
+                                                @if (!(await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Submitter.ToString())) && !(await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Developer.ToString())))
                                                 {
                                                     <div class="form-group form-check">
                                                         <label class="form-check-label">
@@ -80,22 +80,23 @@
                                                             <option value="">Choose Developer</option>
                                                         </select>
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label name="StatusId" class="control-label">Status</label>
+                                                        <select name="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label name="PriorityId" class="control-label">Priority</label>
+                                                        <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label name="TicketTypeId" class="control-label">TicketType</label>
+                                                        <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                                    </div>
                                                 }
 
 
 
-                                                <div class="form-group">
-                                                    <label name="StatusId" class="control-label">Status</label>
-                                                    <select name="StatusId" class="form-control" asp-items="@ViewBag.StatusId"></select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label name="PriorityId" class="control-label">Priority</label>
-                                                    <select name="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label name="TicketTypeId" class="control-label">TicketType</label>
-                                                    <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
-                                                </div>
+
 
                                             </div>
                                             <div class="modal-footer">

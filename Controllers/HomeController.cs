@@ -67,9 +67,6 @@ namespace BugTracker.Controllers
             var number_of_close_ticket = _dbContext.Ticket.Where(t => t.StatusId == (_dbContext.Status.FirstOrDefault(t => t.Name == "Closed").Id)).ToList().Count;
             var persent_of_ticket_done = number_of_close_ticket * 100 / number_of_ticket;
             var number_of_urgent_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Urgent").Id)).ToList().Count;
-            var number_of_high_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "High").Id)).ToList().Count;
-            var number_of_medium_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Medium").Id)).ToList().Count;
-            var number_of_low_ticket = _dbContext.Ticket.Where(t => t.PriorityId == (_dbContext.Priority.FirstOrDefault(t => t.Name == "Low").Id)).ToList().Count;
             var number_unassign_ticket = _dbContext.Ticket.Where(t => t.IsAssigned == false).ToList().Count;
             var number_new_ticket = _dbContext.Ticket.Where(t => t.Created >= currentTime.AddDays(-7)).ToList().Count;
             var number_resolve_ticket = _dbContext.Ticket.Where(t => t.Updated >= currentTime.AddDays(-7) && t.StatusId == (_dbContext.Status.FirstOrDefault(t => t.Name == "Closed").Id)).ToList().Count;
@@ -86,9 +83,6 @@ namespace BugTracker.Controllers
             ViewData["number_of_close_ticket"] = number_of_close_ticket;
             ViewData["persent_of_ticket_done"] = persent_of_ticket_done;
             ViewData["number_of_urgent_ticket"] = number_of_urgent_ticket;
-            ViewData["number_of_high_ticket"] = number_of_high_ticket;
-            ViewData["number_of_medium_ticket"] = number_of_medium_ticket;
-            ViewData["number_of_low_ticket"] = number_of_low_ticket;
             ViewData["number_unassign_ticket"] = number_unassign_ticket;
             ViewData["number_new_ticket"] = number_new_ticket;
             ViewData["number_resolve_ticket"] = number_resolve_ticket;
@@ -135,7 +129,6 @@ namespace BugTracker.Controllers
 
             var ticket = await _dbContext.Ticket.Include(t => t.Developer).Include(t => t.Ownner).Include(t => t.Priority).Include(t => t.Project).Include(t => t.Status).Include(t => t.TicketType).OrderByDescending(c => c.Created).ToListAsync();
 
-            List<Project> listProjectOfProjectManager = new List<Project>();
            
             if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString()))
             {
@@ -143,6 +136,8 @@ namespace BugTracker.Controllers
             }
             else if (await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.ProjectManager.ToString()))
             {
+                List<Project> listProjectOfProjectManager = new List<Project>();
+
                 foreach (var item in allProject)
                 {
                     if (await _projectService.IsUserOnProjectAsync(userId, item.Id))

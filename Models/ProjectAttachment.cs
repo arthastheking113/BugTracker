@@ -24,7 +24,7 @@ namespace BugTracker.Models
         public IFormFile FormFile { get; set; }
         public string FileName { get; set; }
         public byte[] FileData { get; set; }
-
+        public string ContentType { get; set; }
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
 

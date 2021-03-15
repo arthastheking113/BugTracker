@@ -23,8 +23,25 @@
                 <div class="row">
 
                     <div class="col-6">
-                        <img style="width:80%;" src="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName)) " />
+                        <div class="row">
+                            <img style="width:80%;" src="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName)) " />
+
+                        </div>
+
+                        <br />
+
+                    <div class="row">
+                        <div class="col text-right">
+                            <a class="btn btn-secondary" asp-controller="ProjectAttachments" asp-action="DownloadFile" asp-route-id="@Model.Id"> <i class="fas fa-eye"></i> View Or <i class="fas fa-file-download"></i> Download File</a>
+                        </div>
+                        <div class="col text-left">
+                            <a class="btn btn-secondary" href="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName))" download="@(Model.FileName)">
+                                <i class="fas fa-file-download"></i> Download File
+                            </a>
+                        </div>
                     </div>
+                    </div>
+                    
                     <div class="col">
                         <div class="row">
                             <div class="col-sm-2">
