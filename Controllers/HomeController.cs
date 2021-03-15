@@ -207,14 +207,31 @@ namespace BugTracker.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        [Authorize(Roles = "Admin")]
-        public IActionResult ManageRole()
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> ManageRoleAsync()
         {
+            if (await _customRoleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.Admin.ToString()))
+            {
+                ViewData["users"] = new MultiSelectList(_userManager.Users, "Id", "FullName");
+                ViewData["roles"] = new SelectList(_customRoleService.NonDemoRoles(), "Name", "Name");
+
+            }
+            else
+            {
+                var loginUser = await _userManager.GetUserAsync(User);
+                var userInRoleDeveloper = (await _customRoleService.UsersInRoleAsync(Roles.Developer.ToString())).Where( u => u.CompanyId == loginUser.CompanyId).ToList();
+                var userInRoleSubmitter = (await _customRoleService.UsersInRoleAsync(Roles.Submitter.ToString())).Where(u => u.CompanyId == loginUser.CompanyId).ToList();
+                var userInRoleNewUser = (await _customRoleService.UsersInRoleAsync(Roles.NewUser.ToString())).Where(u => u.CompanyId == loginUser.CompanyId).ToList();
+                var user = userInRoleDeveloper.Union(userInRoleSubmitter).Union(userInRoleNewUser);
+                ViewData["users"] = new MultiSelectList(user, "Id", "FullName");
+                ViewData["roles"] = new SelectList(_customRoleService.NonDemoRoles().Where(r => r.Name != Roles.Admin.ToString() && r.Name != Roles.ProjectManager.ToString()), "Name", "Name");
+
+            }
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRole(List<string> userId, string role)
         {

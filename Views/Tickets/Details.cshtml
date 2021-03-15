@@ -198,9 +198,6 @@
                     <thead>
                         <tr>
                             <th>
-                                Name
-                            </th>
-                            <th>
                                 Created
                             </th>
                             <th>
@@ -221,9 +218,6 @@
                         @foreach (var item in history)
                         {
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
                                 <td>
                                    @item.Created.ToString("dddd dd MMMM yyyy hh:mm tt")
                                 </td>

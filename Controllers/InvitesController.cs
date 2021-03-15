@@ -90,6 +90,7 @@ namespace BugTracker.Controllers
         // POST: Invites/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles ="Admin, ProjectManager, Developer, Submiter")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Email,CompanyToken,InviteDate,IsValid,CompanyId,InvitorId,InviteeId")] Invite invite, string CompanyName, string Role, int projectId)
@@ -197,14 +198,21 @@ namespace BugTracker.Controllers
 
                             if ((await _projectService.ProjectManagerOnProjectAsync(projectId)).Id == loginUser.Id)
                             {
-                                await _projectService.AddUserToProjectAsync(newUser.Id, projectId);
+                                await _projectService.AddUserToProjectAsync(newUser.Id, projectId);   
                             }
-                        }                       
+                        }
+                       
                     }
+                    if (!await _userManager.IsInRoleAsync(loginUser, Roles.Admin.ToString()))
+                    {
+                        string adminEmail = admin.Email;
+                        string subject = "New User Have Been Invited";
+                        string message = $"{loginUser.FullName} just send a Invite Ticket to {invite.Email}";
 
+                        await _emailSender.SendEmailAsync(adminEmail, subject, message);
 
-
-
+                        await _context.SaveChangesAsync();
+                    }
                     //notification for new user
                     WelcomeNotification welcomenotification = new WelcomeNotification
                     {

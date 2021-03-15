@@ -146,10 +146,9 @@
                             </div>
                         </div>
                         <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-tasks"></i> View Projects </a>
-                        @if ((await UserManager.IsInRoleAsync(user, Roles.Admin.ToString())))
-                        {
-                            <a asp-controller="Home" asp-action="ManageRole" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-people-arrows"></i> Role's Management </a>
-                        }
+                      
+                        <a asp-controller="Home" asp-action="ManageRole" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-people-arrows"></i> Role's Management </a>
+                        
                         <a asp-controller="Projects" asp-action="ManagerUserProject" class="btn btn-secondary pb-2 mb-2"><i class="fas fa-user-edit"></i> Project User Management</a>
 
                         <button type="button" class="btn btn-secondary pb-2 mb-2" data-toggle="modal" data-target="#exampleModal3">
