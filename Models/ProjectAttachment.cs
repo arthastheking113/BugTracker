@@ -20,7 +20,7 @@ namespace BugTracker.Models
         [NotMapped]
         [Display(Name = "Upload File")]
         [MaxFileSize(2 * 1024 * 1024)]
-        [AllowedExtention(new string[] { ".jpg", ".png", ".gif", ".doc", ".pdf", ".docx", ".xls", ".xlsx" })]
+        [AllowedExtention(new string[] { ".jpg",".jpeg", ".png", ".gif", ".doc", ".pdf", ".docx", ".xls", ".xlsx" })]
         public IFormFile FormFile { get; set; }
         public string FileName { get; set; }
         public byte[] FileData { get; set; }

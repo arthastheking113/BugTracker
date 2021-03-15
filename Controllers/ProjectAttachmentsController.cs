@@ -112,7 +112,8 @@ namespace BugTracker.Controllers
                 }
                 ViewData["CustomUserId"] = new SelectList(_context.Users, "Id", "Id", projectAttachment.CustomUserId);
                 ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", projectAttachment.ProjectId);
-                return View(projectAttachment);
+                var projectId = projectAttachment.ProjectId;
+                return RedirectToAction("Details", "Projects", new { projectId });
             }
             return RedirectToAction("DemoUser", "Projects");
         }
