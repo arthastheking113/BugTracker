@@ -75,6 +75,7 @@
                     return myAudio.paused ? myAudio.play() : myAudio.pause();
                 };
             </script>
+
             <main role="main">
                 <div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div><div class="firefly"></div>
 
@@ -89,11 +90,20 @@
                 </div>
 
                 <div class="container-fluid" style="opacity: 0.57;">
-                    <br />
-                    <br /> <br /><br />
+                    <ul class="navbar-nav">
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a class="nav-link" style="color:black;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">.</a>
+                        </li>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a class="nav-link" style="color:black;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">.</a>
+                        </li>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a class="nav-link" style="color:black;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">.</a>
+                        </li>
+                    </ul>
                     <div class="row">
                         <div class="col"></div>
-                        <div class="col-lg-3half" >
+                        <div class="col-lg-3half">
                             <div class="shadow-lg p-3 mb-4 bg-dark rounded ">
                                 <div class="row">
                                     <div class="col">
@@ -125,97 +135,97 @@
                                             </label>
                                         </div>
                                     </div>
-                                    
+
                                     <button class=" button-big button button-a btn-block" style="background-color:#1cd5db;font-size: 130%;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:white;border:0;" type="submit">Login</button>
-                                    
+
                                 </form>
                                 <hr />
-                              
-                                    @{
-                                        if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                                        {
-                                            <div>
-                                                <p>
 
-                                                </p>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                @{
+                                    if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                                    {
+                                        <div>
+                                            <p>
 
-                                                <div class="socials text-center">
-                                                    <div class="row">
-                                                        <div class="col" style="padding-right:35px;"></div>
-                                                        <div class="col-6">
-                                                            <ul>
-                                                                <p class="text-center" style="padding-right:20px;">Or using other methods </p>
-                                                                @foreach (var provider in Model.ExternalLogins)
-                                                                {
-                                                                    switch (provider.Name)
-                                                                    {
-                                                                        case "GitHub":
-                                                                            <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-github"></i></button></li>
-                                                                            break;
-                                                                        case "Google":
-                                                                            <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-google"></i></button></li>
-                                                                            break;
-                                                                        case "Twitter":
-                                                                            <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-twitter"></i></button></li>
-                                                                            break;
-                                                                        case "Facebook":
-                                                                            <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-facebook"></i></button></li>
-                                                                            break;
-                                                                    }
-                                                                }
-                                                            </ul>
-                                                        </div>
-                                                        <div class="col"></div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        }
+                                            </p>
+                                        </div>
                                     }
-                                   
-                               
-                                    <div class="row pb-3">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <a class="btn btn-outline-secondary btn-block text-white form-control text-left" style="text-decoration: initial;border:none;" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                                                <a class="btn btn-outline-secondary btn-block text-white form-control text-left" style="text-decoration: initial;border:none;" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                                                <a class="btn btn-outline-secondary  btn-block text-white text-left" style="text-decoration: initial;border:none;" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                                            </div>                                           
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group ">
-                                                <button type="button" class="btn btn-secondary btn-block form-control"  data-toggle="modal" data-target="#aboutModal" id="aboutButton">
-                                                    What is Bug Tracker?
-                                                </button>
-                                                <button type="button" class="btn btn-secondary btn-block form-control" data-toggle="modal" data-target="#whatcanbugtrackerdoes">
-                                                    About My Bug Tracker
-                                                </button>
-                                                <button type="button" class="btn btn-secondary btn-block form-control" data-toggle="modal" data-target="#howtouse">
-                                                    How to use?
-                                                </button>
-                                            </div>                                           
-                                        </div>
-                                    </div>
+                                    else
+                                    {
+                                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
 
-                                    <div class="row pb-3">
-                                        <div class="col">
-                                            <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#contactme">
-                                                How to Contact me?
+                                            <div class="socials text-center">
+                                                <div class="row">
+                                                    <div class="col" style="padding-right:35px;"></div>
+                                                    <div class="col-6">
+                                                        <ul>
+                                                            <p class="text-center" style="padding-right:20px;">Or using other methods </p>
+                                                            @foreach (var provider in Model.ExternalLogins)
+                                                            {
+                                                                switch (provider.Name)
+                                                                {
+                                                                    case "GitHub":
+                                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-github"></i></button></li>
+                                                                        break;
+                                                                    case "Google":
+                                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-google"></i></button></li>
+                                                                        break;
+                                                                    case "Twitter":
+                                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-twitter"></i></button></li>
+                                                                        break;
+                                                                    case "Facebook":
+                                                                        <li style="padding-right:10px; padding-bottom:20px;"><button style="border:none;" type="submit" class="ico-circle" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><i class="fa fa-facebook"></i></button></li>
+                                                                        break;
+                                                                }
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col"></div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    }
+                                }
+
+
+                                <div class="row pb-3">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <a class="btn btn-outline-secondary btn-block text-white form-control text-left" style="text-decoration: initial;border:none;" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                                            <a class="btn btn-outline-secondary btn-block text-white form-control text-left" style="text-decoration: initial;border:none;" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                                            <a class="btn btn-outline-secondary  btn-block text-white text-left" style="text-decoration: initial;border:none;" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group ">
+                                            <button type="button" class="btn btn-secondary btn-block form-control" data-toggle="modal" data-target="#aboutModal" id="aboutButton">
+                                                What is Bug Tracker?
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-block form-control" data-toggle="modal" data-target="#whatcanbugtrackerdoes">
+                                                About My Bug Tracker
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-block form-control" data-toggle="modal" data-target="#howtouse">
+                                                How to use?
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="row pb-0 mb-0">
-                                        <div class="col">
-                                            <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#DemoUserLogin">
-                                                Login As Demo User
-                                            </button>
-                                        </div>
+                                </div>
+
+                                <div class="row pb-3">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#contactme">
+                                            How to Contact me?
+                                        </button>
                                     </div>
-                              
+                                </div>
+                                <div class="row pb-0 mb-0">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#DemoUserLogin">
+                                            Login As Demo User
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                         <div class="col"></div>

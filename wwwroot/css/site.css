@@ -38,7 +38,11 @@ for details on configuring this project to bundle and minify static web assets. 
         opacity: 0.7;
     }
 }
-
+.vertical-center2 {
+    position:absolute;
+    top:15%;
+    left:-1%;
+}
 
 
 .vertical-center {
