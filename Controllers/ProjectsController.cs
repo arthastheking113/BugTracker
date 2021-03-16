@@ -194,7 +194,6 @@ namespace BugTracker.Controllers
                     project.ImageData = await _imageService.EncodeFileAsync(image);
                     project.ContentType = _imageService.RecordContentType(image);
                     project.Created = DateTime.Now;
-                    project.CompanyId = (await _userManager.GetUserAsync(User)).CompanyId;
                     _context.Add(project);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
