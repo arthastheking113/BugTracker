@@ -126,8 +126,6 @@ namespace BugTracker.Controllers
                 var ticketsView = ticket.Where(u => u.DeveloperId == userId || (u.OwnnerId == userId && !u.IsAssigned));
                 return View(ticketsView);
             }
-
-
         }
         [Authorize(Roles = "Admin, ProjectManager, Developer")]
         public async Task<IActionResult> ProjectIndex(int id)
@@ -222,7 +220,7 @@ namespace BugTracker.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize]
+        [Authorize(Roles = "Admid, ProjectManager, Developer, Submitter")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,IsAssigned,Created,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)
@@ -283,7 +281,7 @@ namespace BugTracker.Controllers
                         await _context.Notification.AddAsync(notification);
                         await _context.SaveChangesAsync();
 
-                       
+
                         Notification notification2 = new Notification
                         {
                             Name = "You just Create a New Ticket",
@@ -295,6 +293,8 @@ namespace BugTracker.Controllers
                         };
                         await _context.Notification.AddAsync(notification2);
                         await _context.SaveChangesAsync();
+
+
                         return RedirectToAction(nameof(Index));
                     }
                     else if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Developer.ToString())))
@@ -329,9 +329,6 @@ namespace BugTracker.Controllers
                     { 
                         return RedirectToAction("Details", "Projects", new { Id });
                     }
-                  
-                
-
 
                 }
                 IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
