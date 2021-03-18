@@ -100,7 +100,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new CustomUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, CompanyId = Input.CompanyId };
+                var user = new CustomUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, CompanyId = _context.Company.FirstOrDefault(c => c.Name == "New User Company").Id };
              
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
@@ -122,7 +122,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
                     WelcomeNotification welcomenotification = new WelcomeNotification
                     {
                         Name = "Welcome To The Bug Tracker",
-                        Description = "You have created a new account in my bug tracker service, please wait our admin or project manager assign you a higher role in the system. You can contact our staff by the inbox system. My recommendation is to Login as a Demo User, you can see everything my Bug Tracker can do..",
+                        Description = $"Hello {user.FullName} You have created a new account in my bug tracker service. Your role is New User and you are working at {_context.Company.FirstOrDefault(c => c.Id == user.CompanyId).Name}. Please wait our admin or project manager assign you a higher role in the system. You can contact our staff by the inbox system. My recommendation is to Login as a Demo User, you can see everything my Bug Tracker can do..",
                         Created = DateTime.Now,
                         SenderId = (admin).Id,
                         RecipientId = user.Id
