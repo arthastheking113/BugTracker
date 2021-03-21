@@ -227,6 +227,7 @@ namespace BugTracker.Controllers
         {
             if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
+
                 if (ModelState.IsValid)
                 {
                     var Id = ticket.ProjectId;
@@ -238,6 +239,14 @@ namespace BugTracker.Controllers
                     ticket.OwnnerId = _userManager.GetUserId(User);
                     ticket.Created = DateTime.Now;
                     ticket.Updated = ticket.Created;
+
+                    if (User.IsInRole(Roles.Developer.ToString()) || User.IsInRole(Roles.Submitter.ToString()))
+                    {
+                        ticket.TicketTypeId = _context.TicketType.FirstOrDefault(t => t.Name == "UnAssign").Id;
+                        ticket.PriorityId = _context.Priority.FirstOrDefault(t => t.Name == "UnAssign").Id;
+                        ticket.StatusId = _context.Status.FirstOrDefault(t => t.Name == "UnAssign").Id;
+                    }
+
                     _context.Add(ticket);
                     await _context.SaveChangesAsync();
 

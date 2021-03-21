@@ -570,6 +570,7 @@ namespace BugTracker.Utilities
                     new TicketType(){ Name = "Run Time"},
                     new TicketType(){ Name = "UI"},
                     new TicketType(){ Name = "Maintenance"},
+                    new TicketType(){ Name = "UnAssign"},
                 };
                 var dbTicketTypes = context.TicketType.Select(c => c.Name).ToList();
                 await context.TicketType.AddRangeAsync(ticketTypes.Where(c => !dbTicketTypes.Contains(c.Name)));
@@ -596,6 +597,7 @@ namespace BugTracker.Utilities
                     new Status() { Name = "Development" },
                     new Status() { Name = "Testing" },
                     new Status() { Name = "Closed" },
+                    new Status() { Name = "UnAssign" },
                 };
 
                 var dbTicketStatuses = context.Status.Select(c => c.Name).ToList();
@@ -622,6 +624,7 @@ namespace BugTracker.Utilities
                                                     new Priority() { Name = "Medium" },
                                                     new Priority() { Name = "High" },
                                                     new Priority() { Name = "Urgent" },
+                                                    new Priority() { Name = "UnAssign" },
                 };
 
                 var dbTicketPriorities = context.Priority.Select(c => c.Name).ToList();
