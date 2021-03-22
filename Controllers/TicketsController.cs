@@ -220,7 +220,7 @@ namespace BugTracker.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Admid, ProjectManager, Developer, Submitter")]
+        [Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,IsAssigned,Created,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)
