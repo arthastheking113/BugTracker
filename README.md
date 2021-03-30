@@ -17,4 +17,5 @@ Different role has different permission to do their work in the system. For exam
 You can register your own account in the register section, if you do that, your role at after register will be developer.
 
 If you want to test my web application. Go to this link: http://duylanle-bugtracker.herokuapp.com/
+
 Notes: My Bug Tracker is hosted on a free Hehoku server, so, It will take a minute to boot up.
