@@ -1,9 +1,11 @@
-# BugTracker
+# Bug Tracker
 
 What is a Bug Tracker?
 An issue tracking system (also ITS, trouble ticket system, support ticket, request management or incident ticket system) is a computer software package that manages and maintains lists of issues. 
 Issue tracking systems are generally used in collaborative settings—especially in large or distributed collaborations—but can also be employed by individuals as part of a time management or personal productivity regime.
 These systems often encompass resource allocation, time accounting, priority management, and oversight workflow in addition to implementing a centralized issue registry.
+
+I build this web application by using Entity Framework(ASP .NET MVC C#). With basic front end like HTML, CSS, JavaScript, Bootstrap, Typescript, jQuery, AJAX. And data base with PostgresSQL.
 
 What is in my Bug Tracker?
 My Bug Tracker has every funtions of a complete production which is ready to use or sell to customer.
