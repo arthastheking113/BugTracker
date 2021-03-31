@@ -19,7 +19,7 @@
     <div class="col-5">
         <div class="card">
             <div class="card-header bg-dark">
-                Ticket #@Model.Id Details
+                Ticket #@Model.Id - Details
             </div>
 
             <div class="card-body">
@@ -93,10 +93,247 @@
                 </dl>
                 <div class="row">
                     <div class="col">
-                        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            Edit
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body p-0">
+                                        <form asp-action="Edit" method="post">
+                                            <div class="card card-primary mb-0">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Edit Ticket</h3>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                    <input type="hidden" asp-for="Id" />
+                                                    <div class="form-group">
+                                                        <label asp-for="Name" class="control-label"></label>
+                                                        <input asp-for="Name" class="form-control" />
+                                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label asp-for="Description" class="control-label"></label>
+                                                        <input asp-for="Description" class="form-control" />
+                                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                                    </div>
+
+                                                    <input type="hidden" asp-for="Created" class="form-control" />
+
+                                                    @if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString())))
+                                                    {
+                                                        <div class="form-group form-check">
+                                                            <label class="form-check-label">
+                                                                <input class="form-check-input" asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="DeveloperId" class="control-label"></label>
+                                                            <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId"></select>
+                                                            <span asp-validation-for="DeveloperId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="ProjectId" class="control-label"></label>
+                                                            <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
+                                                            <span asp-validation-for="ProjectId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="TicketTypeId" class="control-label"></label>
+                                                            <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                                            <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="PriorityId" class="control-label"></label>
+                                                            <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                                            <span asp-validation-for="PriorityId" class="text-danger"></span>
+                                                        </div>
+                                                    }
+                                                    else if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Submitter.ToString())))
+                                                    {
+                                                        <div class="form-group form-check">
+                                                            <label class="form-check-label">
+                                                                <input class="form-check-input" disabled asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="DeveloperId" class="control-label"></label>
+                                                            <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId" disabled></select>
+                                                            <span asp-validation-for="DeveloperId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="ProjectId" class="control-label"></label>
+                                                            <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId" disabled></select>
+                                                            <span asp-validation-for="ProjectId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="TicketTypeId" class="control-label"></label>
+                                                            <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                                                            <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="PriorityId" class="control-label"></label>
+                                                            <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                                                            <span asp-validation-for="PriorityId" class="text-danger"></span>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group form-check">
+                                                            <label class="form-check-label">
+                                                                <input class="form-check-input" disabled asp-for="IsAssigned" /> @Html.DisplayNameFor(model => model.IsAssigned)
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="DeveloperId" class="control-label"></label>
+                                                            <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.DeveloperId" disabled></select>
+                                                            <span asp-validation-for="DeveloperId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="ProjectId" class="control-label"></label>
+                                                            <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId" disabled></select>
+                                                            <span asp-validation-for="ProjectId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="TicketTypeId" class="control-label"></label>
+                                                            <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId" disabled></select>
+                                                            <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label asp-for="PriorityId" class="control-label"></label>
+                                                            <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId" disabled></select>
+                                                            <span asp-validation-for="PriorityId" class="text-danger"></span>
+                                                        </div>
+                                                    }
+
+
+                                                    <input type="hidden" asp-for="OwnnerId" class="form-control" />
+
+
+                                                    <div class="form-group">
+                                                        <label asp-for="StatusId" class="control-label"></label>
+                                                        <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                                                        <span asp-validation-for="StatusId" class="text-danger"></span>
+                                                    </div>
+
+
+
+                                                    <div class="form-group">
+                                                        <input type="submit" value="Save" class="btn btn-success float-left mr-2">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+
+                                                </div>
+                                                <!-- /.card-body -->
+                                            </div>
+                                            <!-- /.card -->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @if ((await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.Admin.ToString())) || (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), Roles.ProjectManager.ToString())))
                         {
-                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+                    
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal2">
+                                Delete
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-0">
+                                            <div class="card card-primary mb-0">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Are you sure you want to delete this Ticket ?</h3>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="card-body">
+                                                    <dl class="row">
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Name)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Name)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Description)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Description)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Created)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Created)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Updated)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Model.Created.ToString("dddd, dd MMMM yyyy")
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Developer)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Developer.FullName)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Ownner)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Ownner.FullName)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Project)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Project.Name)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Status)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Status.Name)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.Priority)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.Priority.Name)
+                                                        </dd>
+                                                        <dt class="col-sm-2">
+                                                            @Html.DisplayNameFor(model => model.TicketType)
+                                                        </dt>
+                                                        <dd class="col-sm-10">
+                                                            @Html.DisplayFor(model => model.TicketType.Name)
+                                                        </dd>
+                                                    </dl>
+                                                    <form asp-action="Delete" method="post">
+                                                        <input type="hidden" asp-for="Id" />
+                                                        <input type="submit" value="Delete" class="btn btn-danger" />
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </form>
+                                                </div>
+                                                <!-- /.card-body -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         }
 
                         <a class="btn btn-secondary" asp-action="Index">Back to List</a>
@@ -107,7 +344,7 @@
         </div>
         <div class="card">
             <div class="card-header bg-dark">
-               <h3 class="card-title"> Attach File</h3>
+               <h3 class="card-title"> Attach File (@(Model.Attachments.Count))</h3>
             </div>
             <div class="card-body">
                 <div class="row ">
@@ -175,10 +412,12 @@
 
     <div class="col">
 
-
+        @{
+            var history = ApplicationDbContext.TicketHistory.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Created).ToList();
+        }
         <div class="card">
             <div class="card-header bg-dark">
-                <h3 class="card-title">Ticket Histories</h3>
+                <h3 class="card-title">Ticket Histories (@(history.Count))</h3>
                 <div class="card-tools">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" placeholder="Search Histories" id="searchTicketHistory">
@@ -191,9 +430,6 @@
                 </div>
             </div>
             <div class="card-body">
-                @{
-                    var history = ApplicationDbContext.TicketHistory.Where(t => t.TicketId == Model.Id).OrderByDescending(c => c.Created).ToList();
-                }
                 <table class="table" id="tickethistory">
                     <thead>
                         <tr>
@@ -219,7 +455,7 @@
                         {
                             <tr>
                                 <td>
-                                   @item.Created.ToString("dddd dd MMMM yyyy hh:mm tt")
+                                    @item.Created.ToString("dddd dd MMMM yyyy hh:mm tt")
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Property)
@@ -240,7 +476,7 @@
                 </table>
             </div>
         </div>
-    
+
         <div class="row">
             <div class="col">
                 <div class="card">
@@ -292,34 +528,34 @@
                                     {
                                         commentdate = eslapseSecond.ToString() + " Seconds Ago";
                                     }
-                                <div class="media mb-4" style="border-bottom:2px solid rgb(28, 213, 219)">
-                                    <img class="d-flex mr-3 rounded-circle" style="width:5%" src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync(comment.CustomUserId)).ImageData,(await UserManager.FindByIdAsync(comment.CustomUserId)).ContentType)" alt="">
-                                    <div class="media-body">
-                                        <div class="row">
-                                            <div class="col text-left">
-                                                <h5 class="mt-0">@comment.CustomUser.FullName</h5>
-                                            </div>
-                                            @if (User.IsInRole("Administrator") || User.IsInRole("Moderator"))
-                                            {
-                                                <div class="col text-right">
-                                                    <a class="btn btn-secondary" asp-controller="PostComments" asp-action="Edit" asp-route-id="@comment.Id">Edit</a>
-                                                    <a class="btn btn-secondary" asp-controller="PostComments" asp-action="Delete" asp-route-id="@comment.Id">Delete</a>
+                                    <div class="media mb-4" style="border-bottom:2px solid rgb(28, 213, 219)">
+                                        <img class="d-flex mr-3 rounded-circle" style="width:5%" src="@imageService.DecodeFileAvatar((await UserManager.FindByIdAsync(comment.CustomUserId)).ImageData,(await UserManager.FindByIdAsync(comment.CustomUserId)).ContentType)" alt="">
+                                        <div class="media-body">
+                                            <div class="row">
+                                                <div class="col text-left">
+                                                    <h5 class="mt-0">@comment.CustomUser.FullName</h5>
                                                 </div>
-                                            }
+                                                @if (User.IsInRole("Administrator") || User.IsInRole("Moderator"))
+                                                {
+                                                    <div class="col text-right">
+                                                        <a class="btn btn-secondary" asp-controller="PostComments" asp-action="Edit" asp-route-id="@comment.Id">Edit</a>
+                                                        <a class="btn btn-secondary" asp-controller="PostComments" asp-action="Delete" asp-route-id="@comment.Id">Delete</a>
+                                                    </div>
+                                                }
 
-                                        </div>
-
-                                        <div class="row" style="margin:0px;padding:0px;margin-bottom:15px">
-                                            <div class="col text-left" style="padding:0px 0px">
-                                                @Html.Raw(comment.Content)
                                             </div>
-                                            <div class="col text-right">
-                                                <p style="margin:0px;padding:0px;">@commentdate</p>
+
+                                            <div class="row" style="margin:0px;padding:0px;margin-bottom:15px">
+                                                <div class="col text-left" style="padding:0px 0px">
+                                                    @Html.Raw(comment.Content)
+                                                </div>
+                                                <div class="col text-right">
+                                                    <p style="margin:0px;padding:0px;">@commentdate</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                   
+
                                 }
 
                             </div>

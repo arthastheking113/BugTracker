@@ -96,7 +96,7 @@ namespace BugTracker.Services
                     TicketHistory history = new TicketHistory
                     {
                         TicketId = newTicket.Id,
-                        Property = "CustomUser",
+                        Property = "Developer",
                         OldValue = oldTicket.Developer.FullName,
                         NewValue = newTicket.Developer.FullName,
                         Created = DateTime.Now,

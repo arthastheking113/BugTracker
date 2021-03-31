@@ -187,8 +187,20 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
             //var userId = _userManager.GetUserId(User);
-           
-                return View(ticket);
+            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
+            var allProject = _context.Project.ToList();
+            foreach (var item in allProject)
+            {
+                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                allDeveloper = allDeveloper.Union(developer);
+            }
+            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
+            ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
+            ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
+            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
+            return View(ticket);
            
             
         }
@@ -437,7 +449,7 @@ namespace BugTracker.Controllers
                     return NotFound();
                 }
                 Ticket oldTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
-
+                var ticketId = ticket.Id;
                 if (ModelState.IsValid)
                 {
                     try
@@ -453,6 +465,7 @@ namespace BugTracker.Controllers
                         Ticket newTicket = await _context.Ticket.Include(t => t.TicketType).Include(t => t.Status).Include(t => t.Priority).Include(t => t.Developer).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
                         await _customHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
 
+
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -465,7 +478,7 @@ namespace BugTracker.Controllers
                             throw;
                         }
                     }
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details","Tickets", new { id = ticketId });
                 }
                 IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
                 var allProject = _context.Project.ToList();
@@ -474,12 +487,12 @@ namespace BugTracker.Controllers
                     var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
                     allDeveloper = allDeveloper.Union(developer);
                 }
-                ViewData["DeveloperId"] = new SelectList(allProject, "Id", "Id", ticket.DeveloperId);
-                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnnerId);
-                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Id", ticket.PriorityId);
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Id", ticket.ProjectId);
-                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", ticket.StatusId);
-                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Id", ticket.TicketTypeId);
+                ViewData["DeveloperId"] = new SelectList(allProject, "Id", "FullName", ticket.DeveloperId);
+                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
+                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
+                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
+                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
+                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
                 return View(ticket);
             }
             return RedirectToAction("DemoUser", "Projects");

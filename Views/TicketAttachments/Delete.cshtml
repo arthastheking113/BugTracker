@@ -1,5 +1,6 @@
 ﻿@model BugTracker.Models.TicketAttachment
-
+@using BugTracker.Services
+@inject ICustomFileService CustomFileService
 @{
     ViewData["Title"] = "Delete";
 }
@@ -11,44 +12,44 @@
     <h4>TicketAttachment</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FileName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileName)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FileData)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileData)
+        <dd class="col-sm-10">
+            <img style="width:80%;" src="@(CustomFileService.ConvertByteArrayToFile(Model.FileData,Model.FileName)) " />
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Created)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FileName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FileName)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Ticket)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ticket.Id)
-        </dd class>
-        <dt class = "col-sm-2">
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ticket.Name)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CustomUser)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomUser.Id)
-        </dd class>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CustomUser.FullName)
+        </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
