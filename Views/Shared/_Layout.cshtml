@@ -58,6 +58,13 @@
         background-size: cover;
         background-position: center;
 ">
+    <div id="preloader">
+        <div class="center">
+            <p style="text-align: center;font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                Just A Second, I'm Loading...
+            </p>
+        </div>
+    </div>
     <div>
         <!-- Sidebar -->
         @if (SignInManager.IsSignedIn(User))
@@ -325,7 +332,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-    with font-awesome or any other icon font library -->
+                            with font-awesome or any other icon font library -->
 
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index" class="nav-link">
@@ -552,13 +559,7 @@
             </div>
         </footer>
         <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-        <div id="preloader">
-            <div class="center">
-                <p style="text-align: center;font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-                    Just A Second, I'm Loading...
-                </p>
-            </div>
-        </div>
+
     </div>
 
     <script src="~/plugins/jquery/jquery.min.js"></script>
