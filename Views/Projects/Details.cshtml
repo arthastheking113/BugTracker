@@ -410,10 +410,15 @@
                             <div class="col">
                                 <p class="text-sm">
                                     Project Leader
-                                    @{ 
+                                    @{
                                         var projectManager = await projectService.ProjectManagerOnProjectAsync(Model.Id);
+
+
                                     }
-                                    <b class="d-block">@(projectManager.FullName)</b>
+                                    @if (projectManager != null)
+                                    {
+                                        <b class="d-block">@(projectManager.FullName)</b>
+                                    }
                                 </p>
                             </div>
                         </div>

@@ -195,6 +195,7 @@ namespace BugTracker.Controllers
                     project.ContentType = _imageService.RecordContentType(image);
                     project.Created = DateTime.Now;
                     _context.Add(project);
+
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }

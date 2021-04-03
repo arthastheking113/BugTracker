@@ -185,8 +185,6 @@ namespace BugTracker.Controllers
                             Created = DateTime.Now,
                             CompanyId = company.Id
                         };
-
-
                         await _context.Project.AddAsync(project);
                         await _context.SaveChangesAsync();
                         await _projectService.AddUserToProjectAsync(newUser.Id, project.Id);
