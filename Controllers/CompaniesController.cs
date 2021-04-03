@@ -159,6 +159,56 @@ namespace BugTracker.Controllers
             if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
                 var company = await _context.Company.FindAsync(id);
+
+                var projectList = _context.Project.Include(p => p.Attachments).Where(p => p.CompanyId == id).ToList();
+                // delete project of company
+                foreach (var project in projectList)
+                {
+                    var ticketList = _context.Ticket.Include(t => t.Attachments).Include(t => t.Comments).Include(t => t.TicketHistories).Where(t => t.ProjectId == project.Id).ToList();
+                    //delete ticket of this project
+                    foreach (var ticket in ticketList)
+                    {
+                        //delete all attachments in 1 ticket
+                        foreach (var attachment in ticket.Attachments)
+                        {
+                            _context.Attachment.Remove(attachment);
+                            await _context.SaveChangesAsync();
+                        }
+                        //delete all comment in 1 ticket
+                        foreach (var comment in ticket.Comments)
+                        {
+                            _context.Comment.Remove(comment);
+                            await _context.SaveChangesAsync();
+                        }
+                        //delete all History in 1 ticket
+                        foreach (var history in ticket.TicketHistories)
+                        {
+                            _context.TicketHistory.Remove(history);
+                            await _context.SaveChangesAsync();
+                        }
+                        _context.Ticket.Remove(ticket);
+                        await _context.SaveChangesAsync();
+                    }
+                    //you don't need to do this foreach loop
+                    foreach (var projectAttachment in project.Attachments)
+                    {
+                        _context.ProjectAttachment.Remove(projectAttachment);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    _context.Project.Remove(project);
+                    await _context.SaveChangesAsync();
+                }
+
+                var listUser = _context.Users.Where(u => u.CompanyId == company.Id).ToList();
+                var temporaryCompanyId = _context.Company.FirstOrDefault(c => c.Name == "Temporary Company").Id;
+                foreach (var user in listUser)
+                {
+                    user.CompanyId = temporaryCompanyId;
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
+                //delete company
                 _context.Company.Remove(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

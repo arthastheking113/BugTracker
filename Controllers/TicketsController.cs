@@ -429,7 +429,7 @@ namespace BugTracker.Controllers
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
-            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
+            ViewData["StatusId"] = new SelectList(_context.Status.Where(t => t.Name != "UnAssign").ToList(), "Id", "Name", ticket.StatusId);
             ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
@@ -491,7 +491,7 @@ namespace BugTracker.Controllers
                 ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
                 ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
                 ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
-                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
+                ViewData["StatusId"] = new SelectList(_context.Status.Where(t => t.Name != "UnAssign").ToList(), "Id", "Name", ticket.StatusId);
                 ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
                 return View(ticket);
             }
@@ -532,6 +532,25 @@ namespace BugTracker.Controllers
             if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
                 var ticket = await _context.Ticket.FindAsync(id);
+
+                //delete all attachments in 1 ticket
+                foreach (var attachment in ticket.Attachments)
+                {
+                    _context.Attachment.Remove(attachment);
+                    await _context.SaveChangesAsync();
+                }
+                //delete all comment in 1 ticket
+                foreach (var comment in ticket.Comments)
+                {
+                    _context.Comment.Remove(comment);
+                    await _context.SaveChangesAsync();
+                }
+                //delete all History in 1 ticket
+                foreach (var history in ticket.TicketHistories)
+                {
+                    _context.TicketHistory.Remove(history);
+                    await _context.SaveChangesAsync();
+                }
                 _context.Ticket.Remove(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
