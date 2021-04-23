@@ -185,24 +185,19 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,CompanyId,ImageData,ContentType")] Project project, IFormFile image)
         {
-            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    var loginUser = await _userManager.GetUserAsync(User);
-                    project.CompanyId = loginUser.CompanyId;
-                    project.ImageData = await _imageService.EncodeFileAsync(image);
-                    project.ContentType = _imageService.RecordContentType(image);
-                    project.Created = DateTime.Now;
-                    _context.Add(project);
+                var loginUser = await _userManager.GetUserAsync(User);
+                project.CompanyId = loginUser.CompanyId;
+                project.ImageData = await _imageService.EncodeFileAsync(image);
+                project.ContentType = _imageService.RecordContentType(image);
+                project.Created = DateTime.Now;
+                _context.Add(project);
 
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(project);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            return RedirectToAction("DemoUser", "Projects");
+            return View(project);
         }
 
         public IActionResult DemoUser()

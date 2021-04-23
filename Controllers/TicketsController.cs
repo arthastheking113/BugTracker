@@ -237,171 +237,165 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,IsAssigned,Created,Updated,DeveloperId,OwnnerId,ProjectId,StatusId,PriorityId,TicketTypeId")] Ticket ticket)
         {
-            //check if current user is demouser, if current user is demouser, it will redirect to the demo user warning view
-            //if current user is not demo user, it will allow user to create a ticket
-            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
+            // check is model is valid
+            if (ModelState.IsValid)
             {
-                // check is model is valid
-                if (ModelState.IsValid)
+                var Id = ticket.ProjectId;
+                if (ticket.IsAssigned == null)
                 {
-                    var Id = ticket.ProjectId;
-                    if (ticket.IsAssigned == null)
+                    ticket.IsAssigned = false;
+                }
+
+                ticket.OwnnerId = _userManager.GetUserId(User);
+                ticket.Created = DateTime.Now;
+                ticket.Updated = ticket.Created;
+
+                //check if current user is developer or submitter
+                //because developer and submitter can't choose type, priority, and status
+                //project manager will see a notifocation and approve that
+                if (User.IsInRole(Roles.Developer.ToString()) || User.IsInRole(Roles.Submitter.ToString()))
+                {
+                    ticket.TicketTypeId = _context.TicketType.FirstOrDefault(t => t.Name == "UnAssign").Id;
+                    ticket.PriorityId = _context.Priority.FirstOrDefault(t => t.Name == "UnAssign").Id;
+                    ticket.StatusId = _context.Status.FirstOrDefault(t => t.Name == "UnAssign").Id;
+                }
+
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+
+                var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
+                                                                                                //notify for developer if that ticket is assign to them and status is not closed
+                if (ticket.IsAssigned == true && ticket.StatusId != currentStatus)
+                {
+                    Notification notification = new Notification
                     {
-                        ticket.IsAssigned = false;
-                    }
-
-                    ticket.OwnnerId = _userManager.GetUserId(User);
-                    ticket.Created = DateTime.Now;
-                    ticket.Updated = ticket.Created;
-
-                    //check if current user is developer or submitter
-                    //because developer and submitter can't choose type, priority, and status
-                    //project manager will see a notifocation and approve that
-                    if (User.IsInRole(Roles.Developer.ToString()) || User.IsInRole(Roles.Submitter.ToString()))
-                    {
-                        ticket.TicketTypeId = _context.TicketType.FirstOrDefault(t => t.Name == "UnAssign").Id;
-                        ticket.PriorityId = _context.Priority.FirstOrDefault(t => t.Name == "UnAssign").Id;
-                        ticket.StatusId = _context.Status.FirstOrDefault(t => t.Name == "UnAssign").Id;
-                    }
-
-                    _context.Add(ticket);
+                        Name = "New Ticket Assign",
+                        TicketId = ticket.Id,
+                        Description = "You have a new ticket.",
+                        Created = DateTime.Now,
+                        SenderId = ticket.OwnnerId,
+                        RecipientId = ticket.DeveloperId
+                    };
+                    await _context.Notification.AddAsync(notification);
                     await _context.SaveChangesAsync();
 
-                    var currentStatus = _context.Status.FirstOrDefault(t => t.Name == "Closed").Id; // new 
-                    //notify for developer if that ticket is assign to them and status is not closed
-                    if (ticket.IsAssigned == true && ticket.StatusId != currentStatus)
-                    {
-                        Notification notification = new Notification
-                        {
-                            Name = "New Ticket Assign",
-                            TicketId = ticket.Id,
-                            Description = "You have a new ticket.",
-                            Created = DateTime.Now,
-                            SenderId = ticket.OwnnerId,
-                            RecipientId = ticket.DeveloperId
-                        };
-                        await _context.Notification.AddAsync(notification);
-                        await _context.SaveChangesAsync();
 
+                    string devEmail = (await _userManager.FindByIdAsync(ticket.DeveloperId)).Email;
+                    string subject = "New Ticket Assignment";
+                    string message = $"You have been Assigned a new ticket {ticket.Name} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}";
 
-                        string devEmail = (await _userManager.FindByIdAsync(ticket.DeveloperId)).Email;
-                        string subject = "New Ticket Assignment";
-                        string message = $"You have been Assigned a new ticket {ticket.Name} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}";
+                    await _emailSender.SendEmailAsync(devEmail, subject, message);
 
-                        await _emailSender.SendEmailAsync(devEmail, subject, message);
-
-                        await _context.SaveChangesAsync();
-                    }
-                    //access project name
-                    var projectName = _context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name;
-
-                    //create notifocation for project manager on project through system notification and email
-                    //notification when current user is submitter
-                    if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
-                    {
-                        //notification for project manager on project
-                        Notification notification = new Notification
-                        {
-                            Name = "New Ticket is Created by Submitter",
-                            TicketId = ticket.Id,
-                            Description = $"New Ticket #{ticket.Id} is Created by Submitter in {projectName} and Waiting for being Assigned",
-                            Created = DateTime.Now,
-                            SenderId = ticket.OwnnerId,
-                            RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
-                        };
-                        await _context.Notification.AddAsync(notification);
-                        await _context.SaveChangesAsync();
-
-                        //email to project manager about the notification
-                        string PMEmail = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Email;
-                        string subject = "New Ticket Has Been Created by Submitter";
-                        string message = $"A new ticket {ticket.Name} has been created by Submitter {await _userManager.FindByIdAsync(ticket.OwnnerId)} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}, and waiting approval from you.";
-
-                        await _emailSender.SendEmailAsync(PMEmail, subject, message);
-
-                        //notification to current user
-                        Notification notification2 = new Notification
-                        {
-                            Name = "You just Create a New Ticket",
-                            TicketId = ticket.Id,
-                            Description = $"You just create a new ticket #{ticket.Id} in project {projectName} and waiting for being Assigned",
-                            Created = DateTime.Now,
-                            SenderId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id,
-                            RecipientId = ticket.OwnnerId
-                        };
-                        await _context.Notification.AddAsync(notification2);
-                        await _context.SaveChangesAsync();
-
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                    //create notifocation for project manager on project through system notification and email
-                    //notification when current user is developer
-                    else if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Developer.ToString())))
-                    {
-                        //send notication to project manager on project
-                        Notification notification = new Notification
-                        {
-                            Name = "New Ticket is Created by Developer",
-                            TicketId = ticket.Id,
-                            Description = $"New Ticket #{ticket.Id} is Created by Developer in {projectName} and Waiting for being Approve",
-                            Created = DateTime.Now,
-                            SenderId = ticket.OwnnerId,
-                            RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
-                        };
-                        await _context.Notification.AddAsync(notification);
-                        await _context.SaveChangesAsync();
-
-
-                        string PMEmail = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Email;
-                        string subject = "New Ticket Has Been Created by Developer";
-                        string message = $"A new ticket {ticket.Name} has been created by Developer {await _userManager.FindByIdAsync(ticket.OwnnerId)} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}, and waiting approval from you.";
-
-                        await _emailSender.SendEmailAsync(PMEmail, subject, message);
-
-                        Notification notification2 = new Notification
-                        {
-                            Name = "You just Create a New Ticket",
-                            TicketId = ticket.Id,
-                            Description = $"You just create a new ticket #{ticket.Id} in project {projectName} and waiting for being Assigned",
-                            Created = DateTime.Now,
-                            SenderId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id,
-                            RecipientId = ticket.OwnnerId
-                        };
-                        await _context.Notification.AddAsync(notification2);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
-                    }
-                    //if current user is in the other role, this will redirect to project details view
-                    else
-                    { 
-                        return RedirectToAction("Details", "Projects", new { Id });
-                    }
-
+                    await _context.SaveChangesAsync();
                 }
-                IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-                var allProject = _context.Project.ToList();
-                List<Project> listProject = new List<Project>();
-                foreach (var item in allProject)
+                //access project name
+                var projectName = _context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name;
+
+                //create notifocation for project manager on project through system notification and email
+                //notification when current user is submitter
+                if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Submitter.ToString())))
                 {
-                    var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                    allDeveloper = allDeveloper.Union(developer);
-
-
-                    if (await _projectService.IsUserOnProjectAsync(_userManager.GetUserId(User), item.Id))
+                    //notification for project manager on project
+                    Notification notification = new Notification
                     {
-                        listProject.Add(item);
-                    }
+                        Name = "New Ticket is Created by Submitter",
+                        TicketId = ticket.Id,
+                        Description = $"New Ticket #{ticket.Id} is Created by Submitter in {projectName} and Waiting for being Assigned",
+                        Created = DateTime.Now,
+                        SenderId = ticket.OwnnerId,
+                        RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
+                    };
+                    await _context.Notification.AddAsync(notification);
+                    await _context.SaveChangesAsync();
+
+                    //email to project manager about the notification
+                    string PMEmail = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Email;
+                    string subject = "New Ticket Has Been Created by Submitter";
+                    string message = $"A new ticket {ticket.Name} has been created by Submitter {await _userManager.FindByIdAsync(ticket.OwnnerId)} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}, and waiting approval from you.";
+
+                    await _emailSender.SendEmailAsync(PMEmail, subject, message);
+
+                    //notification to current user
+                    Notification notification2 = new Notification
+                    {
+                        Name = "You just Create a New Ticket",
+                        TicketId = ticket.Id,
+                        Description = $"You just create a new ticket #{ticket.Id} in project {projectName} and waiting for being Assigned",
+                        Created = DateTime.Now,
+                        SenderId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id,
+                        RecipientId = ticket.OwnnerId
+                    };
+                    await _context.Notification.AddAsync(notification2);
+                    await _context.SaveChangesAsync();
+
+
+                    return RedirectToAction(nameof(Index));
                 }
-                ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
-                ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
-                ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
-                ViewData["ProjectId"] = new SelectList(listProject, "Id", "Name", ticket.ProjectId);
-                ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
-                ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
-                return View(ticket);
+                //create notifocation for project manager on project through system notification and email
+                //notification when current user is developer
+                else if ((await _userManager.IsInRoleAsync(await _userManager.GetUserAsync(User), Roles.Developer.ToString())))
+                {
+                    //send notication to project manager on project
+                    Notification notification = new Notification
+                    {
+                        Name = "New Ticket is Created by Developer",
+                        TicketId = ticket.Id,
+                        Description = $"New Ticket #{ticket.Id} is Created by Developer in {projectName} and Waiting for being Approve",
+                        Created = DateTime.Now,
+                        SenderId = ticket.OwnnerId,
+                        RecipientId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id
+                    };
+                    await _context.Notification.AddAsync(notification);
+                    await _context.SaveChangesAsync();
+
+
+                    string PMEmail = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Email;
+                    string subject = "New Ticket Has Been Created by Developer";
+                    string message = $"A new ticket {ticket.Name} has been created by Developer {await _userManager.FindByIdAsync(ticket.OwnnerId)} about {ticket.Description} for project: {_context.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name}, and waiting approval from you.";
+
+                    await _emailSender.SendEmailAsync(PMEmail, subject, message);
+
+                    Notification notification2 = new Notification
+                    {
+                        Name = "You just Create a New Ticket",
+                        TicketId = ticket.Id,
+                        Description = $"You just create a new ticket #{ticket.Id} in project {projectName} and waiting for being Assigned",
+                        Created = DateTime.Now,
+                        SenderId = (await _projectService.ProjectManagerOnProjectAsync(ticket.ProjectId)).Id,
+                        RecipientId = ticket.OwnnerId
+                    };
+                    await _context.Notification.AddAsync(notification2);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                //if current user is in the other role, this will redirect to project details view
+                else
+                {
+                    return RedirectToAction("Details", "Projects", new { Id });
+                }
+
             }
-            return RedirectToAction("DemoUser", "Projects");
+            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
+            var allProject = _context.Project.ToList();
+            List<Project> listProject = new List<Project>();
+            foreach (var item in allProject)
+            {
+                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
+                allDeveloper = allDeveloper.Union(developer);
+
+
+                if (await _projectService.IsUserOnProjectAsync(_userManager.GetUserId(User), item.Id))
+                {
+                    listProject.Add(item);
+                }
+            }
+            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
+            ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
+            ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
+            ViewData["ProjectId"] = new SelectList(listProject, "Id", "Name", ticket.ProjectId);
+            ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
+            return View(ticket);
         }
 
         // GET: Tickets/Edit/5
