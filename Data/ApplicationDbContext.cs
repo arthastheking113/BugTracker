@@ -30,5 +30,10 @@ namespace BugTracker.Data
         public DbSet<BugTracker.Models.Reply> Reply { get; set; }
         public DbSet<BugTracker.Models.InboxNotification> InboxNotification { get; set; }
         public DbSet<BugTracker.Models.WelcomeNotification> WelcomeNotification { get; set; }
+
+
+        public ApplicationDbContext()
+        {
+        }
     }
 }

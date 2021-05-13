@@ -26,6 +26,7 @@ namespace BugTracker.Controllers
         private readonly ICustomProjectService _projectService;
         private readonly ICustomRoleService _roleService;
         private readonly SignInManager<CustomUser> _signInManager;
+        private readonly IListDeveloperAndProject _listDeveloperAndProject;
 
         public TicketsController(ApplicationDbContext context, 
             UserManager<CustomUser> userManager, 
@@ -33,7 +34,8 @@ namespace BugTracker.Controllers
             IEmailSender emailSender, 
             ICustomProjectService projectService, 
             ICustomRoleService roleService,
-            SignInManager<CustomUser> signInManager)
+            SignInManager<CustomUser> signInManager,
+            IListDeveloperAndProject listDeveloperAndProject)
         {
             _context = context;
             _userManager = userManager;
@@ -42,6 +44,7 @@ namespace BugTracker.Controllers
             _projectService = projectService;
             _roleService = roleService;
             _signInManager = signInManager;
+            _listDeveloperAndProject = listDeveloperAndProject;
         }
 
         // GET: Tickets
@@ -186,14 +189,9 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-            //var userId = _userManager.GetUserId(User);
-            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-            var allProject = _context.Project.ToList();
-            foreach (var item in allProject)
-            {
-                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Union(developer);
-            }
+
+            var allDeveloper = await _listDeveloperAndProject.ReturnDeveloperOnlyAsync();
+
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
@@ -209,15 +207,8 @@ namespace BugTracker.Controllers
         [Authorize]
         public async Task<IActionResult> CreateAsync(int? projectId)
         {
-            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-            var allProject = _context.Project.ToList();
-            foreach (var item in allProject)
-            {
-                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Union(developer);
-            }
 
-
+            var allDeveloper = await _listDeveloperAndProject.ReturnDeveloperOnlyAsync();
 
             ViewData["projectIdfromView"] = projectId;
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName");
@@ -375,24 +366,13 @@ namespace BugTracker.Controllers
                 }
 
             }
-            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-            var allProject = _context.Project.ToList();
-            List<Project> listProject = new List<Project>();
-            foreach (var item in allProject)
-            {
-                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Union(developer);
 
+            var DeveloperAndProject = await _listDeveloperAndProject.ReturnDeveloperAndProjectAsync(await _userManager.GetUserAsync(User));
 
-                if (await _projectService.IsUserOnProjectAsync(_userManager.GetUserId(User), item.Id))
-                {
-                    listProject.Add(item);
-                }
-            }
-            ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
+            ViewData["DeveloperId"] = new SelectList(DeveloperAndProject.Item1, "Id", "FullName", ticket.DeveloperId);
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
-            ViewData["ProjectId"] = new SelectList(listProject, "Id", "Name", ticket.ProjectId);
+            ViewData["ProjectId"] = new SelectList(DeveloperAndProject.Item2, "Id", "Name", ticket.ProjectId);
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Name", ticket.StatusId);
             ViewData["TicketTypeId"] = new SelectList(_context.TicketType, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
@@ -412,13 +392,8 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-            var allProject = _context.Project.ToList();
-            foreach (var item in allProject)
-            {
-                var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                allDeveloper = allDeveloper.Union(developer);
-            }
+            var allDeveloper = await _listDeveloperAndProject.ReturnDeveloperOnlyAsync();
+
             ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
             ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
             ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
@@ -474,14 +449,9 @@ namespace BugTracker.Controllers
                     }
                     return RedirectToAction("Details","Tickets", new { id = ticketId });
                 }
-                IEnumerable<CustomUser> allDeveloper = new List<CustomUser>();
-                var allProject = _context.Project.ToList();
-                foreach (var item in allProject)
-                {
-                    var developer = await _projectService.DeveloperOnProjectAsync(item.Id);
-                    allDeveloper = allDeveloper.Union(developer);
-                }
-                ViewData["DeveloperId"] = new SelectList(allProject, "Id", "FullName", ticket.DeveloperId);
+                var allDeveloper = await _listDeveloperAndProject.ReturnDeveloperOnlyAsync();
+
+                ViewData["DeveloperId"] = new SelectList(allDeveloper, "Id", "FullName", ticket.DeveloperId);
                 ViewData["OwnnerId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnnerId);
                 ViewData["PriorityId"] = new SelectList(_context.Priority, "Id", "Name", ticket.PriorityId);
                 ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
