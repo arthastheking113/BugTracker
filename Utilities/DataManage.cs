@@ -131,7 +131,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
                 }
             }
@@ -159,7 +159,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.ProjectManager.ToString());
                 }
             }
@@ -188,7 +188,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.ProjectManager.ToString());
                 }
             }
@@ -217,7 +217,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
                 }
             }
@@ -246,7 +246,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
                 }
             }
@@ -275,7 +275,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
                 }
             }
@@ -304,7 +304,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
                 }
             }
@@ -333,7 +333,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
                 }
             }
@@ -362,7 +362,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Submitter.ToString());
                 }
             }
@@ -391,7 +391,7 @@ namespace BugTracker.Utilities
                 var user = await userManagerSvc.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManagerSvc.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManagerSvc.CreateAsync(defaultUser, "Abc123!");
                     await userManagerSvc.AddToRoleAsync(defaultUser, Roles.Submitter.ToString());
                 }
             }
@@ -424,7 +424,7 @@ namespace BugTracker.Utilities
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManager.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManager.CreateAsync(defaultUser, "Abc123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
 
@@ -455,7 +455,7 @@ namespace BugTracker.Utilities
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManager.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManager.CreateAsync(defaultUser, "Abc123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.ProjectManager.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
@@ -485,7 +485,7 @@ namespace BugTracker.Utilities
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManager.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManager.CreateAsync(defaultUser, "Abc123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
@@ -515,7 +515,7 @@ namespace BugTracker.Utilities
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManager.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManager.CreateAsync(defaultUser, "Abc123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Submitter.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
@@ -545,7 +545,7 @@ namespace BugTracker.Utilities
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManager.CreateAsync(defaultUser, "Nhoclanro1!");
+                    await userManager.CreateAsync(defaultUser, "Abc123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Submitter.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
